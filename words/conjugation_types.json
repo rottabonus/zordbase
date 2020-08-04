@@ -1,0 +1,1019 @@
+{
+    "conjugation_types": [
+        {
+            "type": 1,
+            "conjugations": [
+                "n",
+                "a",
+                "on",
+                "t",
+                "jen",
+                "ja",
+                "ihin"
+            ]
+        },
+        {
+            "type": 2,
+            "conjugations": [
+                "n",
+                "a",
+                "un",
+                "t",
+                "jen",
+                "iden",
+                "itten",
+                "ja",
+                "ita",
+                "ihin"
+            ]
+        },
+        {
+            "type": 3,
+            "conjugations": [
+                "n",
+                "ta",
+                "on",
+                "t",
+                "iden",
+                "itten",
+                "ita",
+                "ihin"
+            ]
+        },
+        {
+            "type": 4,
+            "conjugations": [
+                "-+n",
+                "a",
+                "on",
+                "-+t",
+                "jen",
+                "-+iden",
+                "-+itten",
+                "ja",
+                "-+ita",
+                "ihin",
+                "-+ihin"
+            ]
+        },
+        {
+            "type": 5,
+            "conjugations": [
+                "n",
+                "ä",
+                "in",
+                "t",
+                "en",
+                "-ejä",
+                "-eihin"
+            ]
+        },
+        {
+            "type": 6,
+            "conjugations": [
+                "n",
+                "a",
+                "in",
+                "t",
+                "en",
+                "-eiden",
+                "-eitten",
+                "-eja",
+                "-eita",
+                "-eihin"
+            ]
+        },
+        {
+            "type": 7,
+            "conjugations": [
+                "n",
+                "-en",
+                "-ea",
+                "-een",
+                "-et",
+                "en",
+                "a",
+                "in"
+            ]
+        },
+        {
+            "type": 8,
+            "conjugations": [
+                "n",
+                "a",
+                "en",
+                "t",
+                "jen",
+                "in",
+                "ja",
+                "ihin"
+            ]
+        },
+        {
+            "type": 9,
+            "conjugations": [
+                "n",
+                "a",
+                "an",
+                "t",
+                "-ojen",
+                "in",
+                "-oja",
+                "-oihin"
+            ]
+        },
+        {
+            "type": 10,
+            "conjugations": [
+                "n",
+                "a",
+                "t",
+                "-ien",
+                "in",
+                "-ia",
+                "-iin"
+            ]
+        },
+        {
+            "type": 11,
+            "conjugations": [
+                "n",
+                "a",
+                "an",
+                "t",
+                "-ien",
+                "-oiden",
+                "-oitten",
+                "-ojen",
+                "in",
+                "-ia",
+                "-oita",
+                "-oja",
+                "-iin",
+                "-oihin"
+            ]
+        },
+        {
+            "type": 12,
+            "conjugations": [
+                "n",
+                "a",
+                "t",
+                "-oiden",
+                "-oitten",
+                "in",
+                "-oita",
+                "-oihin"
+            ]
+        },
+        {
+            "type": 13,
+            "conjugations": [
+                "n",
+                "a",
+                "an",
+                "t",
+                "-oiden",
+                "-oitten",
+                "-ojen",
+                "in",
+                "-oita",
+                "-oja",
+                "-oihin"
+            ]
+        },
+        {
+            "type": 14,
+            "conjugations": [
+                "n",
+                "a",
+                "an",
+                "t",
+                "--oiden",
+                "--oitten",
+                "-ojen",
+                "in",
+                "-oihin",
+                "--oihin"
+            ]
+        },
+        {
+            "type": 15,
+            "conjugations": [
+                "n",
+                "a",
+                "ta",
+                "an",
+                "t",
+                "-iden",
+                "-itten",
+                "in",
+                "-ita",
+                "-isiin",
+                "-ihin"
+            ]
+        },
+        {
+            "type": 16,
+            "conjugations": [
+                "--man",
+                "-aa",
+                "-aan",
+                "--mat",
+                "en",
+                "-ain",
+                "a",
+                "in"
+            ]
+        },
+        {
+            "type": 17,
+            "conjugations": [
+                "n",
+                "ta",
+                "seen",
+                "t",
+                "-iden",
+                "-itten",
+                "-ita",
+                "-isiin",
+                "-ihin"
+            ]
+        },
+        {
+            "type": 18,
+            "conjugations": [
+                "n",
+                "ta",
+                "han",
+                "t",
+                "-iden",
+                "-itten",
+                "-ita",
+                "-ihin"
+            ]
+        },
+        {
+            "type": 19,
+            "conjugations": [
+                "n",
+                "ta",
+                "hon",
+                "t",
+                "--oiden",
+                "--oitten",
+                "--oita",
+                "--oihin"
+            ]
+        },
+        {
+            "type": 20,
+            "conjugations": [
+                "n",
+                "tä",
+                "hen",
+                "seen",
+                "t",
+                "-iden",
+                "-itten",
+                "-itä",
+                "-ihin",
+                "-isiin"
+            ]
+        },
+        {
+            "type": 21,
+            "conjugations": [
+                "n",
+                "ta",
+                "hen",
+                "t",
+                "iden",
+                "ita",
+                "ihin"
+            ]
+        },
+        {
+            "type": 22,
+            "conjugations": [
+                "'n",
+                "'ta",
+                "'hen",
+                "'t",
+                "'iden",
+                "'ita",
+                "'ihin"
+            ]
+        },
+        {
+            "type": 23,
+            "conjugations": [
+                "-en",
+                "-tä",
+                "-een",
+                "-et",
+                "en",
+                "ä",
+                "in"
+            ]
+        },
+        {
+            "type": 24,
+            "conjugations": [
+                "-en",
+                "-ta",
+                "-een",
+                "-et",
+                "en",
+                "-ten",
+                "a",
+                "in"
+            ]
+        },
+        {
+            "type": 25,
+            "conjugations": [
+                "-en",
+                "--nta",
+                "-ea",
+                "-een",
+                "-et",
+                "en",
+                "--nten",
+                "a",
+                "in"
+            ]
+        },
+        {
+            "type": 26,
+            "conjugations": [
+                "-en",
+                "-tä",
+                "-een",
+                "-et",
+                "-ten",
+                "en",
+                "ä",
+                "in"
+            ]
+        },
+        {
+            "type": 27,
+            "conjugations": [
+                "--den",
+                "--ttä",
+                "--teen",
+                "--det",
+                "en",
+                "--tten",
+                "ä",
+                "in"
+            ]
+        },
+        {
+            "type": 28,
+            "conjugations": [
+                "--nnen",
+                "--ttä",
+                "--teen",
+                "--nteen",
+                "en",
+                "--tten",
+                "ä",
+                "-in"
+            ]
+        },
+        {
+            "type": 29,
+            "conjugations": [
+                "-en",
+                "---sta",
+                "-een",
+                "-et",
+                "---ten",
+                "en",
+                "a",
+                "in"
+            ]
+        },
+        {
+            "type": 30,
+            "conjugations": [
+                "-en",
+                "--stä",
+                "-een",
+                "-et",
+                "en",
+                "--sten",
+                "ä",
+                "in"
+            ]
+        },
+        {
+            "type": 31,
+            "conjugations": [
+                "---hden",
+                "---hta",
+                "---hteen",
+                "---hdet",
+                "en",
+                "a",
+                "in"
+            ]
+        },
+        {
+            "type": 32,
+            "conjugations": [
+                "en",
+                "ta",
+                "een",
+                "et",
+                "ien",
+                "ten",
+                "ia",
+                "iin"
+            ]
+        },
+        {
+            "type": 33,
+            "conjugations": [
+                "-men",
+                "tä",
+                "-meen",
+                "-met",
+                "-mien",
+                "ten",
+                "-miä",
+                "-miin"
+            ]
+        },
+        {
+            "type": 34,
+            "conjugations": [
+                "--toman",
+                "ta",
+                "--tomaan",
+                "--tomat",
+                "--tomien",
+                "--tonten",
+                "--tomia",
+                "--tomiin"
+            ]
+        },
+        {
+            "type": 35,
+            "conjugations": [
+                "---pimän",
+                "tä",
+                "---pimään",
+                "---pimät",
+                "---pimien",
+                "---pimäin",
+                "---pimiä",
+                "---pimiin"
+            ]
+        },
+        {
+            "type": 36,
+            "conjugations": [
+                "-mmän",
+                "tä",
+                "-mpään",
+                "-mmät",
+                "-mpien",
+                "ten",
+                "-mpäin",
+                "-mpiä",
+                "-mpiin"
+            ]
+        },
+        {
+            "type": 37,
+            "conjugations": [
+                "-mman",
+                "ta",
+                "-mpaa",
+                "-mpaan",
+                "-mmat",
+                "-mpien",
+                "ten",
+                "-mpain",
+                "-mpia",
+                "-mpiin"
+            ]
+        },
+        {
+            "type": 38,
+            "conjugations": [
+                "---sen",
+                "---sta",
+                "---seen",
+                "---set",
+                "---sten",
+                "---sien",
+                "---sia",
+                "---siin"
+            ]
+        },
+        {
+            "type": 39,
+            "conjugations": [
+                "-ksen",
+                "ta",
+                "-kseen",
+                "-kset",
+                "ten",
+                "-ksien",
+                "-ksia",
+                "-ksiin"
+            ]
+        },
+        {
+            "type": 40,
+            "conjugations": [
+                "-den",
+                "-tta",
+                "-teen",
+                "-det",
+                "-ksien",
+                "-ksia",
+                "-ksiin"
+            ]
+        },
+        {
+            "type": 41,
+            "conjugations": [
+                "-an",
+                "ta",
+                "-aseen",
+                "-at",
+                "-iden",
+                "-itten",
+                "-ita",
+                "-isiin",
+                "-ihin"
+            ]
+        },
+        {
+            "type": 42,
+            "conjugations": [
+                "-hen",
+                "tä",
+                "-heen",
+                "-het",
+                "ten",
+                "-hien",
+                "-hiä",
+                "-hiin"
+            ]
+        },
+        {
+            "type": 43,
+            "conjugations": [
+                "-en",
+                "ta",
+                "-een",
+                "-et",
+                "-iden",
+                "-itten",
+                "-ita",
+                "-isiin",
+                "-ihin"
+            ]
+        },
+        {
+            "type": 44,
+            "conjugations": [
+                "-än",
+                "tä",
+                "-äseen",
+                "-ät",
+                "-iden",
+                "-itten",
+                "-itä",
+                "-isiin",
+                "-äihin"
+            ]
+        },
+        {
+            "type": 45,
+            "conjugations": [
+                "-nnen",
+                "-tta",
+                "-nteen",
+                "-nnet",
+                "-nsien",
+                "-nsia",
+                "-nsiin"
+            ]
+        },
+        {
+            "type": 46,
+            "conjugations": [
+                "-nnen",
+                "ta",
+                "-nteen",
+                "-nnet",
+                "-nsien",
+                "-nten",
+                "-nsia",
+                "-nsiin"
+            ]
+        },
+        {
+            "type": 47,
+            "conjugations": [
+                "--een",
+                "ta",
+                "--eeseen",
+                "--eet",
+                "--eiden",
+                "--eitten",
+                "--eita",
+                "--eisiin",
+                "--eihin"
+            ]
+        },
+        {
+            "type": 48,
+            "conjugations": [
+                "en",
+                "tta",
+                "eseen",
+                "et",
+                "iden",
+                "itten",
+                "ita",
+                "isiin",
+                "ihin"
+            ]
+        },
+        {
+            "type": 49,
+            "conjugations": [
+                "en",
+                "ta",
+                "een",
+                "ien",
+                "ten",
+                "ia",
+                "iin",
+                "e",
+                "een",
+                "etta",
+                "eeseen",
+                "eet",
+                "eiden",
+                "eitten",
+                "eita",
+                "eisiin",
+                "eihin"
+            ]
+        },
+        {
+            "type": 50,
+            "conjugations": [
+                "--din",
+                "ä",
+                "in",
+                "--dit",
+                "en",
+                "-ejä",
+                "-eihin"
+            ]
+        },
+        {
+            "type": 51,
+            "conjugations": [
+                "-en / n",
+                "-ta / a",
+                "-een / in",
+                "-et / t",
+                "--ten / en",
+                "en / en",
+                "a / -eja",
+                "in / -eihin"
+            ]
+        },
+        {
+            "type": 52,
+            "conjugations": [
+                "-n",
+                "-i",
+                "-isi",
+                "-nee",
+                "-koon",
+                "-nut",
+                "-ttiin"
+            ]
+        },
+        {
+            "type": 53,
+            "conjugations": [
+                "-n",
+                "--i",
+                "-isi",
+                "-nee",
+                "-koon",
+                "-nut",
+                "--ettiin"
+            ]
+        },
+        {
+            "type": 54,
+            "conjugations": [
+                "---dan",
+                "---si",
+                "-isi",
+                "-nee",
+                "-koon",
+                "-nut",
+                "---dettiin"
+            ]
+        },
+        {
+            "type": 55,
+            "conjugations": [
+                "---dan",
+                "--i",
+                "---si",
+                "-isi",
+                "-nee",
+                "-koon",
+                "-nut",
+                "---dettiin"
+            ]
+        },
+        {
+            "type": 56,
+            "conjugations": [
+                "-n",
+                "--oi",
+                "-isi",
+                "-nee",
+                "-koon",
+                "-nut",
+                "---ettiin"
+            ]
+        },
+        {
+            "type": 57,
+            "conjugations": [
+                "---ran",
+                "---si",
+                "--oi",
+                "-isi",
+                "-nee",
+                "-koon",
+                "-nut",
+                "---rettiin"
+            ]
+        },
+        {
+            "type": 58,
+            "conjugations": [
+                "-n",
+                "--i",
+                "--isi",
+                "-nee",
+                "-koon",
+                "-nut",
+                "-ttiin"
+            ]
+        },
+        {
+            "type": 59,
+            "conjugations": [
+                "---nen",
+                "---si",
+                "--isi",
+                "-nee",
+                "-koon",
+                "-nut",
+                "---nettiin"
+            ]
+        },
+        {
+            "type": 60,
+            "conjugations": [
+                "---den",
+                "--i",
+                "----ksi",
+                "-nee",
+                "-köön",
+                "-nyt",
+                "---dettiin"
+            ]
+        },
+        {
+            "type": 61,
+            "conjugations": [
+                "-n",
+                "-",
+                "-si",
+                "-nee",
+                "-koon",
+                "-nut",
+                "-ttiin"
+            ]
+        },
+        {
+            "type": 62,
+            "conjugations": [
+                "--n",
+                "--",
+                "--si",
+                "--nee",
+                "--koon",
+                "--nut",
+                "--tiin"
+            ]
+        },
+        {
+            "type": 63,
+            "conjugations": [
+                "--n",
+                "---i",
+                "---isi",
+                "--nee",
+                "--koon",
+                "--nut",
+                "--tiin"
+            ]
+        },
+        {
+            "type": 64,
+            "conjugations": [
+                "--n",
+                "----oi",
+                "----oisi",
+                "--nee",
+                "--koon",
+                "--nut",
+                "--tiin"
+            ]
+        },
+        {
+            "type": 65,
+            "conjugations": [
+                "--n",
+                "--vi",
+                "--visi",
+                "--nee",
+                "--köön",
+                "--nyt",
+                "--tiin"
+            ]
+        },
+        {
+            "type": 66,
+            "conjugations": [
+                "--sen",
+                "--i",
+                "--isi",
+                "--see",
+                "--koon",
+                "--sut",
+                "-iin"
+            ]
+        },
+        {
+            "type": 67,
+            "conjugations": [
+                "--en",
+                "--i",
+                "--isi",
+                "-ee",
+                "--koon",
+                "-ut",
+                "--tiin"
+            ]
+        },
+        {
+            "type": 68,
+            "conjugations": [
+                "--n",
+                "--tsen",
+                "--",
+                "--tsi",
+                "--si",
+                "--tsisi",
+                "--nut",
+                "--tiin",
+                "--nee",
+                "--koon"
+            ]
+        },
+        {
+            "type": 69,
+            "conjugations": [
+                "-sen",
+                "-si",
+                "-sisi",
+                "--nnee",
+                "-koon",
+                "--nnut",
+                "-tiin"
+            ]
+        },
+        {
+            "type": 70,
+            "conjugations": [
+                "---ksen",
+                "---ksi",
+                "--see",
+                "--koon",
+                "--sut",
+                "-iin"
+            ]
+        },
+        {
+            "type": 71,
+            "conjugations":[
+                "---en",
+                "---ki",
+                "---kisi",
+                "--nee",
+                "--köön",
+                "--nyt",
+                "--tiin"
+            ]
+        },
+        {
+            "type": 72,
+            "conjugations": [
+                "--nen",
+                "--ni",
+                "--nisi",
+                "--nnee",
+                "--tkoon",
+                "--nnut",
+                "--ttiin"
+            ]
+        },
+        {
+            "type": 73,
+            "conjugations": [
+                "--an",
+                "--si",
+                "--isi",
+                "--nnee",
+                "-koon",
+                "--nnut",
+                "-tiin"
+            ]
+        },
+        {
+            "type": 74,
+            "conjugations": [
+                "--an",
+                "--si",
+                "--aisi",
+                "--isi",
+                "--nnee",
+                "-koon",
+                "--nnut",
+                "-iin"
+            ]
+        },
+        {
+            "type": 75,
+            "conjugations":[
+                "--än",
+                "--si",
+                "--äisi",
+                "--nnee",
+                "-köön",
+                "--nnyt",
+                "-tiin"
+            ]
+        },
+        {
+            "type": 76,
+            "conjugations": [
+                "---dan",
+                "---si",
+                "---taisi",
+                "-nee",
+                "---nnee",
+                "-koon",
+                "---nnut",
+                "-nut",
+                "---dettiin"
+            ]
+        },
+        {
+            "type": 77,
+            "conjugations": [
+                "--i",
+                "--isi"
+            ]
+        },
+        {
+            "type": 78,
+            "conjugations": [
+                "-isi"
+            ]
+        }
+    ]
+}

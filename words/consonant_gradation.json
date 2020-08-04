@@ -1,0 +1,69 @@
+{
+    "consonant_gradations": [
+        {
+            "type": "A",
+            "gradation": "kk:k",
+            "bothWays": true
+        },
+        {
+            "type": "B",
+            "gradation": "pp:p",
+            "bothWays": true
+        },
+        {
+            "type": "C",
+            "gradation": "tt:t",
+            "bothWays": true
+        },
+        {
+            "type": "D",
+            "gradation": "k:-",
+            "bothWays": true
+        },
+        {
+            "type": "E",
+            "gradation": "p:v",
+            "bothWays": true
+        },
+        {
+            "type": "F",
+            "gradation": "t:d",
+            "bothWays": true
+        },
+        {
+            "type": "G",
+            "gradation": "nk:ng",
+            "bothWays": true
+        },
+        {
+            "type": "H",
+            "gradation": "mp:mm",
+            "bothWays": true
+        },
+        {
+            "type": I,
+            "gradation": "lt:ll",
+            "bothWays": true
+        },
+        {
+            "type": "J",
+            "gradation": "nt:nn",
+            "bothWays": true
+        },
+        {
+            "type":"K",
+            "gradation": "rt:rr",
+            "bothWays": true
+        },
+        {
+            "type": "L",
+            "gradation": "k:j",
+            "bothWays": true
+        },
+        {
+            "type": "M",
+            "gradation": "k:v",
+            "bothWays": false
+        }
+    ]
+}
