@@ -1,68 +1,68 @@
 {
-    "consonant_gradations": [
+    "consonant_gradiations": [
         {
             "type": "A",
-            "gradation": "kk:k",
+            "gradiation": "kk:k",
             "bothWays": true
         },
         {
             "type": "B",
-            "gradation": "pp:p",
+            "gradiation": "pp:p",
             "bothWays": true
         },
         {
             "type": "C",
-            "gradation": "tt:t",
+            "gradiation": "tt:t",
             "bothWays": true
         },
         {
             "type": "D",
-            "gradation": "k:-",
+            "gradiation": "k:-",
             "bothWays": true
         },
         {
             "type": "E",
-            "gradation": "p:v",
+            "gradiation": "p:v",
             "bothWays": true
         },
         {
             "type": "F",
-            "gradation": "t:d",
+            "gradiation": "t:d",
             "bothWays": true
         },
         {
             "type": "G",
-            "gradation": "nk:ng",
+            "gradiation": "nk:ng",
             "bothWays": true
         },
         {
             "type": "H",
-            "gradation": "mp:mm",
+            "gradiation": "mp:mm",
             "bothWays": true
         },
         {
-            "type": I,
-            "gradation": "lt:ll",
+            "type": "I",
+            "gradiation": "lt:ll",
             "bothWays": true
         },
         {
             "type": "J",
-            "gradation": "nt:nn",
+            "gradiation": "nt:nn",
             "bothWays": true
         },
         {
             "type":"K",
-            "gradation": "rt:rr",
+            "gradiation": "rt:rr",
             "bothWays": true
         },
         {
             "type": "L",
-            "gradation": "k:j",
+            "gradiation": "k:j",
             "bothWays": true
         },
         {
             "type": "M",
-            "gradation": "k:v",
+            "gradiation": "k:v",
             "bothWays": false
         }
     ]
