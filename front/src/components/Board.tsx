@@ -1,13 +1,25 @@
 import React from 'react';
+import { letterObject } from '../types/types';
 
-export const Board = (props: any) => {
+interface BoardProps {
+    letters: string[][];
+    selectLetter: (L: string, row: number, column: number) => void;
+    get: (R: number, C: number, LO: letterObject[]) => Boolean;
+    selected: letterObject[]
+}
+
+export const Board: React.FC<BoardProps> = (props) => {
  
     return <div>
                <table>
                    <tbody>
-                        {props.letters.map((row: any[], i:any) => (
+                        {props.letters.map((row, i) => (
                         <tr key={i}>
-                            {row.map((cellId: React.ReactNode, j:any) => <td key={j}>{cellId}</td>)}
+                            { row.map((cellId, j) => (props.get(i, j, props.selected)) ?
+                                <td style={{backgroundColor: "Cyan"}} key={j} onClick={(event) => props.selectLetter(cellId, i, j)}>{cellId}</td>
+                                :
+                                <td key={j} onClick={(event) => props.selectLetter(cellId, i, j)}>{cellId}</td>
+                                )}
                         </tr>
                         ))}
                     </tbody>

@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import { GameBoardPage } from './pages/BoardPage'
 import { OtherComponent } from './components/OtherComponent'
 
-export const App = () => {
+export const App: React.FC = () => {
      
     return (
         <Router>
