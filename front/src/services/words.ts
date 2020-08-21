@@ -38,16 +38,14 @@ const checkIfLetterSelectionIsallowed = (letter: letterObject, board: string[][]
   let selectedAgainIndex: number = selected.findIndex(isMatch)
   if(selectedAgainIndex !== -1) {
     return { possibleSelection: true, selectedBeforeIndex: selectedAgainIndex }
-  }
-  if (selected.length !== 0) {
+  } else if (selected.length !== 0) {
       const possibleXpositions = [selected[selected.length-1].row, selected[selected.length-1].row + 1, selected[selected.length-1].row - 1].filter(x => x >= 0 && x < board.length)
       const possibleYpositions = [selected[selected.length-1].column, selected[selected.length-1].column + 1, selected[selected.length-1].column - 1].filter(x => x >= 0 && x < (board[0].length))
-    if (possibleXpositions.includes(letter.row) && possibleYpositions.includes(letter.column)) {
-      selectedAgainIndex = selected.findIndex(isMatch)
-    } else {
+    if (!possibleXpositions.includes(letter.row) && !possibleYpositions.includes(letter.column)) {
       return { possibleSelection: false, selectedBeforeIndex: selectedAgainIndex }
     }
   }
+
   return { possibleSelection: true, selectedBeforeIndex: selectedAgainIndex}
 }
 
@@ -89,28 +87,30 @@ const checkAllPossibleWordsAndRoutes =  (selected: letterObject[], words: string
   const searched = [...selected]
   let paths: { [key:string]: string[] } = {}
   paths[getKeyNameObject(selected[selected.length-1])] = [...selected[selected.length-1].letter]
-  const startStr = paths[getKeyNameObject(selected[selected.length-1])]
+
   do {
-    let toCheck = queue.shift()
-    let parents = findParent(toCheck, paths, movements)
+    
+    const toCheck = queue.shift()
+    const parents = findParent(toCheck, paths, movements)
+
     if (parents.length > 0){
       const isMatch = (l: letterObject) => l.row === toCheck.row && l.column === toCheck.column
-    if (searched.findIndex(isMatch) === -1){
-      parents.forEach( (parent) => {
-          parent.forEach( (str) => {
-            queue.push(...movements[getKeyNameObject(toCheck)])
-            searched.push(toCheck)
-            if(words.filter(w => w.toUpperCase().includes(str+toCheck.letter)).length > 0){
-                let temp = paths[getKeyNameObject(toCheck)]
-                temp === undefined ? temp = [] : temp
-                paths[getKeyNameObject(toCheck)] = [...temp, str+toCheck.letter]
+      if (searched.findIndex(isMatch) === -1){
+        queue.push(...movements[getKeyNameObject(toCheck)])
+        searched.push(toCheck)
+        parents.forEach( (parent) => {
+            parent.forEach( (str) => {
+              if(words.filter(w => w.toUpperCase().includes(str+toCheck.letter)).length > 0){
+                let moves = paths[getKeyNameObject(toCheck)]
+                moves === undefined ? moves = [] : moves
+                paths[getKeyNameObject(toCheck)] = [...moves, str+toCheck.letter]
             } 
           })
         })  
       }
     }
-    
     } while (queue.length > 0)
+
   return paths
 }
 
