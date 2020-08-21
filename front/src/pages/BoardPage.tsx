@@ -9,10 +9,15 @@ export const GameBoardPage: React.FC = () => {
     const [board, setBoard] = useState<string[][]>([])
     const [selected, setSelected] = useState<letterObject[]>([])
     const [selectedStr, setSelectedStr] = useState<string | undefined>(undefined);
+    const [possibleWords, setpossibleWords] = useState<{[key:string]: string[]}>({});
 
-    const fetchData = async (letter: string) => {
+    const fetchData = async (letter: string, selected: letterObject[]) => {
         const words = await wordService.fetchAll(letter)
-        setWords(words)       
+        setWords(words)
+        if (words.length > 0 ){
+            const possibleWords = wordService.checkAllPossibleWordsAndRoutes(selected, words, board)
+            setpossibleWords(possibleWords)   
+        } 
       }
 
     const createBoard = () => {
@@ -22,18 +27,20 @@ export const GameBoardPage: React.FC = () => {
 
     const selectLetter = async (letter: string, row: number, column: number) => {
         let obj = { letter: letter, row: row, column: column }
-        const result: selectionObject = wordService.checkIfWordIsallowed(obj, board, selected)
+        const result: selectionObject = wordService.checkIfLetterSelectionIsallowed(obj, board, selected)
+        let newSelected: letterObject[] = []
         if (result.possibleSelection){
             if (result.selectedBeforeIndex === -1){
+                newSelected = [...selected, obj]
                 setSelected([...selected, obj])
             } else {
-                const newSelected =  selected.slice(0, result.selectedBeforeIndex)
+                newSelected =  selected.slice(0, result.selectedBeforeIndex)
                 setSelected(newSelected)
         }
     }
-        const selectedStr = selected.map(s => s.letter).join("")
+        const selectedStr = newSelected.map(s => s.letter).join("")
         setSelectedStr(selectedStr)
-        //fetchData(selectedStr)  
+        fetchData(selectedStr, newSelected)
     }
 
     const getSelected = (r: number, c: number, selected: letterObject[]) => {
@@ -42,7 +49,7 @@ export const GameBoardPage: React.FC = () => {
     }
 
       useEffect(() => {
-        createBoard()
+            createBoard()      
       }, [])
 
         return  <div>
@@ -50,7 +57,7 @@ export const GameBoardPage: React.FC = () => {
                         <h1>GameBoardPage</h1>
                     </div>
                     <div>
-                        <Board letters={board} selectLetter={selectLetter} get={getSelected} selected={selected}/> 
+                        <Board letters={board} selectLetter={selectLetter} getSelected={getSelected} selected={selected}/> 
                     </div> 
                 </div>;
     }
