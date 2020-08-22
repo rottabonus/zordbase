@@ -5,20 +5,9 @@ import { letterObject, selectionObject } from '../types/types'
 
 export const GameBoardPage: React.FC = () => {
 
-    const [words, setWords] = useState<string[] | undefined>(undefined);
     const [board, setBoard] = useState<string[][]>([])
     const [selected, setSelected] = useState<letterObject[]>([])
-    const [selectedStr, setSelectedStr] = useState<string | undefined>(undefined);
     const [possibleWords, setpossibleWords] = useState<{[key:string]: string[]}>({});
-
-    const fetchData = async (letter: string, selected: letterObject[]) => {
-        const words = await wordService.fetchAll(letter)
-        setWords(words)
-        if (words.length > 0 ){
-            const possibleWords = wordService.checkAllPossibleWordsAndRoutes(selected, words, board)
-            setpossibleWords(possibleWords)   
-        } 
-      }
 
     const createBoard = () => {
         const board = wordService.createBoard(10, 8)
@@ -38,9 +27,8 @@ export const GameBoardPage: React.FC = () => {
                 setSelected(newSelected)
         }
     }
-        const selectedStr = newSelected.map(s => s.letter).join("")
-        setSelectedStr(selectedStr)
-        fetchData(selectedStr, newSelected)
+    const possibleWords = await wordService.checkAllPossibleWordsAndRoutes(newSelected, board)
+    setpossibleWords(possibleWords)
     }
 
     const getSelected = (r: number, c: number, selected: letterObject[]) => {

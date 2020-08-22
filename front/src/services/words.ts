@@ -3,7 +3,9 @@ import {
 } from '../types/types'
 
 const fetchAll = async (char: string) => {
-  if (char == "") {
+
+  console.log('here')
+  if (char === '') {
     return []
   }
   let response = await fetch('http://localhost:3000/api/words/');
@@ -13,8 +15,8 @@ const fetchAll = async (char: string) => {
 }
 
 const createBoard = (rows: number, columns: number) => {
-  const letters = "abcdefghijklmnoprstuvxyzöä"
-  const letterArr = letters.split("")
+  const letters = 'abcdefghijklmnoprstuvxyzöä'
+  const letterArr = letters.split('')
   const board: string[][] = []
   let rowArray: string[] = []
   for (let i = 0; i <= rows; i++) {
@@ -53,18 +55,14 @@ const generateMovements = (board: string[][]) => {
   const moves: { [key:string] : letterObject[] } = {}
   board.forEach((row, r) => {
       row.forEach((column, c) => {
-          moves[getKeyName(r, c)] = getNeighborsData({'letter': board[r][c], 'row': r, 'column': c}, board)
+          moves[`${r},${c}`] = getNeighborsData({'letter': board[r][c], 'row': r, 'column': c}, board)
       })
   })
   return moves
 }
 
-const getKeyName = (r: number, c: number) => {
-  return r.toString() + "," + c.toString()
-}
-
 const getKeyNameObject = (obj: letterObject) => {
-  return obj.row.toString() + "," + obj.column.toString()
+  return `${obj.row},${obj.column}`
 }
 
 const getNeighborsData = (selected: letterObject, board: string[][]) => {
@@ -81,7 +79,8 @@ const getNeighborsData = (selected: letterObject, board: string[][]) => {
      return possibleCoordinates
 }
 
-const checkAllPossibleWordsAndRoutes =  (selected: letterObject[], words: string[], board: string[][]) => {
+const checkAllPossibleWordsAndRoutes = async (selected: letterObject[], board: string[][]) => {
+  const words: string[] = await fetchAll(selected.map(s => s.letter).join(''))
   const movements = generateMovements(board)
   const queue = [...movements[getKeyNameObject(selected[selected.length-1])]]
   const searched = [...selected]
@@ -104,6 +103,10 @@ const checkAllPossibleWordsAndRoutes =  (selected: letterObject[], words: string
                 let moves = paths[getKeyNameObject(toCheck)]
                 moves === undefined ? moves = [] : moves
                 paths[getKeyNameObject(toCheck)] = [...moves, str+toCheck.letter]
+                const reSearchable: number[] = returnPossibleNeighborsToQueue(searched, toCheck, movements, paths)
+                reSearchable.forEach( (node) => {
+                  searched.splice(node, 1)
+              })
             } 
           })
         })  
@@ -112,6 +115,23 @@ const checkAllPossibleWordsAndRoutes =  (selected: letterObject[], words: string
     } while (queue.length > 0)
 
   return paths
+}
+
+const returnPossibleNeighborsToQueue = (searched: letterObject[], obj: letterObject, allMoves: {[key:string]: letterObject[]}, paths: {[key:string]: string[]}) => {
+//debugger;
+const objectMoves: letterObject[] = allMoves[getKeyNameObject(obj)]
+const toReturnIndexes: number[] = []
+objectMoves.forEach( (move) => {
+  searched.forEach( (searched, i) => {
+    if(JSON.stringify(searched) === JSON.stringify(move)){
+      let moves = paths[getKeyNameObject(move)]
+      if (moves === undefined){
+        toReturnIndexes.push(i)
+      }
+    }
+  })
+})
+return toReturnIndexes
 }
 
 const findParent = (obj: letterObject, parentMoves: {[key:string]: string[]}, allMoves: {[key:string]: letterObject[]}) => {
