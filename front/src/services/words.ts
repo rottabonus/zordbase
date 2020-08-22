@@ -77,12 +77,12 @@ const getNeighborsData = (selected: letterObject, board: string[][]) => {
 }
 
 const checkAllPossibleWordsAndRoutes = async (selected: letterObject[], board: string[][]) => {
+  const paths: { [key:string]: string[] } = setPaths(selected)
   if (selected.length != 0){
     const words: string[] = await fetchAll(selected.map(s => s.letter).join(''))
     const movements = generateMovements(board)
     const queue = [...movements[getKeyNameObject(selected[selected.length-1])]]
     const searched = [...selected]
-    const paths: { [key:string]: string[] } = setPaths(selected)
     
     do {
     
@@ -109,10 +109,8 @@ const checkAllPossibleWordsAndRoutes = async (selected: letterObject[], board: s
           }
         }
       } while (queue.length > 0)
-
-    return paths
     }
-  return {}
+  return paths
 }
 
 const setPaths = (selected: letterObject[]) => {
