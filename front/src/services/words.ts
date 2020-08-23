@@ -34,9 +34,10 @@ const getRandomInt = (max: number) => {
 }
 
 const checkIfLetterSelectionIsallowed = (letter: letterObject, board: string[][], selected: letterObject[]) => {
-  const isMatch = (l: letterObject) => l.row == letter.row && l.column == letter.column 
+  const isMatch = (l: letterObject) => l.row == letter.row && l.column == letter.column
   let selectedAgainIndex: number = selected.findIndex(isMatch)
-  if (selected.length !== 0) {
+  console.log(selectedAgainIndex) 
+  if (selected.length !== 0 && selectedAgainIndex === -1) {
       const possibleXpositions = [selected[selected.length-1].row, selected[selected.length-1].row + 1, selected[selected.length-1].row - 1].filter(x => x >= 0 && x < board.length)
       const possibleYpositions = [selected[selected.length-1].column, selected[selected.length-1].column + 1, selected[selected.length-1].column - 1].filter(x => x >= 0 && x < (board[0].length))
       if (!possibleXpositions.includes(letter.row) && !possibleYpositions.includes(letter.column) || 
@@ -85,7 +86,8 @@ const checkAllPossibleWordsAndRoutes = async (selected: letterObject[], board: s
     const searched = [...selected]
     
     do {
-    
+
+        let returned = false
         const toCheck = queue.shift()
         const parentPaths = findParentPaths(toCheck, paths, movements)
         if (parentPaths.length > 0){
@@ -102,10 +104,13 @@ const checkAllPossibleWordsAndRoutes = async (selected: letterObject[], board: s
                     const reSearchable: number[] = returnPossibleNeighborsToQueue(searched, toCheck, movements, paths)
                     reSearchable.forEach( (nodeIndex) => {
                       searched.splice(nodeIndex, 1)
+                      returned = true
+                  })
+                    if(returned){
                       const queueIndex =  queue.length - movements[`${toCheck.row},${toCheck.column}`].length
                       const elementsToShift = movements[`${toCheck.row},${toCheck.column}`].length
                       queue.unshift(...queue.splice(queueIndex, elementsToShift))
-                  })
+                  }
                 } 
               })
             })  
