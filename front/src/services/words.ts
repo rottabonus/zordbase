@@ -35,8 +35,7 @@ const getRandomInt = (max: number) => {
 
 const checkIfLetterSelectionIsallowed = (letter: letterObject, board: string[][], selected: letterObject[]) => {
   const isMatch = (l: letterObject) => l.row == letter.row && l.column == letter.column
-  let selectedAgainIndex: number = selected.findIndex(isMatch)
-  console.log(selectedAgainIndex) 
+  let selectedAgainIndex: number = selected.findIndex(isMatch) 
   if (selected.length !== 0 && selectedAgainIndex === -1) {
       const possibleXpositions = [selected[selected.length-1].row, selected[selected.length-1].row + 1, selected[selected.length-1].row - 1].filter(x => x >= 0 && x < board.length)
       const possibleYpositions = [selected[selected.length-1].column, selected[selected.length-1].column + 1, selected[selected.length-1].column - 1].filter(x => x >= 0 && x < (board[0].length))
