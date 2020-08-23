@@ -39,8 +39,7 @@ const checkIfLetterSelectionIsallowed = (letter: letterObject, board: string[][]
   if (selected.length !== 0 && selectedAgainIndex === -1) {
       const possibleXpositions = [selected[selected.length-1].row, selected[selected.length-1].row + 1, selected[selected.length-1].row - 1].filter(x => x >= 0 && x < board.length)
       const possibleYpositions = [selected[selected.length-1].column, selected[selected.length-1].column + 1, selected[selected.length-1].column - 1].filter(x => x >= 0 && x < (board[0].length))
-      if (!possibleXpositions.includes(letter.row) && !possibleYpositions.includes(letter.column) || 
-       possibleXpositions.includes(letter.row) && !possibleYpositions.includes(letter.column)  ||
+      if ( possibleXpositions.includes(letter.row) && !possibleYpositions.includes(letter.column)  ||
        !possibleXpositions.includes(letter.row) && possibleYpositions.includes(letter.column)) {
       return { possibleSelection: false, selectedBeforeIndex: selectedAgainIndex }
     }
@@ -86,7 +85,6 @@ const checkAllPossibleWordsAndRoutes = async (selected: letterObject[], board: s
     
     do {
 
-        let returned = false
         const toCheck = queue.shift()
         const parentPaths = findParentPaths(toCheck, paths, movements)
         if (parentPaths.length > 0){
@@ -98,18 +96,14 @@ const checkAllPossibleWordsAndRoutes = async (selected: letterObject[], board: s
               pathArr.forEach( (str) => {
                   if(words.filter(w => w.toUpperCase().startsWith(str+toCheck.letter)).length > 0){
                     let moves = paths[`${toCheck.row},${toCheck.column}`]
-                    moves === undefined ? moves = [] : moves
+                    moves === undefined || moves.includes(str+toCheck.letter) ? moves = [] : moves
                     paths[`${toCheck.row},${toCheck.column}`] = [...moves, str+toCheck.letter]
                     const reSearchable: number[] = returnPossibleNeighborsToQueue(searched, toCheck, movements, paths)
                     reSearchable.forEach( (nodeIndex) => {
                       searched.splice(nodeIndex, 1)
-                      returned = true
+                      const returned = searched.splice(nodeIndex, 1)
+                      queue.unshift(...returned)
                   })
-                    if(returned){
-                      const queueIndex =  queue.length - movements[`${toCheck.row},${toCheck.column}`].length
-                      const elementsToShift = movements[`${toCheck.row},${toCheck.column}`].length
-                      queue.unshift(...queue.splice(queueIndex, elementsToShift))
-                  }
                 } 
               })
             })  
@@ -150,9 +144,11 @@ const findParentPaths = (obj: letterObject, parentMoves: {[key:string]: string[]
   const parentPaths: string[][] = []
   const objectMoves = allMoves[`${obj.row},${obj.column}`]
   const movePositions = objectMoves.map(p => getKeyNameObject(p))
+  console.log('finding parents for', obj)
   movePositions.forEach( (move) => {
     if (parentMoves[move] !== undefined ){
       parentPaths.push(parentMoves[move])
+      console.log('found parent moves', parentMoves[move])
     }
   })
   return parentPaths
