@@ -41,7 +41,9 @@ const checkIfLetterSelectionIsallowed = (letter: letterObject, board: string[][]
   } else if (selected.length !== 0) {
       const possibleXpositions = [selected[selected.length-1].row, selected[selected.length-1].row + 1, selected[selected.length-1].row - 1].filter(x => x >= 0 && x < board.length)
       const possibleYpositions = [selected[selected.length-1].column, selected[selected.length-1].column + 1, selected[selected.length-1].column - 1].filter(x => x >= 0 && x < (board[0].length))
-    if (!possibleXpositions.includes(letter.row) && !possibleYpositions.includes(letter.column)) {
+      if (!possibleXpositions.includes(letter.row) && !possibleYpositions.includes(letter.column) || 
+       possibleXpositions.includes(letter.row) && !possibleYpositions.includes(letter.column)  ||
+       !possibleXpositions.includes(letter.row) && possibleYpositions.includes(letter.column)) {
       return { possibleSelection: false, selectedBeforeIndex: selectedAgainIndex }
     }
   }
@@ -87,14 +89,14 @@ const checkAllPossibleWordsAndRoutes = async (selected: letterObject[], board: s
     do {
     
         const toCheck = queue.shift()
-        const parents = findParent(toCheck, paths, movements)
-        if (parents.length > 0){
+        const parentPaths = findParentPaths(toCheck, paths, movements)
+        if (parentPaths.length > 0){
           const isMatch = (l: letterObject) => l.row === toCheck.row && l.column === toCheck.column
           if (searched.findIndex(isMatch) === -1){
             queue.push(...movements[`${toCheck.row},${toCheck.column}`])
             searched.push(toCheck)
-            parents.forEach( (parent) => {
-                parent.forEach( (str) => {
+            parentPaths.forEach( (pathArr) => {
+              pathArr.forEach( (str) => {
                   if(words.filter(w => w.toUpperCase().startsWith(str+toCheck.letter)).length > 0){
                     let moves = paths[`${toCheck.row},${toCheck.column}`]
                     moves === undefined ? moves = [] : moves
@@ -102,6 +104,9 @@ const checkAllPossibleWordsAndRoutes = async (selected: letterObject[], board: s
                     const reSearchable: number[] = returnPossibleNeighborsToQueue(searched, toCheck, movements, paths)
                     reSearchable.forEach( (nodeIndex) => {
                       searched.splice(nodeIndex, 1)
+                      const queueIndex =  queue.length - movements[`${toCheck.row},${toCheck.column}`].length
+                      const elementsToShift = movements[`${toCheck.row},${toCheck.column}`].length
+                      queue.unshift(...queue.splice(queueIndex, elementsToShift))
                   })
                 } 
               })
@@ -139,14 +144,16 @@ objectMoves.forEach( (move) => {
 return toReturnIndexes
 }
 
-const findParent = (obj: letterObject, parentMoves: {[key:string]: string[]}, allMoves: {[key:string]: letterObject[]}) => {
-  const objectMoves: letterObject[] = allMoves[`${obj.row},${obj.column}`]
-  let parents: string[][] = []
-  const movePositions: string[] = objectMoves.map(p => getKeyNameObject(p))
-  Object.keys(parentMoves).forEach( (parent) => {
-    parents.push(...movePositions.filter(pos => pos === parent).map(moveArray => parentMoves[moveArray]))
+const findParentPaths = (obj: letterObject, parentMoves: {[key:string]: string[]}, allMoves: {[key:string]: letterObject[]}) => {
+  const parentPaths: string[][] = []
+  const objectMoves = allMoves[`${obj.row},${obj.column}`]
+  const movePositions = objectMoves.map(p => getKeyNameObject(p))
+  movePositions.forEach( (move) => {
+    if (parentMoves[move] !== undefined ){
+      parentPaths.push(parentMoves[move])
+    }
   })
- return parents
+  return parentPaths
 }
 
 export default {
