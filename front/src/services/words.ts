@@ -98,7 +98,7 @@ const checkAllPossibleWordsAndRoutes = async (selected: letterObject[], board: s
                     let moves = paths[`${toCheck.row},${toCheck.column}`]
                     moves === undefined || moves.includes(str+toCheck.letter) ? moves = [] : moves
                     paths[`${toCheck.row},${toCheck.column}`] = [...moves, str+toCheck.letter]
-                    const reSearchable: number[] = returnPossibleNeighborsToQueue(searched, toCheck, movements, paths)
+                    const reSearchable: number[] = returnNonPathSearchedNodeIndexes(searched, toCheck, movements, paths)
                     reSearchable.forEach( (nodeIndex) => {
                       searched.splice(nodeIndex, 1)
                       const returned = searched.splice(nodeIndex, 1)
@@ -124,7 +124,7 @@ const setPaths = (selected: letterObject[]) => {
   return paths
 }
 
-const returnPossibleNeighborsToQueue = (searched: letterObject[], obj: letterObject, allMoves: {[key:string]: letterObject[]}, paths: {[key:string]: string[]}) => {
+const returnNonPathSearchedNodeIndexes = (searched: letterObject[], obj: letterObject, allMoves: {[key:string]: letterObject[]}, paths: {[key:string]: string[]}) => {
 const objectMoves: letterObject[] = allMoves[`${obj.row},${obj.column}`]
 const toReturnIndexes: number[] = []
 objectMoves.forEach( (move) => {
@@ -144,11 +144,9 @@ const findParentPaths = (obj: letterObject, parentMoves: {[key:string]: string[]
   const parentPaths: string[][] = []
   const objectMoves = allMoves[`${obj.row},${obj.column}`]
   const movePositions = objectMoves.map(p => getKeyNameObject(p))
-  console.log('finding parents for', obj)
   movePositions.forEach( (move) => {
     if (parentMoves[move] !== undefined ){
       parentPaths.push(parentMoves[move])
-      console.log('found parent moves', parentMoves[move])
     }
   })
   return parentPaths
