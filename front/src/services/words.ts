@@ -4,8 +4,8 @@ import {
 
 const fetchAll = async (char: string) => {
   if (char !== '') {
-    let response = await fetch('http://localhost:3000/api/words/');
-    let data = await response.json()
+    const response = await fetch('http://localhost:3000/api/words/');
+    const data = await response.json()
     //console.log(response.status)
     return data.words.filter((a: string) => a.toUpperCase().startsWith(char))
   }
@@ -36,9 +36,7 @@ const getRandomInt = (max: number) => {
 const checkIfLetterSelectionIsallowed = (letter: letterObject, board: string[][], selected: letterObject[]) => {
   const isMatch = (l: letterObject) => l.row == letter.row && l.column == letter.column 
   let selectedAgainIndex: number = selected.findIndex(isMatch)
-  if(selectedAgainIndex !== -1) {
-    return { possibleSelection: true, selectedBeforeIndex: selectedAgainIndex }
-  } else if (selected.length !== 0) {
+  if (selected.length !== 0) {
       const possibleXpositions = [selected[selected.length-1].row, selected[selected.length-1].row + 1, selected[selected.length-1].row - 1].filter(x => x >= 0 && x < board.length)
       const possibleYpositions = [selected[selected.length-1].column, selected[selected.length-1].column + 1, selected[selected.length-1].column - 1].filter(x => x >= 0 && x < (board[0].length))
       if (!possibleXpositions.includes(letter.row) && !possibleYpositions.includes(letter.column) || 
@@ -65,7 +63,7 @@ const getKeyNameObject = (obj: letterObject) => {
 }
 
 const getNeighborsData = (selected: letterObject, board: string[][]) => {
-  let possibleMoves: letterObject[] = []
+  const possibleMoves: letterObject[] = []
   const possibleXpositions: number[] = [selected.row, selected.row + 1, selected.row - 1].filter(x => x >= 0 && x < board.length)
   const possibleYpositions: number[] = [selected.column, selected.column + 1, selected.column - 1].filter(x => x >= 0 && x < (board[0].length)) 
   possibleXpositions.forEach( (xPos) => {
@@ -134,7 +132,7 @@ const toReturnIndexes: number[] = []
 objectMoves.forEach( (move) => {
   searched.forEach( (searched, i) => {
     if(JSON.stringify(searched) === JSON.stringify(move)){
-      let moves = paths[getKeyNameObject(move)]
+      const moves = paths[`${move.row},${move.column}`]
       if (moves === undefined){
         toReturnIndexes.push(i)
       }
