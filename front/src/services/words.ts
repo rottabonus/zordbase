@@ -1,5 +1,6 @@
 import {
-  letterObject
+  letterObject, 
+  wordObject
 } from '../types/types'
 
 const fetchAll = async (char: string) => {
@@ -77,7 +78,8 @@ const getNeighborsData = (selected: letterObject, board: string[][]) => {
 
 const checkAllPossibleWordsAndRoutes = async (selected: letterObject[], board: string[][]) => {
   const paths: { [key:string]: string[] } = setPaths(selected)
-  if (selected.length != 0){
+  const realWords: wordObject[] = []
+  if (selected.length !== 0){
     const words: string[] = await fetchAll(selected.map(s => s.letter).join(''))
     const movements = generateMovements(board)
     const queue = [...movements[getKeyNameObject(selected[selected.length-1])]]
@@ -95,6 +97,7 @@ const checkAllPossibleWordsAndRoutes = async (selected: letterObject[], board: s
             parentPaths.forEach( (pathArr) => {
               pathArr.forEach( (str) => {
                   if(words.filter(w => w.toUpperCase().startsWith(str+toCheck.letter)).length > 0){
+                    realWords.push(...words.filter(w => w.toUpperCase() === str+toCheck.letter).map(word => ({ 'letters' : word, 'pos':`${toCheck.row},${toCheck.column}`}) ))
                     let moves = paths[`${toCheck.row},${toCheck.column}`]
                     moves === undefined || moves.includes(str+toCheck.letter) ? moves = [] : moves
                     paths[`${toCheck.row},${toCheck.column}`] = [...moves, str+toCheck.letter]
@@ -111,7 +114,7 @@ const checkAllPossibleWordsAndRoutes = async (selected: letterObject[], board: s
         }
       } while (queue.length > 0)
     }
-  return paths
+  return generateSelections(paths, realWords, selected)
 }
 
 const setPaths = (selected: letterObject[]) => {
@@ -151,6 +154,47 @@ const findParentPaths = (obj: letterObject, parentMoves: {[key:string]: string[]
   })
   return parentPaths
 }
+
+const generateSelections = (paths: { [key:string]: string[] }, realWords: wordObject[], selected: letterObject[]) => {
+  const selections: letterObject[][] = []
+  const realWordsSet = realWords.reduce((acc, curr) => { 	!acc.find(v => v.pos === curr.pos && v.letters === curr.letters)  && acc.push(curr);     return acc; }, []);
+  realWordsSet.forEach( (word) => {
+    const letters = word.letters.split('')
+    let wordSelection = [{'row': Number(`${word.pos.slice(0,1)}`), 'column': Number(`${word.pos.slice(2,4)}`), 'letter': letters[letters.length-1].toUpperCase()}]
+    for (let i = letters.length-2; i >= selected.length; i--){
+      const position = getPositionForLetter(letters, wordSelection, paths)
+      wordSelection.push({'row': Number(`${position.slice(0,1)}`), 'column': Number(`${position.slice(2,4)}`), 'letter': letters[i].toUpperCase()})
+    }
+    wordSelection.reverse().unshift(...selected)
+    selections.push(wordSelection)
+  })
+  return selections
+  }
+  
+  const getPositionForLetter = (letters: string[], selected: letterObject[], paths: {[key:string]: string[]}) => {
+    const currentWord = selected.map(s => s.letter).join('')
+    const keys = Object.keys(paths)
+    for(const pos of keys){
+        for(const path of paths[pos]){
+          const Okposition = checkPosition(pos, selected[selected.length-1])
+          const OkPath = checkLetters(path, currentWord, letters)
+        if (OkPath && Okposition ) {
+            return pos
+        } 
+      } 
+    }
+    return 'X,X'
+  }
+  
+  const checkLetters = (path: string, currentWord: string, letters: string[]) => {
+    return path + currentWord.split('').reverse().join('') === letters.join('').toUpperCase()
+  }
+  
+  const checkPosition = (pos: string, obj: letterObject) => {
+    const row = Number(pos.slice(0,1))
+    const column = Number(pos.slice(2,4))
+    return !(row === obj.row && column === obj.column) && (row-1 === obj.row || row === obj.row || row+1 === obj.row) && (column-1 === obj.column || column === obj.column || column+1 === obj.column)
+  }
 
 export default {
   createBoard,

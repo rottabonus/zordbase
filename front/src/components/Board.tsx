@@ -1,11 +1,10 @@
 import React from 'react';
-import { letterObject } from '../types/types';
 
 interface BoardProps {
     letters: string[][];
     selectLetter: (L: string, row: number, column: number) => void;
-    getSelected: (R: number, C: number, LO: letterObject[]) => Boolean;
-    selected: letterObject[]
+    getSelected: (R: number, C: number) => string;
+    confirmSelection: () => void;
 }
 
 export const Board: React.FC<BoardProps> = (props) => {
@@ -15,8 +14,11 @@ export const Board: React.FC<BoardProps> = (props) => {
                    <tbody>
                         {props.letters.map((row, i) => (
                         <tr key={i}>
-                            { row.map((cellId, j) => (props.getSelected(i, j, props.selected)) ?
+                            { row.map((cellId, j) => (props.getSelected(i, j)) === 'player1' ?
                                 <td style={{backgroundColor: "Cyan"}} key={j} onClick={(event) => props.selectLetter(cellId, i, j)}>{cellId}</td>
+                                :  
+                                (props.getSelected(i, j)) === 'player2' ?
+                                <td style={{backgroundColor: "Red"}} key={j} onClick={(event) => props.selectLetter(cellId, i, j)}>{cellId}</td>
                                 :
                                 <td key={j} onClick={(event) => props.selectLetter(cellId, i, j)}>{cellId}</td>
                                 )}
@@ -24,6 +26,7 @@ export const Board: React.FC<BoardProps> = (props) => {
                         ))}
                     </tbody>
                 </table>
+                <button onClick={() => props.confirmSelection()}>Confirm selection</button>
             </div>;
 }
         
