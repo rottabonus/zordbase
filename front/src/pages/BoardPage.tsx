@@ -8,8 +8,7 @@ export const GameBoardPage: React.FC = () => {
     const [board, setBoard] = useState<string[][]>([])
     const [selected, setSelected] = useState<letterObject[]>([])
     const [possibleWords, setpossibleWords] = useState<letterObject[][]>([])
-    const [playerOneBase, setPlayerOneBase] = useState<letterObjectOwner[]>([])
-    const [playerTwoBase, setPlayerTwoBase] = useState<letterObjectOwner[]>([])
+    const [confirmedSelections, setConfirmedSelections] = useState<letterObjectOwner[]>([])
     const [turn, setTurn] = useState<playerTurn>('player1')
 
     const createBoard = () => {
@@ -19,13 +18,11 @@ export const GameBoardPage: React.FC = () => {
 
     const confirmSelection = () => {
         const newSelectionConfirmed = selected.map(s => ({'letter': s.letter, 'row': s.row, 'column': s.column, 'owner': turn}))
+        const newBase = confirmedSelections.concat(newSelectionConfirmed)
+        setConfirmedSelections(newBase)
         if (turn === 'player1'){
-            const newBase = playerOneBase.concat(newSelectionConfirmed)
-            setPlayerOneBase(newBase)
             setTurn('player2')
         } else {
-            const newBase = playerTwoBase.concat(newSelectionConfirmed)
-            setPlayerTwoBase(newBase)
             setTurn('player1')
         }
         setSelected([])
@@ -50,7 +47,7 @@ export const GameBoardPage: React.FC = () => {
 
     const getSelected = (r: number, c: number) => {
         const selectedWithOwner: letterObjectOwner[] = selected.map(s => ({'row':s.row, 'column': s.column, 'letter': s.letter, 'owner': turn}))
-        const allSelected = selectedWithOwner.concat(playerOneBase, playerTwoBase)
+        const allSelected = selectedWithOwner.concat(confirmedSelections)
         const found = allSelected.filter(a => a.row === r && a.column === c)
         if (found.length === 0){
             return 'none'
