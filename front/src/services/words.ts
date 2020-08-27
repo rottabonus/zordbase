@@ -1,6 +1,8 @@
 import {
   letterObject, 
-  wordObject
+  wordObject,
+  letterObjectOwner,
+  playerTurn,
 } from '../types/types'
 
 const fetchAll = async (char: string) => {
@@ -11,6 +13,20 @@ const fetchAll = async (char: string) => {
     return data.words.filter((a: string) => a.toUpperCase().startsWith(char))
   }
   return []
+}
+
+const removeDuplicates = (newSelectionConfirmed: letterObjectOwner[], confirmedSelections: letterObjectOwner[]) => {
+        debugger;
+        const toFilter =  confirmedSelections.filter(array => newSelectionConfirmed.some(filter => filter.row === array.row && filter.column === array.column))
+        toFilter.forEach((filter) => {
+          console.log('filter', filter)
+            const index = confirmedSelections.indexOf(filter)
+            console.log('index of filter in confirmed', index)
+            if (index !== -1) {
+              confirmedSelections.splice(index, 1)
+            }
+        })
+        return confirmedSelections
 }
 
 const createBoard = (rows: number, columns: number) => {
@@ -71,9 +87,9 @@ const getNeighborsData = (selected: letterObject, board: string[][]) => {
         if(!(xPos === selected.row && yPos === selected.column)){
           possibleMoves.push({'row':xPos, 'column':yPos, 'letter':board[xPos][yPos]})
         }
-        })
       })
-     return possibleMoves
+    })
+  return possibleMoves
 }
 
 const checkAllPossibleWordsAndRoutes = async (selected: letterObject[], board: string[][]) => {
@@ -199,5 +215,6 @@ const generateSelections = (paths: { [key:string]: string[] }, realWords: wordOb
 export default {
   createBoard,
   checkIfLetterSelectionIsallowed, 
-  checkAllPossibleWordsAndRoutes
+  checkAllPossibleWordsAndRoutes,
+  removeDuplicates
 }

@@ -8,7 +8,7 @@ export type letterObjectOwner = {
     letter: string
     row: number
     column: number
-    owner: string
+    owner: playerTurn
 }
 
 export type wordObject = {

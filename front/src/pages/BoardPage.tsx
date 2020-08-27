@@ -18,14 +18,15 @@ export const GameBoardPage: React.FC = () => {
 
     const confirmSelection = () => {
         const newSelectionConfirmed = selected.map(s => ({'letter': s.letter, 'row': s.row, 'column': s.column, 'owner': turn}))
-        const newBase = confirmedSelections.concat(newSelectionConfirmed)
+        const confirmedAndFiltered = wordService.removeDuplicates(newSelectionConfirmed, confirmedSelections)
+        const newBase = confirmedAndFiltered.concat(newSelectionConfirmed)
         setConfirmedSelections(newBase)
+        setSelected([])
         if (turn === 'player1'){
             setTurn('player2')
         } else {
             setTurn('player1')
         }
-        setSelected([])
     }
 
     const selectLetter = async (letter: string, row: number, column: number) => {
