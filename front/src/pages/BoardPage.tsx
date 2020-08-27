@@ -1,15 +1,15 @@
 import React, {useState, useEffect} from 'react';
 import wordService from '../services/words'
 import { Board } from '../components/Board'
-import { letterObject, selectionObject, playerTurn, letterObjectOwner } from '../types/types'
+import { letterObject, selectionObject } from '../types/types'
 
 export const GameBoardPage: React.FC = () => {
 
     const [board, setBoard] = useState<string[][]>([])
     const [selected, setSelected] = useState<letterObject[]>([])
     const [possibleWords, setpossibleWords] = useState<letterObject[][]>([])
-    const [confirmedSelections, setConfirmedSelections] = useState<letterObjectOwner[]>([])
-    const [turn, setTurn] = useState<playerTurn>('player1')
+    const [confirmedSelections, setConfirmedSelections] = useState<letterObject[]>([])
+    const [turn, setTurn] = useState<string>('player1')
 
     const createBoard = () => {
         const board = wordService.createBoard(10, 8)
@@ -30,7 +30,7 @@ export const GameBoardPage: React.FC = () => {
     }
 
     const selectLetter = async (letter: string, row: number, column: number) => {
-        let obj = { letter: letter, row: row, column: column }
+        let obj = { letter: letter, row: row, column: column, owner: turn }
         const result: selectionObject = wordService.checkIfLetterSelectionIsallowed(obj, board, selected)
         let newSelected: letterObject[] = []
         if (result.possibleSelection){
@@ -47,7 +47,7 @@ export const GameBoardPage: React.FC = () => {
     }
 
     const getSelected = (r: number, c: number) => {
-        const selectedWithOwner: letterObjectOwner[] = selected.map(s => ({'row':s.row, 'column': s.column, 'letter': s.letter, 'owner': turn}))
+        const selectedWithOwner: letterObject[] = selected.map(s => ({'row':s.row, 'column': s.column, 'letter': s.letter, 'owner': turn}))
         const allSelected = selectedWithOwner.concat(confirmedSelections)
         const found = allSelected.filter(a => a.row === r && a.column === c)
         if (found.length === 0){

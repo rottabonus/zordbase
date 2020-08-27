@@ -1,14 +1,8 @@
 export type letterObject = {
     letter: string
     row: number
-    column: number
-}
-
-export type letterObjectOwner = {
-    letter: string
-    row: number
-    column: number
-    owner: playerTurn
+    column: number,
+    owner: string
 }
 
 export type wordObject = {
@@ -21,4 +15,3 @@ export type selectionObject = {
     selectedBeforeIndex: number
 }
 
-export type playerTurn = "player1" | "player2";

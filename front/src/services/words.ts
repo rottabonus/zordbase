@@ -1,8 +1,6 @@
 import {
   letterObject, 
   wordObject,
-  letterObjectOwner,
-  playerTurn,
 } from '../types/types'
 
 const fetchAll = async (char: string) => {
@@ -15,7 +13,7 @@ const fetchAll = async (char: string) => {
   return []
 }
 
-const removeDuplicates = (newSelectionConfirmed: letterObjectOwner[], confirmedSelections: letterObjectOwner[]) => {
+const removeDuplicates = (newSelectionConfirmed: letterObject[], confirmedSelections: letterObject[]) => {
         const toFilter =  confirmedSelections.filter(array => newSelectionConfirmed.some(filter => filter.row === array.row && filter.column === array.column))
         toFilter.forEach((filter) => {
             const index = confirmedSelections.indexOf(filter)
@@ -65,7 +63,7 @@ const generateMovements = (board: string[][]) => {
   const moves: { [key:string] : letterObject[] } = {}
   board.forEach((row, r) => {
       row.forEach((column, c) => {
-          moves[`${r},${c}`] = getNeighborsData({'letter': board[r][c], 'row': r, 'column': c}, board)
+          moves[`${r},${c}`] = getNeighborsData({'letter': board[r][c], 'row': r, 'column': c, 'owner': 'none'}, board)
       })
   })
   return moves
@@ -82,7 +80,7 @@ const getNeighborsData = (selected: letterObject, board: string[][]) => {
   possibleXpositions.forEach( (xPos) => {
         possibleYpositions.forEach( (yPos) => {
         if(!(xPos === selected.row && yPos === selected.column)){
-          possibleMoves.push({'row':xPos, 'column':yPos, 'letter':board[xPos][yPos]})
+          possibleMoves.push({'row':xPos, 'column':yPos, 'letter':board[xPos][yPos], 'owner': 'none'})
         }
       })
     })
@@ -173,10 +171,10 @@ const generateSelections = (paths: { [key:string]: string[] }, realWords: wordOb
   const realWordsSet = realWords.reduce((acc, curr) => { 	!acc.find(v => v.pos === curr.pos && v.letters === curr.letters)  && acc.push(curr);     return acc; }, []);
   realWordsSet.forEach( (word) => {
     const letters = word.letters.split('')
-    let wordSelection = [{'row': Number(`${word.pos.slice(0,1)}`), 'column': Number(`${word.pos.slice(2,4)}`), 'letter': letters[letters.length-1].toUpperCase()}]
+    let wordSelection = [{'row': Number(`${word.pos.slice(0,1)}`), 'column': Number(`${word.pos.slice(2,4)}`), 'letter': letters[letters.length-1].toUpperCase(), 'owner': 'none'}]
     for (let i = letters.length-2; i >= selected.length; i--){
       const position = getPositionForLetter(letters, wordSelection, paths)
-      wordSelection.push({'row': Number(`${position.slice(0,1)}`), 'column': Number(`${position.slice(2,4)}`), 'letter': letters[i].toUpperCase()})
+      wordSelection.push({'row': Number(`${position.slice(0,1)}`), 'column': Number(`${position.slice(2,4)}`), 'letter': letters[i].toUpperCase(), 'owner': 'none'})
     }
     wordSelection.reverse().unshift(...selected)
     selections.push(wordSelection)
