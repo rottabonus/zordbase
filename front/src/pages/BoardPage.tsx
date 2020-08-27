@@ -14,6 +14,9 @@ export const GameBoardPage: React.FC = () => {
     const createBoard = () => {
         const board = wordService.createBoard(10, 8)
         setBoard(board)
+        const playerOneBase = board[0].map( (letter, column) => ({'letter': letter, 'row': 0, 'column': column, 'owner': 'player1'}))
+        const playerTwoBase = board[board.length-1].map( (letter, column) => ({'letter': letter, 'row': board.length-1, 'column': column, 'owner': 'player2'}))
+        setConfirmedSelections(playerOneBase.concat(playerTwoBase))
     }
 
     const confirmSelection = () => {
