@@ -16,7 +16,6 @@ const fetchAll = async (char: string) => {
 }
 
 const removeDuplicates = (newSelectionConfirmed: letterObjectOwner[], confirmedSelections: letterObjectOwner[]) => {
-        debugger;
         const toFilter =  confirmedSelections.filter(array => newSelectionConfirmed.some(filter => filter.row === array.row && filter.column === array.column))
         toFilter.forEach((filter) => {
           console.log('filter', filter)
