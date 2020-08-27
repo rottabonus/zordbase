@@ -32,9 +32,9 @@ export const GameBoardPage: React.FC = () => {
         }
     }
 
-    const selectLetter = async (letter: string, row: number, column: number) => {
-        let obj = { letter: letter, row: row, column: column, owner: turn }
-        const result: selectionObject = wordService.checkIfLetterSelectionIsallowed(obj, board, selected)
+    const selectLetter = async (letter: string, row: number, column: number, owner: string) => {
+        let obj = { letter: letter, row: row, column: column, owner: owner }
+        const result: selectionObject = wordService.checkIfLetterSelectionIsallowed(obj, board, selected, turn)
         let newSelected: letterObject[] = []
         if (result.possibleSelection){
             if (result.selectedBeforeIndex === -1){

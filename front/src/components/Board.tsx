@@ -2,7 +2,7 @@ import React from 'react';
 
 interface BoardProps {
     letters: string[][];
-    selectLetter: (L: string, row: number, column: number) => void;
+    selectLetter: (L: string, row: number, column: number, owner: string) => void;
     getSelected: (R: number, C: number) => string;
     confirmSelection: () => void;
 }
@@ -15,12 +15,12 @@ export const Board: React.FC<BoardProps> = (props) => {
                         {props.letters.map((row, i) => (
                         <tr key={i}>
                             { row.map((cellId, j) => (props.getSelected(i, j)) === 'player1' ?
-                                <td style={{backgroundColor: "Cyan"}} key={j} onClick={(event) => props.selectLetter(cellId, i, j)}>{cellId}</td>
+                                <td style={{backgroundColor: "Cyan"}} key={j} onClick={(event) => props.selectLetter(cellId, i, j, 'player1')}>{cellId}</td>
                                 :  
                                 (props.getSelected(i, j)) === 'player2' ?
-                                <td style={{backgroundColor: "Red"}} key={j} onClick={(event) => props.selectLetter(cellId, i, j)}>{cellId}</td>
+                                <td style={{backgroundColor: "Red"}} key={j} onClick={(event) => props.selectLetter(cellId, i, j, 'player2')}>{cellId}</td>
                                 :
-                                <td key={j} onClick={(event) => props.selectLetter(cellId, i, j)}>{cellId}</td>
+                                <td key={j} onClick={(event) => props.selectLetter(cellId, i, j, 'none')}>{cellId}</td>
                                 )}
                         </tr>
                         ))}
