@@ -5,3 +5,17 @@
   td {
     border-style: groove;
   }
+
+  .GameBoard {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .BoardAndWordList {
+    display: flex;
+    flex-direction: row;
+  }
+
+  li {
+    list-style-type: none;
+  }

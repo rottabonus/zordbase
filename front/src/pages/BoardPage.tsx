@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import wordService from '../services/words'
 import { Board } from '../components/Board'
-import { letterObject, selectionObject } from '../types/types'
+import { PlayedWordList } from '../components/PlayedWordList'
+import { letterObject, selectionObject, playedWord } from '../types/types'
 
 export const GameBoardPage: React.FC = () => {
 
@@ -10,6 +11,7 @@ export const GameBoardPage: React.FC = () => {
     const [possibleWords, setpossibleWords] = useState<letterObject[][]>([])
     const [confirmedSelections, setConfirmedSelections] = useState<letterObject[]>([])
     const [turn, setTurn] = useState<string>('player1')
+    const [playedWords, setPlayedWords] = useState<playedWord[]>([])
 
     const createBoard = () => {
         const board = wordService.createBoard(10, 8)
@@ -22,8 +24,10 @@ export const GameBoardPage: React.FC = () => {
     const confirmSelection = () => {
         const newSelectionConfirmed = selected.map(s => ({'letter': s.letter, 'row': s.row, 'column': s.column, 'owner': turn}))
         const confirmedAndFiltered = wordService.removeDuplicates(newSelectionConfirmed, confirmedSelections)
+        const newWord = {word: selected.map(s => s.letter).join(""), owner: turn}
         const newBase = confirmedAndFiltered.concat(newSelectionConfirmed)
         setConfirmedSelections(newBase)
+        setPlayedWords([...playedWords, newWord])
         setSelected([])
         if (turn === 'player1'){
             setTurn('player2')
@@ -50,29 +54,32 @@ export const GameBoardPage: React.FC = () => {
     }
 
     const getSelected = (r: number, c: number, type: string) => {
-        let returnValue = ''
         if (type === 'class'){
             const found = selected.filter(a => a.row === r && a.column === c)
-            returnValue = found.length === 0 ? 'none' : 'selectedLetter'
+            return found.length === 0 ? 'none' : 'selectedLetter'
         } else {
             const selectedWithOwner: letterObject[] = selected.map(s => ({'row':s.row, 'column': s.column, 'letter': s.letter, 'owner': turn}))
             const allSelected = selectedWithOwner.concat(confirmedSelections)
             const found = allSelected.filter(a => a.row === r && a.column === c)
-            returnValue = found.length === 0 ? 'none' : found[0].owner
+            return found.length === 0 ? 'none' : found[0].owner
         }
-        return returnValue
     }
 
       useEffect(() => {
             createBoard()      
       }, [])
 
-        return  <div>
+        return  <div className="GameBoard">
                     <div>
                         <h1>GameBoardPage</h1>
                     </div>
-                    <div>
-                        <Board letters={board} selectLetter={selectLetter} confirmSelection={confirmSelection} getSelected={getSelected} /> 
-                    </div> 
+                    <div className="BoardAndWordList">
+                        <div>
+                            <Board letters={board} selectLetter={selectLetter} confirmSelection={confirmSelection} getSelected={getSelected} /> 
+                        </div> 
+                        <div>
+                            <PlayedWordList playedWords={playedWords}/>
+                        </div>
+                    </div>
                 </div>;
     }

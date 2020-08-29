@@ -15,3 +15,8 @@ export type selectionObject = {
     selectedBeforeIndex: number
 }
 
+export type playedWord = {
+    word: string,
+    owner: string
+}
+
