@@ -49,14 +49,18 @@ export const GameBoardPage: React.FC = () => {
     setpossibleWords(possibleWords)
     }
 
-    const getSelected = (r: number, c: number) => {
-        const selectedWithOwner: letterObject[] = selected.map(s => ({'row':s.row, 'column': s.column, 'letter': s.letter, 'owner': turn}))
-        const allSelected = selectedWithOwner.concat(confirmedSelections)
-        const found = allSelected.filter(a => a.row === r && a.column === c)
-        if (found.length === 0){
-            return 'none'
+    const getSelected = (r: number, c: number, type: string) => {
+        let returnValue = ''
+        if (type === 'class'){
+            const found = selected.filter(a => a.row === r && a.column === c)
+            returnValue = found.length === 0 ? 'none' : 'selectedLetter'
+        } else {
+            const selectedWithOwner: letterObject[] = selected.map(s => ({'row':s.row, 'column': s.column, 'letter': s.letter, 'owner': turn}))
+            const allSelected = selectedWithOwner.concat(confirmedSelections)
+            const found = allSelected.filter(a => a.row === r && a.column === c)
+            returnValue = found.length === 0 ? 'none' : found[0].owner
         }
-        return found[0].owner
+        return returnValue
     }
 
       useEffect(() => {

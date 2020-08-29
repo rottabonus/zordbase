@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import './index.css'
   
 import { GameBoardPage } from './pages/BoardPage'
 import { OtherComponent } from './components/OtherComponent'

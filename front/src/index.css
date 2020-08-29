@@ -1,0 +1,7 @@
+.selectedLetter {
+    border-style: solid;
+  }
+
+  td {
+    border-style: groove;
+  }
