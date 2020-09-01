@@ -1,6 +1,7 @@
 import {
   letterObject, 
   wordObject,
+  playedWord
 } from '../types/types'
 
 const fetchAll = async (char: string) => {
@@ -45,13 +46,13 @@ const getRandomInt = (max: number) => {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
-const computerTurn =  async (confirmedSelections: letterObject[], board: string[][]) => {
+const computerTurn =  async (confirmedSelections: letterObject[], board: string[][], playedWords: playedWord[]) => {
   const selected: letterObject[] =  []
-  const firstLetter = await selectFirstLetter(confirmedSelections, board)
+  const firstLetter = await selectFirstLetter(confirmedSelections, board, playedWords)
   selected.push(firstLetter)
   let searching = true
   do {
-    const nextLetter = await selectNextLetter(selected, board)
+    const nextLetter = await selectNextLetter(selected, board, playedWords)
     if (nextLetter === null){
       searching = false
     } else {
@@ -61,13 +62,13 @@ const computerTurn =  async (confirmedSelections: letterObject[], board: string[
   return selected.map(s => ({letter: s.letter, row: s.row, column: s.column, owner: 'player2'}))
 }
 
-const selectFirstLetter = async (selected: letterObject[], board: string[][]) => {
+const selectFirstLetter = async (selected: letterObject[], board: string[][], playedWords: playedWord[]) => {
   const computerBase = selected.filter(s => s.owner === 'player2')
   let countOfPossibilities: number = 0
   let longestWord: number = 0
   let bestIndex: number = 0
   for (const [i, letter] of computerBase.entries()) { 
-    const possibilities =  await checkAllPossibleWordsAndRoutes([letter], board)
+    const possibilities =  await checkAllPossibleWordsAndRoutes([letter], board, playedWords)
     if(possibilities.length > countOfPossibilities){
       countOfPossibilities = possibilities.length
       const arraysLongestWord = possibilities.reduce((max,el,j,arr) => {return el.length>arr[max].length ? j : max;}, 0)
@@ -81,8 +82,8 @@ const selectFirstLetter = async (selected: letterObject[], board: string[][]) =>
 
 }
 
-const selectNextLetter =  async (selected: letterObject[], board: string[][]) => {
-  const possibilities = await checkAllPossibleWordsAndRoutes(selected, board)
+const selectNextLetter =  async (selected: letterObject[], board: string[][], playedWords: playedWord[]) => {
+  const possibilities = await checkAllPossibleWordsAndRoutes(selected, board, playedWords)
   if(possibilities.length === 0){
     return null
   }
@@ -140,14 +141,17 @@ const getNeighborsData = (selected: letterObject, board: string[][]) => {
   return possibleMoves
 }
 
-const checkAllPossibleWordsAndRoutes = async (selected: letterObject[], board: string[][]) => {
+const checkAllPossibleWordsAndRoutes = async (selected: letterObject[], board: string[][], playedWords: playedWord[]) => {
   const paths: { [key:string]: string[] } = setPaths(selected)
   const realWords: wordObject[] = []
   if (selected.length !== 0){
-    const words: string[] = await fetchAll(selected.map(s => s.letter).join(''))
+    const playedWordsList: string[] = playedWords.filter(w => w.owner === 'player2').map(s => s.word)
+    const allWords: string[] = await fetchAll(selected.map(s => s.letter).join(''))
+    const words: string[] = allWords.map(w => w.toUpperCase()).filter(word => !playedWordsList.includes(word))
+    console.log('played words by player2', playedWordsList, 'and length of possible words', words.length)
     const movements = generateMovements(board)
-    const queue = [...movements[getKeyNameObject(selected[selected.length-1])]]
-    const searched = [...selected]
+    const queue: letterObject[] = [...movements[getKeyNameObject(selected[selected.length-1])]]
+    const searched: letterObject[] = [...selected]
     
     do {
 
