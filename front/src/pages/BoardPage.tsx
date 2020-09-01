@@ -26,14 +26,21 @@ export const GameBoardPage: React.FC = () => {
         const confirmedAndFiltered = wordService.removeDuplicates(newSelectionConfirmed, confirmedSelections)
         const newWord = {word: selected.map(s => s.letter).join(""), owner: turn}
         const newBase = confirmedAndFiltered.concat(newSelectionConfirmed)
-        setConfirmedSelections(newBase)
-        setPlayedWords([...playedWords, newWord])
         setSelected([])
-        if (turn === 'player1'){
-            setTurn('player2')
-        } else {
-            setTurn('player1')
-        }
+        setPlayedWords([...playedWords, newWord]) 
+        setConfirmedSelections(newBase)
+        setTurn('player2')   
+    }
+
+    const computersTurn = async () => {
+        const computerSelected = await wordService.computerTurn(confirmedSelections, board)
+        const newSelectionConfirmed = computerSelected.map(s => ({'letter': s.letter, 'row': s.row, 'column': s.column, 'owner': turn}))
+        const confirmedAndFiltered = wordService.removeDuplicates(newSelectionConfirmed, confirmedSelections)
+        const newWord = {word: computerSelected.map(s => s.letter).join(""), owner: turn}
+        const newBase = confirmedAndFiltered.concat(newSelectionConfirmed)
+        setPlayedWords([...playedWords, newWord]) 
+        setConfirmedSelections(newBase)
+        setTurn('player1')
     }
 
     const selectLetter = async (letter: string, row: number, column: number, owner: string) => {
@@ -47,10 +54,8 @@ export const GameBoardPage: React.FC = () => {
             } else {
                 newSelected =  selected.slice(0, result.selectedBeforeIndex)
                 setSelected(newSelected)
-        }
-    }
-    const possibleWords = await wordService.checkAllPossibleWordsAndRoutes(newSelected, board)
-    setpossibleWords(possibleWords)
+            }
+        }   
     }
 
     const getSelected = (r: number, c: number, type: string) => {
@@ -66,8 +71,13 @@ export const GameBoardPage: React.FC = () => {
     }
 
       useEffect(() => {
-            createBoard()      
-      }, [])
+          if (board.length === 0 ){
+            createBoard()
+          }  
+          if (turn === 'player2'){
+              computersTurn()
+          }
+      }, [turn])
 
         return  <div className="GameBoard">
                     <div>

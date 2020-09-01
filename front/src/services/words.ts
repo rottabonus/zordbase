@@ -45,6 +45,59 @@ const getRandomInt = (max: number) => {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
+const computerTurn =  async (confirmedSelections: letterObject[], board: string[][]) => {
+  const selected: letterObject[] =  []
+  const firstLetter = await selectFirstLetter(confirmedSelections, board)
+  selected.push(firstLetter)
+  let searching = true
+  do {
+    const nextLetter = await selectNextLetter(selected, board)
+    if (nextLetter === null){
+      searching = false
+    } else {
+      selected.push(nextLetter)
+    }  
+  } while (searching)
+  return selected.map(s => ({letter: s.letter, row: s.row, column: s.column, owner: 'player2'}))
+}
+
+const selectFirstLetter = async (selected: letterObject[], board: string[][]) => {
+  const computerBase = selected.filter(s => s.owner === 'player2')
+  let countOfPossibilities: number = 0
+  let longestWord: number = 0
+  let bestIndex: number = 0
+  for (const [i, letter] of computerBase.entries()) { 
+    const possibilities =  await checkAllPossibleWordsAndRoutes([letter], board)
+    if(possibilities.length > countOfPossibilities){
+      countOfPossibilities = possibilities.length
+      const arraysLongestWord = possibilities.reduce((max,el,j,arr) => {return el.length>arr[max].length ? j : max;}, 0)
+     if(longestWord < arraysLongestWord) {
+       longestWord = arraysLongestWord
+      bestIndex = i
+     }
+    }
+  }
+  return computerBase[bestIndex]
+
+}
+
+const selectNextLetter =  async (selected: letterObject[], board: string[][]) => {
+  const possibilities = await checkAllPossibleWordsAndRoutes(selected, board)
+  if(possibilities.length === 0){
+    return null
+  }
+  let longestWord: number = 0
+  let longestWordIndex: number = 0
+  for (const [i, word] of possibilities.entries()){
+    if (word.length > longestWord){
+      longestWordIndex = i
+      longestWord = word.length
+    }
+  }
+  return possibilities[longestWordIndex][selected.length]
+}
+
+
 const checkIfLetterSelectionIsallowed = (letter: letterObject, board: string[][], selected: letterObject[], turn: string) => {
   const isMatch = (l: letterObject) => l.row == letter.row && l.column == letter.column
   let selectedAgainIndex: number = selected.findIndex(isMatch) 
@@ -211,5 +264,6 @@ export default {
   createBoard,
   checkIfLetterSelectionIsallowed, 
   checkAllPossibleWordsAndRoutes,
-  removeDuplicates
+  removeDuplicates,
+  computerTurn
 }
