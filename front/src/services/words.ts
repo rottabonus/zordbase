@@ -25,8 +25,14 @@ const removeDuplicates = (newSelectionConfirmed: letterObject[], confirmedSelect
         return removeIsolatedNodes(confirmedSelections, board, turn)
 }
 
+const checkIfWin = (selections: letterObject[], turn: string, max: number) => {
+    const win = selections.filter((sel => 
+      turn === 'player1' ? sel.row === max-1 : sel.row === 0))
+    return win.length > 0
+  }
+
 const createBoard = (rows: number, columns: number) => {
-  const letters = 'aaabcdeeefghhiiiijjkkllmmnnoopprrssttuuuvvxyzööäää'
+  const letters = 'aaaabcdeeeefghhhiiiijjjkkklllmnmnnnooooppprrrssstttuuuuvvyöääää'
   const letterArr = letters.split('')
   const board: string[][] = []
   let rowArray: string[] = []
@@ -296,5 +302,6 @@ export default {
   checkIfLetterSelectionIsallowed, 
   checkAllPossibleWordsAndRoutes,
   removeDuplicates,
-  computerTurn
+  computerTurn,
+  checkIfWin
 }

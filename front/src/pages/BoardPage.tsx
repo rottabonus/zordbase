@@ -12,13 +12,27 @@ export const GameBoardPage: React.FC = () => {
     const [confirmedSelections, setConfirmedSelections] = useState<letterObject[]>([])
     const [turn, setTurn] = useState<string>('player1')
     const [playedWords, setPlayedWords] = useState<playedWord[]>([])
+    const [newGame, setNewGame] = useState<boolean>(true) 
 
     const createBoard = () => {
-        const board = wordService.createBoard(10, 8)
+        const board = wordService.createBoard(10, 12)
         setBoard(board)
         const playerOneBase = board[0].map( (letter, column) => ({'letter': letter, 'row': 0, 'column': column, 'owner': 'player1'}))
         const playerTwoBase = board[board.length-1].map( (letter, column) => ({'letter': letter, 'row': board.length-1, 'column': column, 'owner': 'player2'}))
         setConfirmedSelections(playerOneBase.concat(playerTwoBase))
+    }
+    const gameChange = () => {
+        setTimeout(() => {
+            alert(`winner is ${turn}`)
+            startNewGame()
+        }, 2000);
+    }
+
+    const startNewGame = () => {
+        console.log('in startnewgame function')
+        
+        setPlayedWords([])
+        setNewGame(true)
     }
 
     const confirmSelection = () => {
@@ -26,10 +40,11 @@ export const GameBoardPage: React.FC = () => {
         const confirmedAndFiltered = wordService.removeDuplicates(newSelectionConfirmed, confirmedSelections, board, turn)
         const newWord = {word: selected.map(s => s.letter).join(""), owner: turn}
         const newBase = confirmedAndFiltered.concat(newSelectionConfirmed)
-        setSelected([])
+        const checkGame = wordService.checkIfWin(newSelectionConfirmed, turn, board.length)
         setPlayedWords([...playedWords, newWord]) 
         setConfirmedSelections(newBase)
-        setTurn('player2')   
+        setSelected([])
+        checkGame ? gameChange() : setTurn('player2')          
     }
 
     const computersTurn = async () => {
@@ -38,9 +53,15 @@ export const GameBoardPage: React.FC = () => {
         const confirmedAndFiltered = wordService.removeDuplicates(newSelectionConfirmed, confirmedSelections, board, turn)
         const newWord = {word: computerSelected.map(s => s.letter).join(""), owner: turn}
         const newBase = confirmedAndFiltered.concat(newSelectionConfirmed)
+        const checkGame = wordService.checkIfWin(newSelectionConfirmed, turn, board.length)
         setPlayedWords([...playedWords, newWord]) 
         setConfirmedSelections(newBase)
-        setTurn('player1')
+        if (checkGame){
+            setTurn('player1')
+            gameChange()
+        } else {
+            setTurn('player1')
+        }       
     }
 
     const selectLetter = async (letter: string, row: number, column: number, owner: string) => {
@@ -71,13 +92,14 @@ export const GameBoardPage: React.FC = () => {
     }
 
       useEffect(() => {
-          if (board.length === 0 ){
+          if (newGame){
             createBoard()
+            setNewGame(false)
           }  
           if (turn === 'player2'){
               computersTurn()
           }
-      }, [turn])
+      }, [turn, newGame])
 
         return  <div className="GameBoard">
                     <div>
