@@ -51,7 +51,6 @@ const computerTurn =  async (confirmedSelections: letterObject[], board: string[
   const firstLetter = await selectFirstLetter(confirmedSelections, board, playedWords)
   selected.push(firstLetter)
   let searching = true
-  console.log('first letter is', firstLetter)
   do {
     const nextLetter = await selectNextLetter(selected, board, playedWords)
     if (nextLetter === null){
@@ -210,7 +209,6 @@ const checkAllPossibleWordsAndRoutes = async (selected: letterObject[], board: s
 }
 
 const setPaths = (selected: letterObject[]) => {
-  console.log('setting paths', selected)
   const paths: { [key:string]: string[] } = {}
   let acc: string = ''
   selected.forEach( (node) => {
