@@ -14,7 +14,7 @@ const fetchAll = async (char: string) => {
   return []
 }
 
-const removeDuplicates = (newSelectionConfirmed: letterObject[], confirmedSelections: letterObject[]) => {
+const removeDuplicates = (newSelectionConfirmed: letterObject[], confirmedSelections: letterObject[], board: string[][], turn: string) => {
         const toFilter =  confirmedSelections.filter(array => newSelectionConfirmed.some(filter => filter.row === array.row && filter.column === array.column))
         toFilter.forEach((filter) => {
             const index = confirmedSelections.indexOf(filter)
@@ -22,7 +22,7 @@ const removeDuplicates = (newSelectionConfirmed: letterObject[], confirmedSelect
               confirmedSelections.splice(index, 1)
             }
         })
-        return confirmedSelections
+        return removeIsolatedNodes(confirmedSelections, board, turn)
 }
 
 const createBoard = (rows: number, columns: number) => {
@@ -60,6 +60,32 @@ const computerTurn =  async (confirmedSelections: letterObject[], board: string[
     }  
   } while (searching)
   return selected.map(s => ({letter: s.letter, row: s.row, column: s.column, owner: 'player2'}))
+}
+
+const removeIsolatedNodes = (confirmedSelections: letterObject[], board: string[][], turn: string) => {
+  const queue = []
+  const movements = generateMovements(board)
+  const attachedNodes: letterObject[] = []
+  const searched : { [key:string] : letterObject } = {}
+  const nodesToCheck = confirmedSelections.filter(m => m.owner !== turn).sort((a, b) => {
+    return turn === 'player2' ? a.row - b.row || a.column - b.column : b.row - a.row || a.column - b.column 
+  })
+  queue.push(nodesToCheck[0])
+  do {
+    const toCheck = queue.shift()
+    const neighbors = movements[`${toCheck.row},${toCheck.column}`]
+    neighbors.forEach((node) => {
+      if (!(`${node.row},${node.column}` in searched)){
+        searched[`${node.row},${node.column}`] = node
+        const nodeIndex = nodesToCheck.findIndex(obj => obj.row === node.row && obj.column === node.column)
+          if(nodeIndex !== -1){
+            attachedNodes.push(nodesToCheck[nodeIndex])
+            queue.push(nodesToCheck[nodeIndex])
+        }
+      }
+    })
+  } while (queue.length > 0)
+  return attachedNodes.concat(confirmedSelections.filter(obj => obj.owner === turn))
 }
 
 const selectFirstLetter = async (selected: letterObject[], board: string[][], playedWords: playedWord[]) => {
@@ -100,8 +126,7 @@ const selectNextLetter =  async (selected: letterObject[], board: string[][], pl
 
 
 const checkIfLetterSelectionIsallowed = (letter: letterObject, board: string[][], selected: letterObject[], turn: string) => {
-  const isMatch = (l: letterObject) => l.row == letter.row && l.column == letter.column
-  let selectedAgainIndex: number = selected.findIndex(isMatch) 
+  let selectedAgainIndex: number = selected.findIndex(l => l.row == letter.row && l.column == letter.column) 
   if (selected.length === 0){
     return (letter.owner === turn) ?  { possibleSelection: true, selectedBeforeIndex: selectedAgainIndex} : { possibleSelection: false, selectedBeforeIndex: selectedAgainIndex}
  }
@@ -127,13 +152,13 @@ const getKeyNameObject = (obj: letterObject) => {
   return `${obj.row},${obj.column}`
 }
 
-const getNeighborsData = (selected: letterObject, board: string[][]) => {
+const getNeighborsData = (node: letterObject, board: string[][]) => {
   const possibleMoves: letterObject[] = []
-  const possibleXpositions: number[] = [selected.row, selected.row + 1, selected.row - 1].filter(x => x >= 0 && x < board.length)
-  const possibleYpositions: number[] = [selected.column, selected.column + 1, selected.column - 1].filter(x => x >= 0 && x < (board[0].length)) 
+  const possibleXpositions: number[] = [node.row, node.row + 1, node.row - 1].filter(x => x >= 0 && x < board.length)
+  const possibleYpositions: number[] = [node.column, node.column + 1, node.column - 1].filter(x => x >= 0 && x < (board[0].length)) 
   possibleXpositions.forEach( (xPos) => {
         possibleYpositions.forEach( (yPos) => {
-        if(!(xPos === selected.row && yPos === selected.column)){
+        if(!(xPos === node.row && yPos === node.column)){
           possibleMoves.push({'row':xPos, 'column':yPos, 'letter':board[xPos][yPos], 'owner': 'none'})
         }
       })
@@ -148,7 +173,6 @@ const checkAllPossibleWordsAndRoutes = async (selected: letterObject[], board: s
     const playedWordsList: string[] = playedWords.filter(w => w.owner === 'player2').map(s => s.word)
     const allWords: string[] = await fetchAll(selected.map(s => s.letter).join(''))
     const words: string[] = allWords.map(w => w.toUpperCase()).filter(word => !playedWordsList.includes(word))
-    console.log('played words by player2', playedWordsList, 'and length of possible words', words.length)
     const movements = generateMovements(board)
     const queue: letterObject[] = [...movements[getKeyNameObject(selected[selected.length-1])]]
     const searched: letterObject[] = [...selected]
@@ -158,8 +182,7 @@ const checkAllPossibleWordsAndRoutes = async (selected: letterObject[], board: s
         const toCheck = queue.shift()
         const parentPaths = findParentPaths(toCheck, paths, movements)
         if (parentPaths.length > 0){
-          const isMatch = (l: letterObject) => l.row === toCheck.row && l.column === toCheck.column
-          if (searched.findIndex(isMatch) === -1){
+          if (searched.findIndex(l => l.row === toCheck.row && l.column === toCheck.column) === -1){
             queue.push(...movements[`${toCheck.row},${toCheck.column}`])
             searched.push(toCheck)
             parentPaths.forEach( (pathArr) => {
@@ -225,10 +248,14 @@ const findParentPaths = (obj: letterObject, parentMoves: {[key:string]: string[]
 
 const generateSelections = (paths: { [key:string]: string[] }, realWords: wordObject[], selected: letterObject[]) => {
   const selections: letterObject[][] = []
+  const selected_str = selected.map(s => s.letter).join('')
   const realWordsSet = realWords.reduce((acc, curr) => { 	!acc.find(v => v.pos === curr.pos && v.letters === curr.letters)  && acc.push(curr);     return acc; }, []);
   realWordsSet.forEach( (word) => {
     const letters = word.letters.split('')
-    let wordSelection = [{'row': Number(`${word.pos.slice(0,1)}`), 'column': Number(`${word.pos.slice(2,4)}`), 'letter': letters[letters.length-1].toUpperCase(), 'owner': 'none'}]
+    const wordSelection = []
+    if (selected_str !== word.letters) {
+      wordSelection.push({'row': Number(`${word.pos.slice(0,1)}`), 'column': Number(`${word.pos.slice(2,4)}`), 'letter': letters[letters.length-1].toUpperCase(), 'owner': 'none'})
+    }
     for (let i = letters.length-2; i >= selected.length; i--){
       const position = getPositionForLetter(letters, wordSelection, paths)
       wordSelection.push({'row': Number(`${position.slice(0,1)}`), 'column': Number(`${position.slice(2,4)}`), 'letter': letters[i].toUpperCase(), 'owner': 'none'})
