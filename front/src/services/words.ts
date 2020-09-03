@@ -51,6 +51,7 @@ const computerTurn =  async (confirmedSelections: letterObject[], board: string[
   const firstLetter = await selectFirstLetter(confirmedSelections, board, playedWords)
   selected.push(firstLetter)
   let searching = true
+  console.log('first letter is', firstLetter)
   do {
     const nextLetter = await selectNextLetter(selected, board, playedWords)
     if (nextLetter === null){
@@ -209,6 +210,7 @@ const checkAllPossibleWordsAndRoutes = async (selected: letterObject[], board: s
 }
 
 const setPaths = (selected: letterObject[]) => {
+  console.log('setting paths', selected)
   const paths: { [key:string]: string[] } = {}
   let acc: string = ''
   selected.forEach( (node) => {
@@ -255,13 +257,13 @@ const generateSelections = (paths: { [key:string]: string[] }, realWords: wordOb
     const wordSelection = []
     if (selected_str !== word.letters) {
       wordSelection.push({'row': Number(`${word.pos.slice(0,1)}`), 'column': Number(`${word.pos.slice(2,4)}`), 'letter': letters[letters.length-1].toUpperCase(), 'owner': 'none'})
-    }
     for (let i = letters.length-2; i >= selected.length; i--){
       const position = getPositionForLetter(letters, wordSelection, paths)
       wordSelection.push({'row': Number(`${position.slice(0,1)}`), 'column': Number(`${position.slice(2,4)}`), 'letter': letters[i].toUpperCase(), 'owner': 'none'})
     }
     wordSelection.reverse().unshift(...selected)
     selections.push(wordSelection)
+  }
   })
   return selections
   }
