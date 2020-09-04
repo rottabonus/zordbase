@@ -2,7 +2,8 @@ export type letterObject = {
     letter: string
     row: number
     column: number,
-    owner: string
+    owner: string,
+    possibleWords: letterObject[][]
 }
 
 export type wordObject = {
