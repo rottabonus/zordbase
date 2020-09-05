@@ -199,7 +199,7 @@ const checkAllPossibleWordsAndRoutes = async (selected: letterObject[], board: s
         }
       } while (queue.length > 0)
     }
-  return generateSelections(realWords, selected, movements)
+  return generateSelections(realWords, selected, movements, paths)
 }
 
 const setPaths = (selected: letterObject[]) => {
@@ -240,25 +240,30 @@ const findParentPaths = (obj: letterObject, parentMoves: {[key:string]: string[]
   return parentPaths
 }
 
-const getRoute = (word: wordObject, selected: letterObject[], movements: {[key:string]: letterObject[]}) => {
+const getRoute = (word: wordObject, selected: letterObject[], movements: {[key:string]: letterObject[]}, paths: {[key:string]: string[]}) => {
   const queue = []
-  const searched: { [key:string] : letterObject } = {}
+  const searched: letterObject[] = [...selected]
   queue.push(selected[selected.length-1])
   let curWord = selected.map(s => s.letter).join('')
   let curPos = [selected[selected.length-1].row,  selected[selected.length-1].column]
   let selection = [...selected]
   do {    
       const toCheck = queue.shift()
-      searched[`${toCheck.row},${toCheck.column}`] = toCheck
+      searched.push(toCheck)
       const neighbors = movements[`${toCheck.row},${toCheck.column}`]
       neighbors.forEach((node) => {
-          if (!(`${node.row},${node.column}` in searched)){
+          if (searched.findIndex(l => l.row === node.row && l.column === node.column) === -1){
               if(word.letters.includes(curWord + node.letter) && checkPosition(node.row, node.column, curPos)){
                   queue.push(...movements[`${node.row},${node.column}`])
                   curWord += node.letter
                   selection.push({row: node.row, column: node.column, letter: node.letter, owner: node.owner})
                   curPos = [node.row, node.column]
-                  
+                  const reSearchable: number[] = returnNonPathSearchedNodeIndexes(searched, node, movements, paths)
+                    reSearchable.forEach( (nodeIndex) => {
+                      searched.splice(nodeIndex, 1)
+                      const returned = searched.splice(nodeIndex, 1)
+                      queue.unshift(...returned)
+                  })
                  }
               }
       })
@@ -270,11 +275,11 @@ const checkPosition = (r: number, c: number, arr: number[]) => {
   return (r-1 === arr[0] || r === arr[0] || r+1 ===arr[0]) && (c-1 === arr[1] || c ===arr[1] || c+1 === arr[1])
 }
 
-const generateSelections = (realWords: wordObject[], selected: letterObject[], movements: {[key:string]: letterObject[]}) => {
+const generateSelections = (realWords: wordObject[], selected: letterObject[], movements: {[key:string]: letterObject[]}, paths: {[key:string]: string[]}) => {
   const selections: letterObject[][] = [];
   const realWordsSet = realWords.reduce((acc, curr) => { !acc.find(v => v.pos === curr.pos && v.letters === curr.letters) && acc.push(curr); return acc; }, []);
   realWordsSet.forEach((word) => {
-      const wordPath: letterObject[] = getRoute(word, selected, movements)
+      const wordPath: letterObject[] = getRoute(word, selected, movements, paths)
       selections.push(wordPath)
   });
   return selections;
