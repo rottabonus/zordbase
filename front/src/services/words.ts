@@ -53,6 +53,7 @@ return win.length > 0
 }
 
 const computerTurn = (confirmedSelections: letterObject[], board: string[][], playedWords: playedWord[]) => {
+  console.log('com start selecting')
   const selected = getBestStartingWord(confirmedSelections, board, playedWords)
   const longestWords = selected.sort((a, b) => { return b.length - a.length})
   return  longestWords.length === 0 ? [] :
@@ -60,12 +61,14 @@ const computerTurn = (confirmedSelections: letterObject[], board: string[][], pl
 }
 
 const updateValues = async (base: letterObject[], board: string[][], playedWords: playedWord[]) => {
-  for (const [i, letter] of base.filter(s => s.owner === 'player2' && s.possibleWords.length === 0).entries()) {
-    letter.possibleWords.length === 0 ?
-    letter.possibleWords = await checkAllPossibleWordsAndRoutes([letter], board, playedWords)
-    : []
+  const computerBase = base.filter(l => l.owner === 'player2')
+  const playerBase = base.filter(l => l.owner === 'player1')
+  for (const [i, letter] of computerBase.entries()) {
+    if( letter.possibleWords === undefined || playedWords[playedWords.length-1].word.startsWith(letter.letter)){
+      computerBase[i].possibleWords = await checkAllPossibleWordsAndRoutes([letter], board, playedWords)
+    }
   } 
-  return base
+  return playerBase.concat(computerBase)
 }
 
 const getBestStartingWord = (selected: letterObject[], board: string[][], playedWords: playedWord[]) => {
@@ -75,15 +78,17 @@ const getBestStartingWord = (selected: letterObject[], board: string[][], played
   let selection: letterObject[][] = []
   for (const [i, letter] of computerBase.entries()) { 
     if(letter.possibleWords.length > countOfPossibilities){
+      console.log('cur longest possibilities', letter)
       countOfPossibilities = letter.possibleWords.length
       const arraysLongestWord = letter.possibleWords.reduce((max,el,j,arr) => {return el.length>arr[max].length ? j : max;}, 0)
      if(longestWord < arraysLongestWord) {
-       console.log('best one is ', letter)
+      console.log('cur longest word!', letter)
        longestWord = arraysLongestWord
        selection = letter.possibleWords
      }
     }
   }
+  console.log('returning', selection)
   return selection
 }
 
@@ -130,7 +135,7 @@ const generateMovements = (board: string[][]) => {
   const moves: { [key:string] : letterObject[] } = {}
   board.forEach((row, r) => {
       row.forEach((column, c) => {
-          moves[`${r},${c}`] = getNeighborsData({'letter': board[r][c], 'row': r, 'column': c, 'owner': 'none', possibleWords: []}, board)
+          moves[`${r},${c}`] = getNeighborsData({'letter': board[r][c], 'row': r, 'column': c, 'owner': 'none'}, board)
       })
   })
   return moves
@@ -147,7 +152,7 @@ const getNeighborsData = (node: letterObject, board: string[][]) => {
   possibleXpositions.forEach( (xPos) => {
         possibleYpositions.forEach( (yPos) => {
         if(!(xPos === node.row && yPos === node.column)){
-          possibleMoves.push({'row':xPos, 'column':yPos, 'letter':board[xPos][yPos], 'owner': 'none', possibleWords: []})
+          possibleMoves.push({'row':xPos, 'column':yPos, 'letter':board[xPos][yPos], 'owner': 'none'})
         }
       })
     })
@@ -242,8 +247,6 @@ const getRoute = (word: wordObject, selected: letterObject[], movements: {[key:s
   let selection = [...selected]
   do {    
       const toCheck = queue.shift()
-      console.log('winding', toCheck)
-      console.log(queue.length)
       searched[`${toCheck.row},${toCheck.column}`] = toCheck
       const neighbors = movements[`${toCheck.row},${toCheck.column}`]
       neighbors.forEach((node) => {
@@ -251,8 +254,9 @@ const getRoute = (word: wordObject, selected: letterObject[], movements: {[key:s
               if(word.letters.includes(curWord + node.letter) && checkPosition(node.row, node.column, curPos)){
                   queue.push(...movements[`${node.row},${node.column}`])
                   curWord += node.letter
-                  selection.push({row: node.row, column: node.column, letter: node.letter, owner: node.owner, possibleWords: []})
+                  selection.push({row: node.row, column: node.column, letter: node.letter, owner: node.owner})
                   curPos = [node.row, node.column]
+                  
                  }
               }
       })
