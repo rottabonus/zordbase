@@ -45,7 +45,8 @@ export const GameBoardPage: React.FC = () => {
     }
 
     const computersTurn = async () => {
-        const updateSelections = await wordService.updateValues(confirmedSelections, board, playedWords)
+        console.log('computer turn start')
+        const updateSelections = await wordService.updateValues(confirmedSelections, board, playedWords.filter(f => f.owner === 'player2'))
         const computerSelected = wordService.computerTurn(updateSelections, board, playedWords)
         const newSelectionConfirmed = computerSelected.map(s => ({'letter': s.letter, 'row': s.row, 'column': s.column, 'owner': turn, possibleWords: s.possibleWords}))
         const confirmedAndFiltered = wordService.removeDuplicates(newSelectionConfirmed, updateSelections, board, turn)

@@ -64,7 +64,9 @@ const updateValues = async (base: letterObject[], board: string[][], playedWords
   const computerBase = base.filter(l => l.owner === 'player2')
   const playerBase = base.filter(l => l.owner === 'player1')
   for (const [i, letter] of computerBase.entries()) {
-    if( letter.possibleWords === undefined || playedWords[playedWords.length-1].word.startsWith(letter.letter)){
+    const reCheck = playedWords.length > 0 ? playedWords[playedWords.length-1].word.startsWith(letter.letter) : false
+    if( letter.possibleWords === undefined || reCheck){
+      computerBase[i].possibleWords = undefined
       computerBase[i].possibleWords = await checkAllPossibleWordsAndRoutes([letter], board, playedWords)
     }
   } 
