@@ -29,7 +29,6 @@ const createBoard = (rows: number, columns: number) => {
   }
   return board
 }
-
 const getRandomInt = (max: number) => {
   return Math.floor(Math.random() * Math.floor(max));
 }
@@ -46,17 +45,17 @@ const removeDuplicates = (newSelectionConfirmed: letterObject[], confirmedSelect
 }
 
 const checkIfWin = (selections: letterObject[], turn: string, max: number) => {
-const win = selections.filter((sel => 
-turn === 'player1' ? sel.row === max-1 : sel.row === 0))
-return win.length > 0
+  const win = selections.filter((sel => 
+  turn === 'player1' ? sel.row === max-1 : sel.row === 0))
+  return win.length > 0
 }
 
-const updateValues = async (base: letterObject[], board: string[][], playedWords: playedWord[]) => {
+const updateValues = async (base: letterObject[], board: string[][], playedWords: playedWord[], turn: string) => {
   for (const [i, letter] of base.entries()) {
     const reCheck = playedWords.length > 0 ? playedWords[playedWords.length-1].word.startsWith(letter.letter) : false
     if( letter.possibleWords === undefined || reCheck){
       base[i].possibleWords = undefined
-      base[i].possibleWords = await checkAllPossibleWordsAndRoutes([letter], board, playedWords)
+      base[i].possibleWords = await checkAllPossibleWordsAndRoutes([letter], board, playedWords, turn)
     }
   } 
   return base
@@ -176,9 +175,9 @@ const getNeighborsData = (node: letterObject, board: string[][]) => {
   return possibleMoves
 }
 
-const checkAllPossibleWordsAndRoutes = async (selected: letterObject[], board: string[][], playedWords: playedWord[]) => {
+const checkAllPossibleWordsAndRoutes = async (selected: letterObject[], board: string[][], playedWords: playedWord[], turn: string) => {
   const movements = generateMovements(board)
-  const playedWordsList: string[] = playedWords.filter(w => w.owner === 'player2').map(s => s.word)
+  const playedWordsList: string[] = playedWords.filter(w => w.owner === turn).map(s => s.word)
   const possibilities: letterObject[][] = []
   const allWords = await fetchAll(selected.map(s => s.letter).join(''))
   const words: string[] = allWords.map((w: string) => w.toUpperCase()).filter((word: string) => !playedWordsList.includes(word))
