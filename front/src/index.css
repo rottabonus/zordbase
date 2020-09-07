@@ -18,22 +18,25 @@
 
   li {
     list-style-type: none;
-    display:inline-block
   }
 
   ul {
-    overflow:hidden; overflow-y:scroll;
-    width: 75px;
-    padding-right: 10px;
+    overflow:hidden; 
+    overflow-y:scroll;
+    scroll-behavior: smooth;
+    width: 150px;
+    padding: 4px;
+    margin: 0;
   }
 
   .wordListContainer {
-    height: 200px;
-    overflow: auto;
     display: flex;
-    flex-direction: column-reverse;
-    border-style: solid;
-    border-width: 2px;
+    flex-direction: column;
+    border: 1px black solid;
+    height: 200px;
+    overflow: scroll;
+    margin-top: 1rem;
+    width: 150px;
   }
   
 

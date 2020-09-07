@@ -3,22 +3,21 @@ import { playedWord } from '../types/types'
 
 interface PlayedWordProps {
     playedWords: playedWord[]
+    messagesEndRef: any
 }
 
 export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
  
-    return <div className='wordListContainer'>
-                <nav>
-                    <ul>
-                        {props.playedWords.map((w, i )=> (
-                            w.owner === 'player1' ?
-                            <li key={i} style={{color: "Cyan"}}>{w.word}</li>
-                            :
-                            <li key={i} style={{color: "Red"}}>{w.word}</li>
-                        ))}
-                    </ul>
-                </nav>
-            </div>;
+    return <div className='wordListContainer' >
+                {props.playedWords.map((w, i )=> (
+                        w.owner === 'player1' ?
+                        <span key={i} style={{color: "Cyan"}}>{w.word}</span>
+                        :
+                        <span key={i} style={{color: "Red"}}>{w.word}</span>
+                    ))}
+                    <div ref={props.messagesEndRef} />
+                </div>
+                
 }
         
     

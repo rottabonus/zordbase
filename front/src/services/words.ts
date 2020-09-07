@@ -72,9 +72,9 @@ const getBestWord = (base: letterObject[], turn: string, max: number) => {
       letterValueArray[0] = letter.possibleWords.length //possibilities
       for (const [j, possibleWord] of computerBase[i].possibleWords.entries()){
         letterValueArray[1] = possibleWord.length //word length
-        letterValueArray[2] = getCommonElements(opponentBase, possibleWord) * 2 //letters touching opp base
+        letterValueArray[2] = getCommonElements(opponentBase, possibleWord) * 2.5 //letters touching opp base
         letterValueArray[3] = getCommonElements(computerBase, possibleWord) * (-1) //letters touching own base
-        letterValueArray[4] = checkIfWin(possibleWord, turn, max) ? 20 : 0 //if touching goal 20 points
+        letterValueArray[4] = checkIfWin(possibleWord, turn, max) ? 30 : 0 //if touching goal 20 points
         letterValueArray[5] = getChangeInHeight(possibleWord, turn) * 0.5 //change going upward/downward
         let wordValue = letterValueArray.reduce((acc, curr) => acc+curr)
         if(wordValue > greatestWordValue){

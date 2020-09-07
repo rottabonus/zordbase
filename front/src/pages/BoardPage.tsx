@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import wordService from '../services/words'
 import { Board } from '../components/Board'
 import { PlayedWordList } from '../components/PlayedWordList'
@@ -45,7 +45,7 @@ export const GameBoardPage: React.FC = () => {
     }
 
     const computersTurn = async () => {
-        console.log('computer turn start')
+        //console.log('computer turn start')
         const updateSelections = await wordService.updateValues(confirmedSelections, board, playedWords.filter(f => f.owner === turn), turn)
         const computerSelected = wordService.getBestWord(updateSelections, turn, board.length)
         const newSelectionConfirmed = computerSelected.map(s => ({'letter': s.letter, 'row': s.row, 'column': s.column, 'owner': turn, possibleWords: s.possibleWords}))
@@ -89,7 +89,12 @@ export const GameBoardPage: React.FC = () => {
         }
     }
 
+    const scrollToBottom = () => {
+        messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+      }
+
       useEffect(() => {
+        scrollToBottom()
           if (gameOver){
             createBoard()
             setGameOver(false)
@@ -98,6 +103,8 @@ export const GameBoardPage: React.FC = () => {
               computersTurn()
           }
       }, [turn, gameOver])
+
+      const messagesEndRef = useRef(null)
 
         return  <div className='GameBoard'>
                     <div>
@@ -108,7 +115,7 @@ export const GameBoardPage: React.FC = () => {
                             <Board letters={board} selectLetter={selectLetter} confirmSelection={confirmSelection} getSelected={getSelected} /> 
                         </div> 
                         <div>
-                            <PlayedWordList playedWords={playedWords}/>
+                            <PlayedWordList playedWords={playedWords} messagesEndRef={messagesEndRef }/>
                         </div>
                     </div>
                 </div>;
