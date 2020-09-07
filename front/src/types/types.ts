@@ -6,11 +6,6 @@ export type letterObject = {
     possibleWords?: letterObject[][]
 }
 
-export type wordObject = {
-    letters: string
-    pos: string
-}
-
 export type selectionObject = {
     possibleSelection: Boolean
     selectedBeforeIndex: number

@@ -1,6 +1,5 @@
 import {
   letterObject, 
-  wordObject,
   playedWord
 } from '../types/types'
 
@@ -52,16 +51,6 @@ turn === 'player1' ? sel.row === max-1 : sel.row === 0))
 return win.length > 0
 }
 
-const computerTurn = (confirmedSelections: letterObject[], board: string[][], playedWords: playedWord[]) => {
- // debugger;
-  console.log('com start selecting')
-  const selected = getBestStartingWord(confirmedSelections)
-  const longestWords = selected.sort((a, b) => { return b.length - a.length})
-  console.log('most words', longestWords)
-  return  longestWords.length === 0 ? [] :
-   longestWords[0].map(s => ({letter: s.letter, row: s.row, column: s.column, owner: 'player2', possibleWords: s.possibleWords}))
-}
-
 const updateValues = async (base: letterObject[], board: string[][], playedWords: playedWord[]) => {
   for (const [i, letter] of base.entries()) {
     const reCheck = playedWords.length > 0 ? playedWords[playedWords.length-1].word.startsWith(letter.letter) : false
@@ -73,27 +62,51 @@ const updateValues = async (base: letterObject[], board: string[][], playedWords
   return base
 }
 
-const getBestStartingWord = (base: letterObject[]) => {
-  console.log('getting best starting word')
-  //console.log('base', JSON.stringify(base))
-  const computerBase = base.filter(s => s.owner === 'player2')
-  let countOfPossibilities: number = 0
-  let longestWord: number = 0
-  let selection: letterObject[][] = []
+const getBestWord = (base: letterObject[], turn: string, max: number) => {
+  const computerBase = base.filter(s => s.owner === turn)
+  const opponentBase = base.filter(s => s.owner !== turn)
+  let letterValueArray = [0, 0, 0, 0, 0, 0] //0 possible words starting, 1 word length, 2 letters touching opponents base, 3 letters touching own base, 4 letters touching goal 5 higher than starting pos
+  let greatestWordValue = 0
+  let selection: letterObject[] = []
   for (const [i, letter] of computerBase.entries()) { 
-    if(letter.possibleWords.length > countOfPossibilities){
-      console.log('cur longest possibilities', letter)
-      countOfPossibilities = letter.possibleWords.length
-      const longestWordIndex = letter.possibleWords.reduce((max,el,j,arr) => {return el.length>arr[max].length ? j : max;}, 0)
-      console.log('longestWord', longestWord, 'arrays longest wor', longestWordIndex)
-     if(longestWord < computerBase[i].possibleWords[longestWordIndex].length) {
-      console.log('cur longest!', letter)
-       longestWord = longestWordIndex
-       selection = computerBase[i].possibleWords
-     }
+    if(letter.hasOwnProperty('possibleWords') && letter.possibleWords.length > 0){
+      letterValueArray[0] = letter.possibleWords.length
+      for (const [j, possibleWord] of computerBase[i].possibleWords.entries()){
+        letterValueArray[1] = possibleWord.length
+        letterValueArray[2] = getCommonElements(opponentBase, possibleWord) * 2
+        letterValueArray[3] = getCommonElements(computerBase, possibleWord) * (-1)
+        letterValueArray[4] = checkIfWin(possibleWord, turn, max) ? 20 : 0
+        letterValueArray[5] = getChangeInHeight(possibleWord) * 0.5
+        let wordValue = letterValueArray.reduce((acc, curr) => acc+curr)
+        if(wordValue > greatestWordValue){
+          greatestWordValue = wordValue
+          selection = computerBase[i].possibleWords[j]
+        }
+      }
     }
   }
   return selection
+}
+
+const getChangeInHeight = (word: letterObject[]) => {
+  const sortedByRow = word.map(s => s).sort((a, b) => { return a.row - b.row })
+  return word[0].row - sortedByRow[0].row
+}
+
+const getCommonElements = (base: letterObject[], word: letterObject[]) => {
+let commonElements: { [key:string] : boolean }  = {}
+let commonIterator = 0
+for(const [i, obj] of base.entries()){
+  if(!commonElements[`${obj.row},${obj.column}`]){
+    commonElements[`${obj.row},${obj.column}`] = true
+  }
+}
+for(const [j, obj] of word.entries()){
+  if(commonElements[`${obj.row},${obj.column}`]){
+    commonIterator++
+  }
+}
+return commonIterator
 }
 
 const removeIsolatedNodes = (confirmedSelections: letterObject[], board: string[][], turn: string) => {
@@ -233,7 +246,7 @@ export default {
   checkIfLetterSelectionIsallowed, 
   checkAllPossibleWordsAndRoutes,
   removeDuplicates,
-  computerTurn,
   checkIfWin, 
-  updateValues
+  updateValues,
+  getBestWord
 }
