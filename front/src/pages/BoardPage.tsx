@@ -38,7 +38,7 @@ export const GameBoardPage: React.FC = () => {
         const confirmedAndFiltered = wordService.removeDuplicates(newSelectionConfirmed, confirmedSelections, board, turn)
         const newBase = confirmedAndFiltered.concat(newSelectionConfirmed)
         const checkGame = wordService.checkIfWin(newSelectionConfirmed, turn, board.length)
-        setPlayedWords([...playedWords, {word: selected.map(s => s.letter).join(""), owner: turn}]) 
+        setPlayedWords([...playedWords, {word: selected.map(s => s.letter).join(''), owner: turn}]) 
         setConfirmedSelections(newBase)
         setSelected([])
         checkGame ? gameChange() : setTurn('player2')          
@@ -52,7 +52,7 @@ export const GameBoardPage: React.FC = () => {
         const confirmedAndFiltered = wordService.removeDuplicates(newSelectionConfirmed, updateSelections, board, turn)
         const newBase = confirmedAndFiltered.concat(newSelectionConfirmed)
         const checkGame = wordService.checkIfWin(newSelectionConfirmed, turn, board.length)
-        setPlayedWords([...playedWords, {word: computerSelected.map(s => s.letter).join(""), owner: turn}]) 
+        setPlayedWords([...playedWords, {word: computerSelected.map(s => s.letter).join(''), owner: turn}]) 
         setConfirmedSelections(newBase)
         if (checkGame){
             setTurn('player1')
@@ -99,11 +99,11 @@ export const GameBoardPage: React.FC = () => {
           }
       }, [turn, gameOver])
 
-        return  <div className="GameBoard">
+        return  <div className='GameBoard'>
                     <div>
                         <h1>GameBoardPage</h1>
                     </div>
-                    <div className="BoardAndWordList">
+                    <div className='BoardAndWordList'>
                         <div>
                             <Board letters={board} selectLetter={selectLetter} confirmSelection={confirmSelection} getSelected={getSelected} /> 
                         </div> 

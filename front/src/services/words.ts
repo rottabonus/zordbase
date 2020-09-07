@@ -69,13 +69,13 @@ const getBestWord = (base: letterObject[], turn: string, max: number) => {
   let selection: letterObject[] = []
   for (const [i, letter] of computerBase.entries()) { 
     if(letter.hasOwnProperty('possibleWords') && letter.possibleWords.length > 0){
-      letterValueArray[0] = letter.possibleWords.length
+      letterValueArray[0] = letter.possibleWords.length //possibilities
       for (const [j, possibleWord] of computerBase[i].possibleWords.entries()){
-        letterValueArray[1] = possibleWord.length
-        letterValueArray[2] = getCommonElements(opponentBase, possibleWord) * 2
-        letterValueArray[3] = getCommonElements(computerBase, possibleWord) * (-1)
-        letterValueArray[4] = checkIfWin(possibleWord, turn, max) ? 20 : 0
-        letterValueArray[5] = getChangeInHeight(possibleWord) * 0.5
+        letterValueArray[1] = possibleWord.length //word length
+        letterValueArray[2] = getCommonElements(opponentBase, possibleWord) * 2 //letters touching opp base
+        letterValueArray[3] = getCommonElements(computerBase, possibleWord) * (-1) //letters touching own base
+        letterValueArray[4] = checkIfWin(possibleWord, turn, max) ? 20 : 0 //if touching goal 20 points
+        letterValueArray[5] = getChangeInHeight(possibleWord, turn) * 0.5 //change going upward/downward
         let wordValue = letterValueArray.reduce((acc, curr) => acc+curr)
         if(wordValue > greatestWordValue){
           greatestWordValue = wordValue
@@ -87,9 +87,9 @@ const getBestWord = (base: letterObject[], turn: string, max: number) => {
   return selection
 }
 
-const getChangeInHeight = (word: letterObject[]) => {
-  const sortedByRow = word.map(s => s).sort((a, b) => { return a.row - b.row })
-  return word[0].row - sortedByRow[0].row
+const getChangeInHeight = (word: letterObject[], turn: string) => {
+  const sortedByRow = word.map(s => s.row).sort((a, b) => { return turn === 'player2' ? a - b : b - a})
+  return word[0].row - sortedByRow[0]
 }
 
 const getCommonElements = (base: letterObject[], word: letterObject[]) => {
@@ -139,11 +139,11 @@ const checkIfLetterSelectionIsallowed = (letter: letterObject, board: string[][]
   if (selected.length === 0){
     return (letter.owner === turn) ?  { possibleSelection: true, selectedBeforeIndex: selectedAgainIndex} : { possibleSelection: false, selectedBeforeIndex: selectedAgainIndex}
  }
-      const possibleXpositions = [selected[selected.length-1].row, selected[selected.length-1].row + 1, selected[selected.length-1].row - 1].filter(x => x >= 0 && x < board.length)
-      const possibleYpositions = [selected[selected.length-1].column, selected[selected.length-1].column + 1, selected[selected.length-1].column - 1].filter(x => x >= 0 && x < (board[0].length))
-      if ( possibleXpositions.includes(letter.row) && possibleYpositions.includes(letter.column)) {
-        return { possibleSelection: true, selectedBeforeIndex: selectedAgainIndex }
-      }
+  const possibleXpositions = [selected[selected.length-1].row, selected[selected.length-1].row + 1, selected[selected.length-1].row - 1].filter(x => x >= 0 && x < board.length)
+  const possibleYpositions = [selected[selected.length-1].column, selected[selected.length-1].column + 1, selected[selected.length-1].column - 1].filter(x => x >= 0 && x < (board[0].length))
+  if ( possibleXpositions.includes(letter.row) && possibleYpositions.includes(letter.column)) {
+    return { possibleSelection: true, selectedBeforeIndex: selectedAgainIndex }
+}
   return  selectedAgainIndex === -1 ? { possibleSelection: false, selectedBeforeIndex: selectedAgainIndex} : { possibleSelection: true, selectedBeforeIndex: selectedAgainIndex }
 }
 
@@ -188,7 +188,7 @@ const checkAllPossibleWordsAndRoutes = async (selected: letterObject[], board: s
     }
   })
   return possibilities
-};
+}
 
 const getRouteForWord = (wordStr: string, movements: {[key:string]: letterObject[]}, obj: letterObject[]) => {
   const queue = [...movements[getKeyNameObject(obj[obj.length - 1])]]
@@ -229,7 +229,6 @@ const returnNonPathSearchedNodeIndexes = (searched: letterObject[], obj: letterO
   objectMoves.forEach((move) => {
       searched.forEach((pos, i) => {
           if (JSON.stringify(pos) === JSON.stringify(move)) {
-              //console.log('this one to return possibly', pos)
               if(selection.findIndex(l => l.row === pos.row && l.column === pos.column) === -1 && wordStr.startsWith(selection.map(s => s.letter).join('')+pos.letter)){
                 toReturnIndexes.push(i)
               }
@@ -239,11 +238,9 @@ const returnNonPathSearchedNodeIndexes = (searched: letterObject[], obj: letterO
   return toReturnIndexes
 }
 
-  
 export default {
   createBoard,
   checkIfLetterSelectionIsallowed, 
-  checkAllPossibleWordsAndRoutes,
   removeDuplicates,
   checkIfWin, 
   updateValues,
