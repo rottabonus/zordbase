@@ -16,19 +16,6 @@
     flex-direction: row;
   }
 
-  li {
-    list-style-type: none;
-  }
-
-  ul {
-    overflow:hidden; 
-    overflow-y:scroll;
-    scroll-behavior: smooth;
-    width: 150px;
-    padding: 4px;
-    margin: 0;
-  }
-
   .wordListContainer {
     display: flex;
     flex-direction: column;
@@ -38,6 +25,5 @@
     margin-top: 1rem;
     width: 150px;
   }
-  
 
 

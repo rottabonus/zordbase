@@ -1,25 +1,26 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react'
 import wordService from '../services/words'
 import { Board } from '../components/Board'
 import { PlayedWordList } from '../components/PlayedWordList'
 import { letterObject, selectionObject, playedWord } from '../types/types'
+import { useSelector, useDispatch } from 'react-redux'
+import allActions from '../actions/allActions'
+import { RootState } from '../reducers/combineReducer'
 
 export const GameBoardPage: React.FC = () => {
 
-    const [board, setBoard] = useState<string[][]>([])
     const [selected, setSelected] = useState<letterObject[]>([])
     //const [possibleWords, setpossibleWords] = useState<letterObject[][]>([])
-    const [confirmedSelections, setConfirmedSelections] = useState<letterObject[]>([])
     const [turn, setTurn] = useState<string>('player1')
     const [playedWords, setPlayedWords] = useState<playedWord[]>([])
     const [gameOver, setGameOver] = useState<boolean>(true) 
+    const board = useSelector((state: RootState) => state.board.board)
+    const confirmedSelections = useSelector((state: RootState) => state.base.base)
 
-    const createBoard = () => {
-        const board = wordService.createBoard(8, 10)
-        setBoard(board)
+    const createBases = () => {
         const playerOneBase = board[0].map( (letter, column) => ({'letter': letter, 'row': 0, 'column': column, 'owner': 'player1'}))
         const playerTwoBase = board[board.length-1].map( (letter, column) => ({'letter': letter, 'row': board.length-1, 'column': column, 'owner': 'player2'}))
-        setConfirmedSelections(playerOneBase.concat(playerTwoBase))
+        dispatch(allActions.baseActions.updateBase(playerOneBase.concat(playerTwoBase)))
     }
     const gameChange = () => {
         setTimeout(() => {
@@ -31,6 +32,7 @@ export const GameBoardPage: React.FC = () => {
     const startNewGame = () => {   
         setPlayedWords([])
         setGameOver(true)
+        dispatch(allActions.boardActions.createBoard())
     }
 
     const confirmSelection = () => {
@@ -39,13 +41,12 @@ export const GameBoardPage: React.FC = () => {
         const newBase = confirmedAndFiltered.concat(newSelectionConfirmed)
         const checkGame = wordService.checkIfWin(newSelectionConfirmed, turn, board.length)
         setPlayedWords([...playedWords, {word: selected.map(s => s.letter).join(''), owner: turn}]) 
-        setConfirmedSelections(newBase)
+        dispatch(allActions.baseActions.updateBase(newBase))
         setSelected([])
         checkGame ? gameChange() : setTurn('player2')          
     }
 
     const computersTurn = async () => {
-        //console.log('computer turn start')
         const updateSelections = await wordService.updateValues(confirmedSelections, board, playedWords.filter(f => f.owner === turn), turn)
         const computerSelected = wordService.getBestWord(updateSelections, turn, board.length)
         const newSelectionConfirmed = computerSelected.map(s => ({'letter': s.letter, 'row': s.row, 'column': s.column, 'owner': turn, possibleWords: s.possibleWords}))
@@ -53,7 +54,7 @@ export const GameBoardPage: React.FC = () => {
         const newBase = confirmedAndFiltered.concat(newSelectionConfirmed)
         const checkGame = wordService.checkIfWin(newSelectionConfirmed, turn, board.length)
         setPlayedWords([...playedWords, {word: computerSelected.map(s => s.letter).join(''), owner: turn}]) 
-        setConfirmedSelections(newBase)
+        dispatch(allActions.baseActions.updateBase(newBase))
         if (checkGame){
             setTurn('player1')
             gameChange()
@@ -96,13 +97,15 @@ export const GameBoardPage: React.FC = () => {
       useEffect(() => {
         scrollToBottom()
           if (gameOver){
-            createBoard()
+            createBases()
             setGameOver(false)
           }  
           if (turn === 'player2'){
               computersTurn()
           }
       }, [turn, gameOver])
+
+      const dispatch = useDispatch()
 
       const messagesEndRef = useRef(null)
 
@@ -112,7 +115,7 @@ export const GameBoardPage: React.FC = () => {
                     </div>
                     <div className='BoardAndWordList'>
                         <div>
-                            <Board letters={board} selectLetter={selectLetter} confirmSelection={confirmSelection} getSelected={getSelected} /> 
+                            <Board selectLetter={selectLetter} confirmSelection={confirmSelection} getSelected={getSelected} /> 
                         </div> 
                         <div>
                             <PlayedWordList playedWords={playedWords} messagesEndRef={messagesEndRef }/>
