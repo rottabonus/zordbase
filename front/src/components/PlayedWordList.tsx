@@ -1,15 +1,18 @@
 import React from 'react';
 import { playedWord } from '../types/types'
+import { useSelector } from 'react-redux'
+import { RootState } from '../reducers/combineReducer'
 
 interface PlayedWordProps {
-    playedWords: playedWord[]
     messagesEndRef: any
 }
 
 export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
+
+    const played: playedWord[] = useSelector((state: RootState) => state.played.playedWords)
  
     return <div className='wordListContainer' >
-                {props.playedWords.map((w, i )=> (
+                {played.map((w, i )=> (
                         w.owner === 'player1' ?
                         <span key={i} style={{color: "Cyan"}}>{w.word}</span>
                         :

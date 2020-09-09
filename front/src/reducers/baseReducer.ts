@@ -1,7 +1,8 @@
 import { BaseState, letterObject }  from '../types/types'
 
 const initialState: BaseState = {
-    base: []
+    base: [],
+    selection: []
   }
 
 const baseReducer = (state = initialState, action: {type: string, payload: letterObject[]}) => {
@@ -10,6 +11,12 @@ const baseReducer = (state = initialState, action: {type: string, payload: lette
             return {
                 ...state,
                 base: action.payload,
+            }
+        case "UPDATESELECTION":
+            return {
+                ...state,
+                selection: action.payload,
+                
             }
         default: {
             return state

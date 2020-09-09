@@ -10,7 +10,7 @@ interface BoardProps {
 
 export const Board: React.FC<BoardProps> = (props) => {
 
-    const board = useSelector((state: RootState) => state.board.board)
+    const board: string[][] = useSelector((state: RootState) => state.board.board)
 
     return <div>
                <table>

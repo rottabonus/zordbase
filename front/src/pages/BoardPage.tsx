@@ -9,19 +9,13 @@ import { RootState } from '../reducers/combineReducer'
 
 export const GameBoardPage: React.FC = () => {
 
-    const [selected, setSelected] = useState<letterObject[]>([])
-    //const [possibleWords, setpossibleWords] = useState<letterObject[][]>([])
-    const [turn, setTurn] = useState<string>('player1')
-    const [playedWords, setPlayedWords] = useState<playedWord[]>([])
-    const [gameOver, setGameOver] = useState<boolean>(true) 
-    const board = useSelector((state: RootState) => state.board.board)
-    const confirmedSelections = useSelector((state: RootState) => state.base.base)
+    const board: string[][] = useSelector((state: RootState) => state.board.board)
+    const turn: string = useSelector((state: RootState) => state.board.turn)
+    const newGame: boolean = useSelector((state: RootState) => state.board.newGame)
+    const confirmedSelections: letterObject[] = useSelector((state: RootState) => state.base.base)
+    const selected: letterObject[] = useSelector((state: RootState) => state.base.selection)
+    const playedWords: playedWord[] = useSelector((state: RootState) => state.played.playedWords)
 
-    const createBases = () => {
-        const playerOneBase = board[0].map( (letter, column) => ({'letter': letter, 'row': 0, 'column': column, 'owner': 'player1'}))
-        const playerTwoBase = board[board.length-1].map( (letter, column) => ({'letter': letter, 'row': board.length-1, 'column': column, 'owner': 'player2'}))
-        dispatch(allActions.baseActions.updateBase(playerOneBase.concat(playerTwoBase)))
-    }
     const gameChange = () => {
         setTimeout(() => {
             alert(`winner is ${turn}`)
@@ -30,8 +24,8 @@ export const GameBoardPage: React.FC = () => {
     }
 
     const startNewGame = () => {   
-        setPlayedWords([])
-        setGameOver(true)
+        dispatch(allActions.playedWordActions.updatePlayed([]))
+        dispatch(allActions.boardActions.newGame(true))
         dispatch(allActions.boardActions.createBoard())
     }
 
@@ -40,10 +34,10 @@ export const GameBoardPage: React.FC = () => {
         const confirmedAndFiltered = wordService.removeDuplicates(newSelectionConfirmed, confirmedSelections, board, turn)
         const newBase = confirmedAndFiltered.concat(newSelectionConfirmed)
         const checkGame = wordService.checkIfWin(newSelectionConfirmed, turn, board.length)
-        setPlayedWords([...playedWords, {word: selected.map(s => s.letter).join(''), owner: turn}]) 
+        dispatch(allActions.playedWordActions.updatePlayed([...playedWords, {word: selected.map(s => s.letter).join(''), owner: turn}])) 
         dispatch(allActions.baseActions.updateBase(newBase))
-        setSelected([])
-        checkGame ? gameChange() : setTurn('player2')          
+        dispatch(allActions.baseActions.updateSelection([]))
+        checkGame ? gameChange() : dispatch(allActions.boardActions.changeTurn('player2'))        
     }
 
     const computersTurn = async () => {
@@ -53,13 +47,11 @@ export const GameBoardPage: React.FC = () => {
         const confirmedAndFiltered = wordService.removeDuplicates(newSelectionConfirmed, updateSelections, board, turn)
         const newBase = confirmedAndFiltered.concat(newSelectionConfirmed)
         const checkGame = wordService.checkIfWin(newSelectionConfirmed, turn, board.length)
-        setPlayedWords([...playedWords, {word: computerSelected.map(s => s.letter).join(''), owner: turn}]) 
+        dispatch(allActions.playedWordActions.updatePlayed([...playedWords, {word: computerSelected.map(s => s.letter).join(''), owner: turn}]))
         dispatch(allActions.baseActions.updateBase(newBase))
+        dispatch(allActions.boardActions.changeTurn('player1'))
         if (checkGame){
-            setTurn('player1')
             gameChange()
-        } else {
-            setTurn('player1')
         }       
     }
 
@@ -70,11 +62,10 @@ export const GameBoardPage: React.FC = () => {
         if (result.possibleSelection){
             if (result.selectedBeforeIndex === -1){
                 newSelected = [...selected, obj]
-                setSelected([...selected, obj])
             } else {
                 newSelected =  selected.slice(0, result.selectedBeforeIndex)
-                setSelected(newSelected)
             }
+            dispatch(allActions.baseActions.updateSelection(newSelected))
         }   
     }
 
@@ -96,14 +87,14 @@ export const GameBoardPage: React.FC = () => {
 
       useEffect(() => {
         scrollToBottom()
-          if (gameOver){
-            createBases()
-            setGameOver(false)
+          if (newGame){
+            dispatch(allActions.baseActions.createBase(board))
+            dispatch(allActions.boardActions.newGame(false))
           }  
           if (turn === 'player2'){
               computersTurn()
           }
-      }, [turn, gameOver])
+      }, [turn, newGame])
 
       const dispatch = useDispatch()
 
@@ -118,7 +109,7 @@ export const GameBoardPage: React.FC = () => {
                             <Board selectLetter={selectLetter} confirmSelection={confirmSelection} getSelected={getSelected} /> 
                         </div> 
                         <div>
-                            <PlayedWordList playedWords={playedWords} messagesEndRef={messagesEndRef }/>
+                            <PlayedWordList messagesEndRef={messagesEndRef }/>
                         </div>
                     </div>
                 </div>;

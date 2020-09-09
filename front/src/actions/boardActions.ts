@@ -7,6 +7,24 @@ const createBoard = () => {
     }
 }
 
+
+const newGame = (newGame: boolean) => {
+    return {
+        type: "NEWGAME",
+        payload: newGame
+    }
+}
+
+
+const changeTurn = (turn: string) => {
+    return {
+        type: "CHANGETURN",
+        payload: turn
+    }
+}
+
 export default {
-    createBoard
+    createBoard,
+    newGame,
+    changeTurn
 }

@@ -16,14 +16,17 @@ export type playedWord = {
     owner: string
 }
 
-export interface CounterState {
-    counter: number
-  }
+export interface GameBoardState {
+      board: string[][],
+      newGame: boolean,
+      turn: string
+}
 
-  export interface GameBoardState {
-      board: string[][]
-  }
+export interface BaseState {
+      base: letterObject[],
+      selection: letterObject[]
+}
 
-  export interface BaseState {
-      base: letterObject[]
-  }
+export interface PlayedWordState {
+    playedWords: playedWord[]
+}
