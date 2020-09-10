@@ -1,9 +1,7 @@
-import wordService from '../services/words'
-
 const createBoard = () => {
     return {
         type: "CREATEBOARD",
-        payload: wordService.createBoard(8, 10)
+        payload: createGameBoard(8, 10)
     }
 }
 
@@ -11,7 +9,7 @@ const createBoard = () => {
 const newGame = (newGame: boolean) => {
     return {
         type: "NEWGAME",
-        payload: newGame
+        payload: {newGame, board: createGameBoard(8, 10)}
     }
 }
 
@@ -23,8 +21,31 @@ const changeTurn = (turn: string) => {
     }
 }
 
+const createGameBoard = (rows: number, columns: number) => {
+    const letters = 'aaaabcdeeeefghhhiiiijjjkkklllmnmnnnooooppprrrssstttuuuuvvyöääää'
+    const letterArr = letters.split('')
+    const board: string[][] = []
+    let rowArray: string[] = []
+    for (let i = 0; i <= rows; i++) {
+      if (i !== 0) {
+        board.push(rowArray)
+      }
+      rowArray = []
+      for (let j = 0; j < columns; j++) {
+        rowArray.push(letterArr[getRandomInt(letterArr.length)].toUpperCase())
+      }
+    }
+    return board
+  }
+
+  
+const getRandomInt = (max: number) => {
+    return Math.floor(Math.random() * Math.floor(max));
+  }
+
 export default {
     createBoard,
     newGame,
-    changeTurn
+    changeTurn,
+    createGameBoard
 }

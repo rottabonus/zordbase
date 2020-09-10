@@ -26,7 +26,6 @@ export const GameBoardPage: React.FC = () => {
     const startNewGame = () => {   
         dispatch(allActions.playedWordActions.updatePlayed([]))
         dispatch(allActions.boardActions.newGame(true))
-        dispatch(allActions.boardActions.createBoard())
     }
 
     const confirmSelection = () => {
@@ -49,25 +48,18 @@ export const GameBoardPage: React.FC = () => {
         const checkGame = wordService.checkIfWin(newSelectionConfirmed, turn, board.length)
         dispatch(allActions.playedWordActions.updatePlayed([...playedWords, {word: computerSelected.map(s => s.letter).join(''), owner: turn}]))
         dispatch(allActions.baseActions.updateBase(newBase))
-        dispatch(allActions.boardActions.changeTurn('player1'))
-        if (checkGame){
-            gameChange()
-        }       
+        checkGame ? gameChange() : dispatch(allActions.boardActions.changeTurn('player1'))
     }
 
     const selectLetter = async (letter: string, row: number, column: number, owner: string) => {
         let obj = { letter: letter, row: row, column: column, owner: owner}
         const result: selectionObject = wordService.checkIfLetterSelectionIsallowed(obj, board, selected, turn)
-        let newSelected: letterObject[] = []
         if (result.possibleSelection){
-            if (result.selectedBeforeIndex === -1){
-                newSelected = [...selected, obj]
-            } else {
-                newSelected =  selected.slice(0, result.selectedBeforeIndex)
+            result.selectedBeforeIndex === -1 ?
+            dispatch(allActions.baseActions.updateSelection([...selected, obj])) :
+            dispatch(allActions.baseActions.removeFromSelection(result.selectedBeforeIndex))
             }
-            dispatch(allActions.baseActions.updateSelection(newSelected))
-        }   
-    }
+        }  
 
     const getSelected = (r: number, c: number, type: string) => {
         if (type === 'class'){

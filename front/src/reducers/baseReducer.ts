@@ -5,7 +5,7 @@ const initialState: BaseState = {
     selection: []
   }
 
-const baseReducer = (state = initialState, action: {type: string, payload: letterObject[]}) => {
+const baseReducer = (state = initialState, action: {type: string, payload: any}) => {
     switch(action.type){
         case "UPDATEBASE":
             return {
@@ -17,6 +17,16 @@ const baseReducer = (state = initialState, action: {type: string, payload: lette
                 ...state,
                 selection: action.payload,
                 
+            }
+        case "UPDATESELECTION":
+            return {
+                ...state,
+                selection: action.payload,   
+                }
+        case "REMOVEFROMSELECTION":
+            return {
+                ...state,
+                selection: state.selection.slice(0, action.payload)
             }
         default: {
             return state

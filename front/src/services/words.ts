@@ -7,30 +7,9 @@ const fetchAll = async (char: string) => {
   if (char !== '') {
     const response = await fetch('http://localhost:3000/api/words/');
     const data = await response.json()
-    //console.log(response.status)
     return data.words.filter((a: string) => a.toUpperCase().startsWith(char))
   }
   return []
-}
-
-const createBoard = (rows: number, columns: number) => {
-  const letters = 'aaaabcdeeeefghhhiiiijjjkkklllmnmnnnooooppprrrssstttuuuuvvyöääää'
-  const letterArr = letters.split('')
-  const board: string[][] = []
-  let rowArray: string[] = []
-  for (let i = 0; i <= rows; i++) {
-    if (i !== 0) {
-      board.push(rowArray)
-    }
-    rowArray = []
-    for (let j = 0; j < columns; j++) {
-      rowArray.push(letterArr[getRandomInt(letterArr.length)].toUpperCase())
-    }
-  }
-  return board
-}
-const getRandomInt = (max: number) => {
-  return Math.floor(Math.random() * Math.floor(max));
 }
 
 const removeDuplicates = (newSelectionConfirmed: letterObject[], confirmedSelections: letterObject[], board: string[][], turn: string) => {
@@ -239,7 +218,6 @@ const returnNonPathSearchedNodeIndexes = (searched: letterObject[], obj: letterO
 }
 
 export default {
-  createBoard,
   checkIfLetterSelectionIsallowed, 
   removeDuplicates,
   checkIfWin, 

@@ -1,8 +1,8 @@
 import { GameBoardState }  from '../types/types'
-import wordService from '../services/words'
+import boardActions from '../actions/boardActions'
 
 const initialState: GameBoardState = {
-    board: wordService.createBoard(8, 10),
+    board: boardActions.createGameBoard(8, 10),
     newGame: true,
     turn: 'player1'
   }
@@ -17,7 +17,8 @@ const boardReducer = (state = initialState, action: {type: string, payload: any}
         case "NEWGAME":
             return {
                 ...state,
-                newGame: action.payload,
+                newGame: action.payload.newGame,
+                board: action.payload.board
             }
         case "CHANGETURN":
             return {

@@ -23,8 +23,16 @@ const updateSelection = (selection: letterObject[]) => {
     }
 }
 
+const removeFromSelection = (index: number) => {
+    return {
+        type: "REMOVEFROMSELECTION",
+        payload: index
+    }
+}
+
 export default {
     updateBase,
     updateSelection,
-    createBase
+    createBase,
+    removeFromSelection
 }
