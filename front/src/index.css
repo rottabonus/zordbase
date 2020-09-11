@@ -1,12 +1,18 @@
+body {
+  font-family: 'Lato', sans-serif;
+}
+
 .selectedLetter {
     border-style: solid;
   }
 
   td {
     border-style: groove;
+    border-radius: 3%;
+    background-color: white;
   }
 
-  .GameBoard {
+  .GameBoardContainer {
     display: flex;
     flex-direction: column;
   }
@@ -19,11 +25,41 @@
   .wordListContainer {
     display: flex;
     flex-direction: column;
-    border: 1px black solid;
-    height: 200px;
+    height: 220px;
+    border: solid 5px #ebf2fc;
     overflow: scroll;
     margin-top: 1rem;
     width: 150px;
+    padding: 6px;
+    border-radius: 8%;
+    text-align: center;
+  }
+
+  .loading {
+    cursor: progress;
+  }
+
+  .GameBoard {
+    background-color: #ebf2fc;
+    padding: 6px;
+    border-radius: 8%;
+    margin-right: 10px;
+    padding-top: 16px;
+  }
+
+  .gameboard-div {
+    cursor: pointer;
+  }
+
+  .gameboard-button-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .gameboard-button {
+    margin: 5px;
+    cursor: pointer;
   }
 
 

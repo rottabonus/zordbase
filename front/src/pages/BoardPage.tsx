@@ -29,12 +29,25 @@ export const GameBoardPage: React.FC = () => {
         dispatch(allActions.boardActions.newGame(true, nextTurn))
     }
 
-    const confirmSelection = () => {
-        const newSelectionConfirmed = selected.map(s => ({'letter': s.letter, 'row': s.row, 'column': s.column, 'owner': turn, possibleWords: []}))
-        const confirmedAndFiltered = gameService.removeDuplicates(newSelectionConfirmed, confirmedSelections, board, turn)
-        const checkGame = gameService.checkIfWin(newSelectionConfirmed, turn, board.length)
-        dispatch(allActions.baseActions.confirmSelection(confirmedAndFiltered.concat(newSelectionConfirmed), [...playedWords, {word: selected.map(s => s.letter).join(''), owner: turn}], []))
-        checkGame ? gameChange() : dispatch(allActions.boardActions.changeTurn('player2'))        
+    const confirmSelection = async () => {
+        const newWord = selected.map(s => s.letter).join('')
+        const wordExist = await gameService.fetchMatch(newWord)
+        const playedAgain = playedWords.filter(word => word.word === newWord)
+        if(wordExist && playedAgain.length === 0){
+            const newSelectionConfirmed = selected.map(s => ({'letter': s.letter, 'row': s.row, 'column': s.column, 'owner': turn, possibleWords: []}))
+            const confirmedAndFiltered = gameService.removeDuplicates(newSelectionConfirmed, confirmedSelections, board, turn)
+            const checkGame = gameService.checkIfWin(newSelectionConfirmed, turn, board.length)
+            dispatch(allActions.baseActions.confirmSelection(confirmedAndFiltered.concat(newSelectionConfirmed), [...playedWords, {word: newWord, owner: turn}], []))
+            checkGame ? gameChange() : dispatch(allActions.boardActions.changeTurn('player2'))       
+        } else {
+            const message = playedAgain.length > 0 ? `cant play same word twice, ${newWord} already played` :  `word ${newWord}, does not exist`
+            alert(message)
+            removeSelection()
+        }   
+    }
+
+    const removeSelection = () => {
+        dispatch(allActions.baseActions.removeFromSelection(0))
     }
 
     const computersTurn = async () => {
@@ -73,6 +86,10 @@ export const GameBoardPage: React.FC = () => {
         messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
       }
 
+    const getCursorStyle = () => {
+        return turn === 'player2' ? 'progress' : 'pointer'       
+    }
+
       useEffect(() => {
         scrollToBottom()
           if (newGame){
@@ -88,13 +105,13 @@ export const GameBoardPage: React.FC = () => {
 
       const messagesEndRef = useRef(null)
 
-        return  <div className='GameBoard'>
+        return  <div className='GameBoardContainer'>
                     <div>
-                        <h1>GameBoardPage</h1>
+                        <h1>Gameboardpage</h1>
                     </div>
                     <div className='BoardAndWordList'>
                         <div>
-                            <Board selectLetter={selectLetter} confirmSelection={confirmSelection} getSelected={getSelected} /> 
+                            <Board selectLetter={selectLetter} confirmSelection={confirmSelection} getSelectedClass={getSelected} removeSelection={removeSelection} getCursorStyle={getCursorStyle}/> 
                         </div> 
                         <div>
                             <PlayedWordList messagesEndRef={messagesEndRef }/>

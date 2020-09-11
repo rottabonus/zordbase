@@ -12,6 +12,16 @@ const fetchAll = async (char: string) => {
   return []
 }
 
+const fetchMatch = async (word: string) => {
+  if (word !== '') {
+    const response = await fetch('http://localhost:3000/api/words/');
+    const data = await response.json()
+    const result = data.words.filter((a: string) => a.toUpperCase() === word)
+    return result.length > 0
+  }
+  return false
+}
+
 const removeDuplicates = (newSelectionConfirmed: letterObject[], confirmedSelections: letterObject[], board: string[][], turn: string) => {
   const toFilter =  confirmedSelections.filter(array => newSelectionConfirmed.some(filter => filter.row === array.row && filter.column === array.column))
   toFilter.forEach((filter) => {
@@ -222,5 +232,6 @@ export default {
   removeDuplicates,
   checkIfWin, 
   updateValues,
-  getBestWord
+  getBestWord,
+  fetchMatch
 }
