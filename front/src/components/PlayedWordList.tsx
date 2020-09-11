@@ -9,7 +9,7 @@ interface PlayedWordProps {
 
 export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
 
-    const played: playedWord[] = useSelector((state: RootState) => state.played.playedWords)
+    const played: playedWord[] = useSelector((state: RootState) => state.base.playedWords)
  
     return <div className='wordListContainer' >
                 {played.map((w, i )=> (

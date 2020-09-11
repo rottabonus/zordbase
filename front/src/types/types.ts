@@ -24,7 +24,8 @@ export interface GameBoardState {
 
 export interface BaseState {
       base: letterObject[],
-      selection: letterObject[]
+      selection: letterObject[],
+      playedWords: playedWord[]
 }
 
 export interface PlayedWordState {

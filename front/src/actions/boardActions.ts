@@ -6,13 +6,19 @@ const createBoard = () => {
 }
 
 
-const newGame = (newGame: boolean) => {
+const newGame = (newGame: boolean, turn: string) => {
     return {
         type: "NEWGAME",
-        payload: {newGame, board: createGameBoard(8, 10)}
+        payload: {newGame, board: createGameBoard(8, 10), turn: turn}
     }
 }
 
+const gameStart = () => {
+  return {
+      type: "GAMESTART",
+      payload: false
+  }
+}
 
 const changeTurn = (turn: string) => {
     return {
@@ -47,5 +53,6 @@ export default {
     createBoard,
     newGame,
     changeTurn,
-    createGameBoard
+    createGameBoard,
+    gameStart
 }

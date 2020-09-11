@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react'
-import wordService from '../services/words'
+import React, { useEffect, useRef } from 'react'
+import gameService from '../services/game'
 import { Board } from '../components/Board'
 import { PlayedWordList } from '../components/PlayedWordList'
 import { letterObject, selectionObject, playedWord } from '../types/types'
@@ -14,7 +14,7 @@ export const GameBoardPage: React.FC = () => {
     const newGame: boolean = useSelector((state: RootState) => state.board.newGame)
     const confirmedSelections: letterObject[] = useSelector((state: RootState) => state.base.base)
     const selected: letterObject[] = useSelector((state: RootState) => state.base.selection)
-    const playedWords: playedWord[] = useSelector((state: RootState) => state.played.playedWords)
+    const playedWords: playedWord[] = useSelector((state: RootState) => state.base.playedWords)
 
     const gameChange = () => {
         setTimeout(() => {
@@ -23,37 +23,33 @@ export const GameBoardPage: React.FC = () => {
         }, 2000);
     }
 
-    const startNewGame = () => {   
-        dispatch(allActions.playedWordActions.updatePlayed([]))
-        dispatch(allActions.boardActions.newGame(true))
+    const startNewGame = () => {
+        const nextTurn = turn === 'player1' ? 'player2' : 'player1'   
+        dispatch(allActions.baseActions.updatePlayedWords([]))
+        dispatch(allActions.boardActions.newGame(true, nextTurn))
     }
 
     const confirmSelection = () => {
         const newSelectionConfirmed = selected.map(s => ({'letter': s.letter, 'row': s.row, 'column': s.column, 'owner': turn, possibleWords: []}))
-        const confirmedAndFiltered = wordService.removeDuplicates(newSelectionConfirmed, confirmedSelections, board, turn)
-        const newBase = confirmedAndFiltered.concat(newSelectionConfirmed)
-        const checkGame = wordService.checkIfWin(newSelectionConfirmed, turn, board.length)
-        dispatch(allActions.playedWordActions.updatePlayed([...playedWords, {word: selected.map(s => s.letter).join(''), owner: turn}])) 
-        dispatch(allActions.baseActions.updateBase(newBase))
-        dispatch(allActions.baseActions.updateSelection([]))
+        const confirmedAndFiltered = gameService.removeDuplicates(newSelectionConfirmed, confirmedSelections, board, turn)
+        const checkGame = gameService.checkIfWin(newSelectionConfirmed, turn, board.length)
+        dispatch(allActions.baseActions.confirmSelection(confirmedAndFiltered.concat(newSelectionConfirmed), [...playedWords, {word: selected.map(s => s.letter).join(''), owner: turn}], []))
         checkGame ? gameChange() : dispatch(allActions.boardActions.changeTurn('player2'))        
     }
 
     const computersTurn = async () => {
-        const updateSelections = await wordService.updateValues(confirmedSelections, board, playedWords.filter(f => f.owner === turn), turn)
-        const computerSelected = wordService.getBestWord(updateSelections, turn, board.length)
+        const updateSelections = await gameService.updateValues(confirmedSelections, board, playedWords.filter(f => f.owner === turn), turn)
+        const computerSelected = gameService.getBestWord(updateSelections, turn, board.length)
         const newSelectionConfirmed = computerSelected.map(s => ({'letter': s.letter, 'row': s.row, 'column': s.column, 'owner': turn, possibleWords: s.possibleWords}))
-        const confirmedAndFiltered = wordService.removeDuplicates(newSelectionConfirmed, updateSelections, board, turn)
-        const newBase = confirmedAndFiltered.concat(newSelectionConfirmed)
-        const checkGame = wordService.checkIfWin(newSelectionConfirmed, turn, board.length)
-        dispatch(allActions.playedWordActions.updatePlayed([...playedWords, {word: computerSelected.map(s => s.letter).join(''), owner: turn}]))
-        dispatch(allActions.baseActions.updateBase(newBase))
+        const confirmedAndFiltered = gameService.removeDuplicates(newSelectionConfirmed, updateSelections, board, turn)
+        const checkGame = gameService.checkIfWin(newSelectionConfirmed, turn, board.length)
+        dispatch(allActions.baseActions.confirmSelection(confirmedAndFiltered.concat(newSelectionConfirmed), [...playedWords, {word: computerSelected.map(s => s.letter).join(''), owner: turn}], []))
         checkGame ? gameChange() : dispatch(allActions.boardActions.changeTurn('player1'))
     }
 
     const selectLetter = async (letter: string, row: number, column: number, owner: string) => {
         let obj = { letter: letter, row: row, column: column, owner: owner}
-        const result: selectionObject = wordService.checkIfLetterSelectionIsallowed(obj, board, selected, turn)
+        const result: selectionObject = gameService.checkIfLetterSelectionIsallowed(obj, board, selected, turn)
         if (result.possibleSelection){
             result.selectedBeforeIndex === -1 ?
             dispatch(allActions.baseActions.updateSelection([...selected, obj])) :
@@ -81,9 +77,9 @@ export const GameBoardPage: React.FC = () => {
         scrollToBottom()
           if (newGame){
             dispatch(allActions.baseActions.createBase(board))
-            dispatch(allActions.boardActions.newGame(false))
+            dispatch(allActions.boardActions.gameStart())
           }  
-          if (turn === 'player2'){
+          if (turn === 'player2' && !newGame){
               computersTurn()
           }
       }, [turn, newGame])

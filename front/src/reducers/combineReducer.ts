@@ -1,13 +1,11 @@
 import boardReducer from './boardReducer'
 import baseReducer from './baseReducer'
-import playedWordReducer from './playedWordReducer'
 
 import { combineReducers } from 'redux'
 
 const rootReducer = combineReducers({
     board: boardReducer,
-    base: baseReducer,
-    played: playedWordReducer
+    base: baseReducer
 })
 
 export type RootState = ReturnType<typeof rootReducer>;

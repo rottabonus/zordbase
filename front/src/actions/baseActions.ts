@@ -1,4 +1,4 @@
-import { letterObject } from "../types/types"
+import { letterObject, playedWord } from "../types/types"
 
 const updateBase = (base: letterObject[]) => {
     return {
@@ -30,9 +30,25 @@ const removeFromSelection = (index: number) => {
     }
 }
 
+const updatePlayedWords = (played: playedWord[]) => {
+    return {
+        type: "UPDATEPLAYEDWORDS",
+        payload: played
+    }
+}
+
+const confirmSelection = (base: letterObject[], played: playedWord[], selection: letterObject[]) => {
+    return {
+        type: "CONFIRMSELECTION",
+        payload: {base: base, played: played, selection: selection}
+    }
+}
+
 export default {
     updateBase,
     updateSelection,
     createBase,
-    removeFromSelection
+    removeFromSelection,
+    updatePlayedWords,
+    confirmSelection
 }

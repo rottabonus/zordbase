@@ -1,8 +1,9 @@
-import { BaseState, letterObject }  from '../types/types'
+import { BaseState }  from '../types/types'
 
 const initialState: BaseState = {
     base: [],
-    selection: []
+    selection: [],
+    playedWords: []
   }
 
 const baseReducer = (state = initialState, action: {type: string, payload: any}) => {
@@ -18,15 +19,22 @@ const baseReducer = (state = initialState, action: {type: string, payload: any})
                 selection: action.payload,
                 
             }
-        case "UPDATESELECTION":
+        case "UPDATEPLAYEDWORDS":
             return {
                 ...state,
-                selection: action.payload,   
+                playedWords: action.payload,   
                 }
         case "REMOVEFROMSELECTION":
             return {
                 ...state,
                 selection: state.selection.slice(0, action.payload)
+            }
+        case "CONFIRMSELECTION":
+            return {
+                ...state,
+                selection: action.payload.selection,
+                base: action.payload.base,
+                playedWords: action.payload.played
             }
         default: {
             return state

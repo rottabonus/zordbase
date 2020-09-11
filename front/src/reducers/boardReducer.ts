@@ -18,12 +18,18 @@ const boardReducer = (state = initialState, action: {type: string, payload: any}
             return {
                 ...state,
                 newGame: action.payload.newGame,
-                board: action.payload.board
+                board: action.payload.board,
+                turn: action.payload.turn
             }
         case "CHANGETURN":
             return {
                 ...state,
                 turn: action.payload,
+            }
+        case "GAMESTART":
+            return {
+                ...state,
+                newGame: action.payload,
             }
         default: {
             return state
