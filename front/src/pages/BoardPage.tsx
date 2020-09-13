@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import gameService from '../services/game'
 import { Board } from '../components/Board'
 import { PlayedWordList } from '../components/PlayedWordList'
-import { letterObject, selectionObject, playedWord } from '../types/types'
+import { letterObject, selectionObject, playedWord, LetterStyle, PlayerWordStyle } from '../types/types'
 import { useSelector, useDispatch } from 'react-redux'
 import allActions from '../actions/allActions'
 import { RootState } from '../reducers/combineReducer'
@@ -15,6 +15,7 @@ export const GameBoardPage: React.FC = () => {
     const confirmedSelections: letterObject[] = useSelector((state: RootState) => state.base.base)
     const selected: letterObject[] = useSelector((state: RootState) => state.base.selection)
     const playedWords: playedWord[] = useSelector((state: RootState) => state.base.playedWords)
+    const playerName: string = useSelector((state: RootState) => state.base.playerName)
 
     const gameChange = () => {
         setTimeout(() => {
@@ -24,7 +25,7 @@ export const GameBoardPage: React.FC = () => {
     }
 
     const startNewGame = () => {
-        const nextTurn = turn === 'player1' ? 'player2' : 'player1'   
+        const nextTurn = turn === 'computer' ? playerName : 'computer'   
         dispatch(allActions.baseActions.updatePlayedWords([]))
         dispatch(allActions.boardActions.newGame(true, nextTurn))
     }
@@ -38,7 +39,7 @@ export const GameBoardPage: React.FC = () => {
             const confirmedAndFiltered = gameService.removeDuplicates(newSelectionConfirmed, confirmedSelections, board, turn)
             const checkGame = gameService.checkIfWin(newSelectionConfirmed, turn, board.length)
             dispatch(allActions.baseActions.confirmSelection(confirmedAndFiltered.concat(newSelectionConfirmed), [...playedWords, {word: newWord, owner: turn}], []))
-            checkGame ? gameChange() : dispatch(allActions.boardActions.changeTurn('player2'))       
+            checkGame ? gameChange() : dispatch(allActions.boardActions.changeTurn('computer'))       
         } else {
             const message = playedAgain.length > 0 ? `cant play same word twice, ${newWord} already played` :  `word ${newWord}, does not exist`
             alert(message)
@@ -57,7 +58,7 @@ export const GameBoardPage: React.FC = () => {
         const confirmedAndFiltered = gameService.removeDuplicates(newSelectionConfirmed, updateSelections, board, turn)
         const checkGame = gameService.checkIfWin(newSelectionConfirmed, turn, board.length)
         dispatch(allActions.baseActions.confirmSelection(confirmedAndFiltered.concat(newSelectionConfirmed), [...playedWords, {word: computerSelected.map(s => s.letter).join(''), owner: turn}], []))
-        checkGame ? gameChange() : dispatch(allActions.boardActions.changeTurn('player1'))
+        checkGame ? gameChange() : dispatch(allActions.boardActions.changeTurn(playerName))
     }
 
     const selectLetter = async (letter: string, row: number, column: number, owner: string) => {
@@ -69,26 +70,30 @@ export const GameBoardPage: React.FC = () => {
             dispatch(allActions.baseActions.removeFromSelection(result.selectedBeforeIndex))
             }
         }  
-
-    const getSelected = (r: number, c: number, type: string) => {
-        if (type === 'class'){
-            const found = selected.filter(a => a.row === r && a.column === c)
-            return found.length === 0 ? 'none' : 'selectedLetter'
-        } else {
-            const selectedWithOwner: letterObject[] = selected.map(s => ({'row':s.row, 'column': s.column, 'letter': s.letter, 'owner': turn}))
-            const allSelected = selectedWithOwner.concat(confirmedSelections)
-            const found = allSelected.filter(a => a.row === r && a.column === c)
-            return found.length === 0 ? 'none' : found[0].owner
-        }
+    
+    const getLetterStyle = (r: number, c:number): LetterStyle => {
+        const found = selected.filter(a => a.row === r && a.column === c)
+        const isSelected = found.length === 0 ? 'none' : 'selectedLetter'
+        const cursorStyle = turn  === 'computer' ? 'progress' : 'pointer'
+        const selectedWithOwner: letterObject[] = selected.map(s => ({'row':s.row, 'column': s.column, 'letter': s.letter, 'owner': turn}))
+        const allSelected = selectedWithOwner.concat(confirmedSelections)
+        const ownerArr = allSelected.filter(a => a.row === r && a.column === c)
+        const owner = ownerArr.length === 0 ? 'none' : ownerArr[0].owner
+        const backgroundColor = owner === 'computer' ? 'lightsalmon' : owner === playerName ? 'paleturquoise' : null
+        return { class: isSelected, backgroundColor: backgroundColor, cursor: cursorStyle}
     }
 
+    const getWordStyle = (owner: string): PlayerWordStyle => {
+        return owner === 'computer' ? {color: 'lightsalmon', textAlign: 'right'} : {color: 'paleturquoise', textAlign: 'left'} 
+    }
+
+    const getButtonStyle = (): string => {
+        return selected.length > 0 ? 'gameboard-button' : 'gameboard-button-hidden'
+    }
+    
     const scrollToBottom = () => {
         messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
       }
-
-    const getCursorStyle = () => {
-        return turn === 'player2' ? 'progress' : 'pointer'       
-    }
 
       useEffect(() => {
         scrollToBottom()
@@ -96,7 +101,7 @@ export const GameBoardPage: React.FC = () => {
             dispatch(allActions.baseActions.createBase(board))
             dispatch(allActions.boardActions.gameStart())
           }  
-          if (turn === 'player2' && !newGame){
+          if (turn === 'computer' && !newGame){
               computersTurn()
           }
       }, [turn, newGame])
@@ -106,15 +111,12 @@ export const GameBoardPage: React.FC = () => {
       const messagesEndRef = useRef(null)
 
         return  <div className='GameBoardContainer'>
-                    <div>
-                        <h1>Gameboardpage</h1>
-                    </div>
                     <div className='BoardAndWordList'>
                         <div>
-                            <Board selectLetter={selectLetter} confirmSelection={confirmSelection} getSelectedClass={getSelected} removeSelection={removeSelection} getCursorStyle={getCursorStyle}/> 
+                            <Board selectLetter={selectLetter} confirmSelection={confirmSelection} getLetterStyle={getLetterStyle} removeSelection={removeSelection} getButtonStyle={getButtonStyle}/> 
                         </div> 
                         <div>
-                            <PlayedWordList messagesEndRef={messagesEndRef }/>
+                            <PlayedWordList messagesEndRef={messagesEndRef} getWordStyle={getWordStyle}/>
                         </div>
                     </div>
                 </div>;

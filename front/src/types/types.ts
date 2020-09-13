@@ -25,9 +25,21 @@ export interface GameBoardState {
 export interface BaseState {
       base: letterObject[],
       selection: letterObject[],
-      playedWords: playedWord[]
+      playedWords: playedWord[],
+      playerName: string
 }
 
 export interface PlayedWordState {
     playedWords: playedWord[]
+}
+
+export type LetterStyle = {
+    backgroundColor: string
+    class: string
+    cursor: string
+}
+
+export type PlayerWordStyle = {
+    color: string,
+    textAlign: 'left' | 'right' | 'center'
 }

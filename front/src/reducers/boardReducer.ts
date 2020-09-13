@@ -4,7 +4,7 @@ import boardActions from '../actions/boardActions'
 const initialState: GameBoardState = {
     board: boardActions.createGameBoard(8, 10),
     newGame: true,
-    turn: 'player1'
+    turn: 'player'
   }
 
 const boardReducer = (state = initialState, action: {type: string, payload: any}) => {

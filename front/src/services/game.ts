@@ -35,7 +35,7 @@ const removeDuplicates = (newSelectionConfirmed: letterObject[], confirmedSelect
 
 const checkIfWin = (selections: letterObject[], turn: string, max: number) => {
   const win = selections.filter((sel => 
-  turn === 'player1' ? sel.row === max-1 : sel.row === 0))
+  turn === 'computer' ?  sel.row === 0 : sel.row === max-1))
   return win.length > 0
 }
 
@@ -77,7 +77,7 @@ const getBestWord = (base: letterObject[], turn: string, max: number) => {
 }
 
 const getChangeInHeight = (word: letterObject[], turn: string) => {
-  const sortedByRow = word.map(s => s.row).sort((a, b) => { return turn === 'player2' ? a - b : b - a})
+  const sortedByRow = word.map(s => s.row).sort((a, b) => { return turn === 'computer' ? a - b : b - a})
   return word[0].row - sortedByRow[0]
 }
 
@@ -103,7 +103,7 @@ const removeIsolatedNodes = (confirmedSelections: letterObject[], board: string[
   const attachedNodes: letterObject[] = []
   const searched : { [key:string] : letterObject } = {}
   const nodesToCheck = confirmedSelections.filter(m => m.owner !== turn).sort((a, b) => {
-    return turn === 'player2' ? a.row - b.row || a.column - b.column : b.row - a.row || a.column - b.column 
+    return turn === 'computer' ? a.row - b.row || a.column - b.column : b.row - a.row || a.column - b.column 
   })
   queue.push(nodesToCheck[0])
   do {

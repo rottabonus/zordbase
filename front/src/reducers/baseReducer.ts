@@ -3,7 +3,8 @@ import { BaseState }  from '../types/types'
 const initialState: BaseState = {
     base: [],
     selection: [],
-    playedWords: []
+    playedWords: [],
+    playerName: 'player'
   }
 
 const baseReducer = (state = initialState, action: {type: string, payload: any}) => {
@@ -35,6 +36,11 @@ const baseReducer = (state = initialState, action: {type: string, payload: any})
                 selection: action.payload.selection,
                 base: action.payload.base,
                 playedWords: action.payload.played
+            }
+        case "CHANGEPLAYERNAME":
+            return {
+                ...state,
+                playerName: action.payload
             }
         default: {
             return state

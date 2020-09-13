@@ -15,6 +15,7 @@ body {
   .GameBoardContainer {
     display: flex;
     flex-direction: column;
+    padding: 20px;
   }
 
   .BoardAndWordList {
@@ -23,16 +24,35 @@ body {
   }
 
   .wordListContainer {
+    box-shadow: 1px 2px rgba(68, 68, 68, 0.6);
+    border-radius: 8%;
+    overflow: auto;
+  }
+
+  .wordListHeader {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: #ebf2fc;
+    border-top-left-radius: 16%;
+    border-top-right-radius: 16%;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 2px;
+    margin-top: auto;
+  }
+
+  .wordListWords {
     display: flex;
     flex-direction: column;
-    height: 220px;
     border: solid 5px #ebf2fc;
-    overflow: scroll;
-    margin-top: 1rem;
+    overflow-y: scroll;
     width: 150px;
-    padding: 6px;
-    border-radius: 8%;
-    text-align: center;
+    height: 230px;
+    padding-bottom: 6px;
+    padding-left: 6px;
+    border-bottom-left-radius: 8%;
+    border-bottom-right-radius: 8%;
   }
 
   .loading {
@@ -45,10 +65,18 @@ body {
     border-radius: 8%;
     margin-right: 10px;
     padding-top: 16px;
+    box-shadow: 1px 2px rgba(68, 68, 68, 0.6);
   }
 
   .gameboard-div {
     cursor: pointer;
+  }
+  .player-selected-letter {
+    background-color: paleturquoise;
+  }
+  
+  .com-selected-letter {
+    background-color: lightsalmon;
   }
 
   .gameboard-button-div {
@@ -62,4 +90,32 @@ body {
     cursor: pointer;
   }
 
+  .gameboard-button-hidden {
+    margin: 5px;
+    visibility: hidden;
+  }
 
+.topnav {
+  background-color: #ebf2fc;
+  overflow: hidden;
+}
+
+.topnav a {
+  float: left;
+  color: #eec288;
+  text-align: center;
+  padding: 5px 20px;
+  text-decoration: none;
+  font-size: 17px;
+  height: 30px;
+}
+
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.topnav a.active {
+  background-color: #eee1c8;
+  color: white;
+}

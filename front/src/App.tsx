@@ -9,9 +9,9 @@ export const App: React.FC = () => {
      
     return (
         <Router>
-            <div>
-            <Link to={'/'}><button>Board</button></Link>
-            <Link to={'/othercomponent'}><button>OtherComponent</button></Link>
+            <div className='topnav'>
+            <Link to={'/'}><a>Play</a></Link>
+            <Link to={'/othercomponent'}><a>How to</a></Link>
             </div>
             <div>
                 <Route exact path="/" render={() => <GameBoardPage />}/>
@@ -22,3 +22,4 @@ export const App: React.FC = () => {
 }
 
 export default App
+
