@@ -28,7 +28,7 @@ const changeTurn = (turn: string) => {
 }
 
 const createGameBoard = (rows: number, columns: number) => {
-    const letters = 'aaaabcdeeeefghhhiiiijjjkkklllmnmnnnooooppprrrssstttuuuuvvyöääää'
+    const letters = 'aaaaabcdeeeeefghhhhiiiiijjjjkkkkllllmmnmnnnnooooopppprrrrssssttttuuuuuvvyööäääää'
     const letterArr = letters.split('')
     const board: string[][] = []
     let rowArray: string[] = []

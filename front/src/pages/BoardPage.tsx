@@ -110,8 +110,8 @@ export const GameBoardPage: React.FC = () => {
 
       const messagesEndRef = useRef(null)
 
-        return  <div className='GameBoardContainer'>
-                    <div className='BoardAndWordList'>
+        return  <div className='gameboard-page-container'>
+                    <div className='board-and-word-list'>
                         <div>
                             <Board selectLetter={selectLetter} confirmSelection={confirmSelection} getLetterStyle={getLetterStyle} removeSelection={removeSelection} getButtonStyle={getButtonStyle}/> 
                         </div> 

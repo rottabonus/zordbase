@@ -3,19 +3,22 @@ import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import './index.css'
   
 import { GameBoardPage } from './pages/BoardPage'
-import { OtherComponent } from './components/OtherComponent'
+import { Howto } from './pages/Howto'
+import { About } from './pages/About'
 
 export const App: React.FC = () => {
      
     return (
         <Router>
             <div className='topnav'>
-            <Link to={'/'}><a>Play</a></Link>
-            <Link to={'/othercomponent'}><a>How to</a></Link>
+            <Link to={'/'}><span>Play</span></Link>
+            <Link to={'/howto'}><span>How to</span></Link>
+            <Link to={'/about'}><span>About</span></Link>
             </div>
             <div>
                 <Route exact path="/" render={() => <GameBoardPage />}/>
-                <Route path="/othercomponent" render={() => <OtherComponent/>}/>
+                <Route path="/howto" render={() => <Howto/>}/>
+                <Route path="/about" render={() => <About/>}/>
             </div>
         </Router>
     )

@@ -15,8 +15,8 @@ export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
  
     return <div className='wordListContainer' >
         <div className='wordListHeader'>
-            <div style={{color: 'paleturquoise'}}>{playerName}</div>
-            <div style={{color: 'lightsalmon'}}>computer</div>
+            <div>{playerName}</div>
+            <div>computer</div>
         </div>
             <div className='wordListWords'>
                 {played.map((w, i )=> {

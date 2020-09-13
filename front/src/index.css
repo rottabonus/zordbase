@@ -1,110 +1,12 @@
-body {
-  font-family: 'Lato', sans-serif;
-}
-
-.selectedLetter {
-    border-style: solid;
-  }
-
-  td {
-    border-style: groove;
-    border-radius: 3%;
-    background-color: white;
-  }
-
-  .GameBoardContainer {
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-  }
-
-  .BoardAndWordList {
-    display: flex;
-    flex-direction: row;
-  }
-
-  .wordListContainer {
-    box-shadow: 1px 2px rgba(68, 68, 68, 0.6);
-    border-radius: 8%;
-    overflow: auto;
-  }
-
-  .wordListHeader {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    background-color: #ebf2fc;
-    border-top-left-radius: 16%;
-    border-top-right-radius: 16%;
-    padding-left: 8px;
-    padding-right: 8px;
-    padding-top: 2px;
-    margin-top: auto;
-  }
-
-  .wordListWords {
-    display: flex;
-    flex-direction: column;
-    border: solid 5px #ebf2fc;
-    overflow-y: scroll;
-    width: 150px;
-    height: 230px;
-    padding-bottom: 6px;
-    padding-left: 6px;
-    border-bottom-left-radius: 8%;
-    border-bottom-right-radius: 8%;
-  }
-
-  .loading {
-    cursor: progress;
-  }
-
-  .GameBoard {
-    background-color: #ebf2fc;
-    padding: 6px;
-    border-radius: 8%;
-    margin-right: 10px;
-    padding-top: 16px;
-    box-shadow: 1px 2px rgba(68, 68, 68, 0.6);
-  }
-
-  .gameboard-div {
-    cursor: pointer;
-  }
-  .player-selected-letter {
-    background-color: paleturquoise;
-  }
-  
-  .com-selected-letter {
-    background-color: lightsalmon;
-  }
-
-  .gameboard-button-div {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-  }
-
-  .gameboard-button {
-    margin: 5px;
-    cursor: pointer;
-  }
-
-  .gameboard-button-hidden {
-    margin: 5px;
-    visibility: hidden;
-  }
-
 .topnav {
   background-color: #ebf2fc;
   overflow: hidden;
 }
 
-.topnav a {
+.topnav span {
   float: left;
-  color: #eec288;
   text-align: center;
-  padding: 5px 20px;
+  padding: 7px 20px;
   text-decoration: none;
   font-size: 17px;
   height: 30px;
@@ -119,3 +21,108 @@ body {
   background-color: #eee1c8;
   color: white;
 }
+
+body {
+  font-family: 'Lato', sans-serif;
+}
+
+.gameboard-page-container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.board-and-word-list {
+  display: flex;
+  flex-direction: row;
+}
+
+.selectedLetter {
+  border-style: solid;
+}
+
+td {
+  border-style: groove;
+  border-radius: 3%;
+  background-color: white;
+}
+
+.gameboard {
+  background-color: #ebf2fc;
+  padding: 6px;
+  border-radius: 6%;
+  margin-right: 10px;
+  padding-top: 16px;
+  box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);
+  }
+
+.gameboard-button-div {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+ }
+
+.gameboard-button {
+  margin: 5px;
+  cursor: pointer;
+}
+
+.gameboard-button-hidden {
+  margin: 5px;
+   visibility: hidden;
+}
+
+.wordListContainer {
+  box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);
+  border-radius: 6%;
+  overflow: auto;
+}
+
+.wordListHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: #ebf2fc;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 2px;
+  margin-top: auto;
+}
+
+.wordListWords {
+  display: flex;
+  flex-direction: column;
+  border: solid 5px #ebf2fc;
+  overflow-y: scroll;
+  width: 150px;
+  height: 230px;
+  padding-bottom: 6px;
+  padding-left: 6px;
+  border-bottom-left-radius: 6%;
+  border-bottom-right-radius: 6%;
+}
+
+.wordListWords::-webkit-scrollbar {
+  width: 11px;
+}
+  
+.wordListWords {
+  scrollbar-width: thin;
+  scrollbar-color: var(--thumbBG) var(--scrollbarBG);
+}
+  
+.wordListWords::-webkit-scrollbar-track {
+  background: var(--scrollbarBG);
+}
+  
+.wordListWords::-webkit-scrollbar-thumb {
+  background-color: var(--thumbBG) ;
+  border-radius: 6px;
+  border: 3px solid var(--scrollbarBG);
+}
+
+html {
+  --scrollbarBG: #ebf2fca1;
+  --thumbBG: #ebf2fc;
+}
+  

@@ -16,7 +16,7 @@ export const Board: React.FC<BoardProps> = (props) => {
     const board: string[][] = useSelector((state: RootState) => state.board.board)
     const playerName: string = useSelector((state: RootState) => state.base.playerName)
 
-    return <div className='GameBoard'>
+    return <div className='gameboard'>
                <table>
                    <tbody>
                         {board.map((row, i) => (   
