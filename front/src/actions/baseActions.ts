@@ -8,11 +8,9 @@ const updateBase = (base: letterObject[]) => {
 }
 
 const createBase = (board: string[][]) => {
-    const playerOneBase = board[0].map( (letter, column) => ({'letter': letter, 'row': 0, 'column': column, 'owner': 'player'}))
-    const playerTwoBase = board[board.length-1].map( (letter, column) => ({'letter': letter, 'row': board.length-1, 'column': column, 'owner': 'computer'}))
     return {
         type: "UPDATEBASE",
-        payload: playerOneBase.concat(playerTwoBase)
+        payload: startingBase(board)
     }
 }
 
@@ -51,6 +49,21 @@ const changePlayerName = (playerName: string) => {
     }
 }
 
+const resetBase = (board: string[][]) => {
+    const played: playedWord[] = []
+    const selection: letterObject[] = []
+    return {
+        type: "RESETGAME",
+        payload: {base: startingBase(board), played: played, selection: selection}
+    }
+}
+
+const startingBase = (board: string[][]) => {
+    const playerOneBase = board[0].map( (letter, column) => ({'letter': letter, 'row': 0, 'column': column, 'owner': 'player'}))
+    const playerTwoBase = board[board.length-1].map( (letter, column) => ({'letter': letter, 'row': board.length-1, 'column': column, 'owner': 'computer'}))
+    return  playerOneBase.concat(playerTwoBase)
+}
+
 export default {
     updateBase,
     updateSelection,
@@ -58,5 +71,6 @@ export default {
     removeFromSelection,
     updatePlayedWords,
     confirmSelection,
-    changePlayerName
+    changePlayerName,
+    resetBase
 }

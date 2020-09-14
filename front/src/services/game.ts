@@ -124,7 +124,7 @@ const removeIsolatedNodes = (confirmedSelections: letterObject[], board: string[
 }
 
 const checkIfLetterSelectionIsallowed = (letter: letterObject, board: string[][], selected: letterObject[], turn: string) => {
-  let selectedAgainIndex: number = selected.findIndex(l => l.row == letter.row && l.column == letter.column) 
+  const selectedAgainIndex: number = selected.findIndex(l => l.row == letter.row && l.column == letter.column) 
   if (selected.length === 0){
     return (letter.owner === turn) ?  { possibleSelection: true, selectedBeforeIndex: selectedAgainIndex} : { possibleSelection: false, selectedBeforeIndex: selectedAgainIndex}
  }

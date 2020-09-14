@@ -42,6 +42,13 @@ const baseReducer = (state = initialState, action: {type: string, payload: any})
                 ...state,
                 playerName: action.payload
             }
+        case "RESETGAME":
+            return {
+                ...state,
+                base: action.payload.base,
+                selection: action.payload.selection,
+                playedWords: action.payload.played
+            }
         default: {
             return state
         }       

@@ -43,3 +43,5 @@ export type PlayerWordStyle = {
     color: string,
     textAlign: 'left' | 'right' | 'center'
 }
+
+export type ButtonVisibility = 'visible' | 'hidden' | 'collapse'
