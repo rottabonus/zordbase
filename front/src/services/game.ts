@@ -50,6 +50,33 @@ const updateValues = async (base: letterObject[], board: string[][], playedWords
   return base
 }
 
+const updateValues_start = async (board: string[][]) => {
+  let base: letterObject[] = []
+  for(const boardRow of board){
+    const row: letterObject[] = boardRow.map( (letter, column): letterObject => ({'letter': letter, 'row': 0, 'column': column, 'owner': 'none'}))
+    base.concat(row)
+  }
+  
+  for (const [i, letter] of base.entries()) {
+      base[i].possibleWords = await checkAllPossibleWordsAndRoutes_start([letter], board)
+    }
+  return base
+}
+
+const checkAllPossibleWordsAndRoutes_start = async (selected: letterObject[], board: string[][]) => {
+  const movements = generateMovements(board)
+  const possibilities: letterObject[][] = []
+  const allWords = await fetchAll(selected.map(s => s.letter).join(''))
+  const words: string[] = allWords.map((w: string) => w.toUpperCase())
+  words.forEach( (possibleWord) => {
+    const route = getRouteForWord(possibleWord, movements, selected)
+    if (route.length > 0) {
+      possibilities.push(route)
+    }
+  })
+  return possibilities
+}
+
 const getBestWord = (base: letterObject[], turn: string, max: number) => {
   const computerBase = base.filter(s => s.owner === turn)
   const opponentBase = base.filter(s => s.owner !== turn)
@@ -233,5 +260,6 @@ export default {
   checkIfWin, 
   updateValues,
   getBestWord,
-  fetchMatch
+  fetchMatch,
+  updateValues_start
 }

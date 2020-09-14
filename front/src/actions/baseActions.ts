@@ -64,6 +64,8 @@ const startingBase = (board: string[][]) => {
     return  playerOneBase.concat(playerTwoBase)
 }
 
+
+
 export default {
     updateBase,
     updateSelection,

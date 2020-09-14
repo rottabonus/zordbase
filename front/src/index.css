@@ -38,13 +38,25 @@ body {
 }
 
 .selectedLetter {
-  border-style: solid;
+  border-color:  rgba(68, 68, 68, 0.6);
+}
+
+table {
+  table-layout: fixed;
+  margin: 0 11px;
 }
 
 td {
-  border-style: groove;
+  border-style: solid;
+  border-color: white;
+  border-width: 2px;
   border-radius: 3%;
   background-color: white;
+  height: 23px;
+	width: 20px;
+  margin: 0; 
+  padding: 0;
+  text-align: center;
 }
 
 .gameboard {
@@ -69,12 +81,6 @@ td {
 
 .gameboard-button {
   margin: 5px;
-  cursor: pointer;
-}
-
-.gameboard-button-hidden {
-  margin: 5px;
-  visibility: hidden;
 }
 
 .gameboard-button .helptext {

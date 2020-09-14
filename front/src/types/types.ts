@@ -44,4 +44,7 @@ export type PlayerWordStyle = {
     textAlign: 'left' | 'right' | 'center'
 }
 
-export type ButtonVisibility = 'visible' | 'hidden' | 'collapse'
+export type ButtonVisibility = {
+    visibility: 'visible' | 'hidden' | 'collapse',
+    cursor: 'pointer' | 'auto'
+}

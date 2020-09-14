@@ -18,7 +18,7 @@ export const GameBoardPage: React.FC = () => {
     const selected: letterObject[] = useSelector((state: RootState) => state.base.selection)
     const playedWords: playedWord[] = useSelector((state: RootState) => state.base.playedWords)
     const playerName: string = useSelector((state: RootState) => state.base.playerName)
-
+    
     const gameChange = () => {
         setTimeout(() => {
             alert(`winner is ${turn}`)
@@ -97,7 +97,7 @@ export const GameBoardPage: React.FC = () => {
     }
 
     const getButtonStyle = (): ButtonVisibility => {
-        return selected.length ? 'visible' : 'hidden'
+        return selected.length ? {visibility: 'visible', cursor: 'pointer' } : {visibility: 'hidden', cursor: 'auto' }
     }
     
     const scrollToBottom = () => {

@@ -12,18 +12,19 @@ const baseReducer = (state = initialState, action: {type: string, payload: any})
         case "UPDATEBASE":
             return {
                 ...state,
-                base: action.payload,
+                base: action.payload
             }
+        
         case "UPDATESELECTION":
             return {
                 ...state,
-                selection: action.payload,
+                selection: action.payload
                 
             }
         case "UPDATEPLAYEDWORDS":
             return {
                 ...state,
-                playedWords: action.payload,   
+                playedWords: action.payload   
                 }
         case "REMOVEFROMSELECTION":
             return {

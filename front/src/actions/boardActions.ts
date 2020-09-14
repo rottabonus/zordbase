@@ -5,7 +5,6 @@ const createBoard = () => {
     }
 }
 
-
 const newGame = (newGame: boolean, turn: string) => {
     return {
         type: "NEWGAME",
