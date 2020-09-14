@@ -4,7 +4,8 @@ import boardActions from '../actions/boardActions'
 const initialState: GameBoardState = {
     board: boardActions.createGameBoard(8, 10),
     newGame: true,
-    turn: 'player'
+    turn: 'player',
+    isLoading: true
   }
 
 const boardReducer = (state = initialState, action: {type: string, payload: any}) => {
@@ -19,7 +20,8 @@ const boardReducer = (state = initialState, action: {type: string, payload: any}
                 ...state,
                 newGame: action.payload.newGame,
                 board: action.payload.board,
-                turn: action.payload.turn
+                turn: action.payload.turn,
+                isLoading: action.payload.isLoading
             }
         case "CHANGETURN":
             return {
@@ -29,8 +31,13 @@ const boardReducer = (state = initialState, action: {type: string, payload: any}
         case "GAMESTART":
             return {
                 ...state,
-                newGame: action.payload,
+                newGame: action.payload        
             }
+        case "HASLOADED":
+            return {
+                ...state,
+                isLoading: action.payload        
+                }
         default: {
             return state
         }       

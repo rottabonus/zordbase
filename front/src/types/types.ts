@@ -19,14 +19,16 @@ export type playedWord = {
 export interface GameBoardState {
       board: string[][],
       newGame: boolean,
-      turn: string
+      turn: string,
+      isLoading: boolean
 }
 
 export interface BaseState {
       base: letterObject[],
       selection: letterObject[],
       playedWords: playedWord[],
-      playerName: string
+      playerName: string,
+      wholeBoard: letterObject[]
 }
 
 export interface PlayedWordState {

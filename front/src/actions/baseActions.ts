@@ -21,6 +21,13 @@ const updateSelection = (selection: letterObject[]) => {
     }
 }
 
+const removeSelectionAndPlayedWords = (selection: letterObject[], played: playedWord[]) => {
+    return {
+        type: "REMOVESELECTIONANDPLAYED",
+        payload: {selection: selection, played: played}
+    }
+}
+
 const removeFromSelection = (index: number) => {
     return {
         type: "REMOVEFROMSELECTION",
@@ -64,7 +71,12 @@ const startingBase = (board: string[][]) => {
     return  playerOneBase.concat(playerTwoBase)
 }
 
-
+const updateBoardValues = (wholeBase: letterObject[]) => {
+    return {
+        type: "UPDATEBOARDVALUES",
+        payload: wholeBase
+    }
+}
 
 export default {
     updateBase,
@@ -74,5 +86,7 @@ export default {
     updatePlayedWords,
     confirmSelection,
     changePlayerName,
-    resetBase
+    resetBase,
+    removeSelectionAndPlayedWords,
+    updateBoardValues
 }

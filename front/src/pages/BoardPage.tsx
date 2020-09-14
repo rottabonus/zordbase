@@ -18,6 +18,7 @@ export const GameBoardPage: React.FC = () => {
     const selected: letterObject[] = useSelector((state: RootState) => state.base.selection)
     const playedWords: playedWord[] = useSelector((state: RootState) => state.base.playedWords)
     const playerName: string = useSelector((state: RootState) => state.base.playerName)
+    const isLoading: boolean = useSelector((state: RootState) => state.board.isLoading)
     
     const gameChange = () => {
         setTimeout(() => {
@@ -28,8 +29,23 @@ export const GameBoardPage: React.FC = () => {
 
     const startNewGame = () => {
         //const nextTurn = turn === 'computer' ? playerName : 'computer'   
-        dispatch(allActions.baseActions.updatePlayedWords([]))
-        dispatch(allActions.boardActions.newGame(true, playerName))
+        dispatch(allActions.baseActions.removeSelectionAndPlayedWords([], []))
+        dispatch(allActions.boardActions.newGame(true, playerName, true))
+    }
+
+    const checkBoard = async () => {
+        const wholeBoard = await gameService.updateValues_start(board, playerName)
+        const positionsWithPossibleWords = wholeBoard.filter(w => w.possibleWords.length > 0)
+        const possibleWordsPercentage =  100 * positionsWithPossibleWords.length / wholeBoard.length
+        console.log('possibleWordsPercentage', possibleWordsPercentage)
+        if(possibleWordsPercentage < 74){
+            dispatch(allActions.baseActions.createBase(board))
+            startNewGame()
+        } else {
+            dispatch(allActions.boardActions.gameStart())
+            dispatch(allActions.boardActions.hasLoaded())
+            dispatch(allActions.baseActions.updateBoardValues(wholeBoard))
+        }
     }
 
     const resetGame = () => {
@@ -109,6 +125,7 @@ export const GameBoardPage: React.FC = () => {
           if (newGame){
             dispatch(allActions.baseActions.createBase(board))
             dispatch(allActions.boardActions.gameStart())
+            checkBoard()
           }  
           if (turn === 'computer' && !newGame){
               computersTurn()
@@ -121,11 +138,17 @@ export const GameBoardPage: React.FC = () => {
 
         return  <div className='gameboard-page-container'>
                     <div className='board-and-word-list'>
+                    {isLoading ?  
+                    <div className='gameboard'>
+                        <p>Loading...</p>
+                    </div> 
+                    :
                         <div className='gameboard'>
                             <GameBoardHeader />
-                            <Board selectLetter={selectLetter} getLetterStyle={getLetterStyle}/>
+                             <Board selectLetter={selectLetter} getLetterStyle={getLetterStyle}/>
                             <GameBoardButtons newGame={startNewGame} resetGame={resetGame} confirmSelection={confirmSelection} removeSelection={removeSelection} getButtonStyle={getButtonStyle}/>
                         </div> 
+                     }
                         <div>
                             <PlayedWordList messagesEndRef={messagesEndRef} getWordStyle={getWordStyle}/>
                         </div>

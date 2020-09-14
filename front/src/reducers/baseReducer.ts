@@ -4,7 +4,8 @@ const initialState: BaseState = {
     base: [],
     selection: [],
     playedWords: [],
-    playerName: 'player'
+    playerName: 'player',
+    wholeBoard: []
   }
 
 const baseReducer = (state = initialState, action: {type: string, payload: any}) => {
@@ -14,7 +15,6 @@ const baseReducer = (state = initialState, action: {type: string, payload: any})
                 ...state,
                 base: action.payload
             }
-        
         case "UPDATESELECTION":
             return {
                 ...state,
@@ -50,10 +50,22 @@ const baseReducer = (state = initialState, action: {type: string, payload: any})
                 selection: action.payload.selection,
                 playedWords: action.payload.played
             }
+        case "REMOVESELECTIONANDPLAYED":
+            return {
+                ...state,
+                selection: action.payload.selection,
+                playedWords: action.payload.played
+            }
+        case "UPDATEBOARDVALUES":
+            return {
+                ...state,
+                wholeBoard: action.payload
+                }
         default: {
             return state
         }       
     }
 }
+
 
 export default baseReducer
