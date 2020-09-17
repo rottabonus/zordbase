@@ -1,14 +1,14 @@
 const createBoard = () => {
     return {
         type: "CREATEBOARD",
-        payload: createGameBoard(8, 10)
+        payload: createGameBoard(12, 10)
     }
 }
 
 const newGame = (newGame: boolean, turn: string, isLoading: boolean) => {
     return {
         type: "NEWGAME",
-        payload: { newGame, board: createGameBoard(8, 10), turn, isLoading }
+        payload: { newGame, board: createGameBoard(12, 10), turn, isLoading }
     }
 }
 
@@ -21,7 +21,7 @@ const gameStart = () => {
 
 const hasLoaded = () => {
   return {
-    type: "HASLOADED",
+    type: "ISLOADING",
     payload: false
   }
 }
@@ -49,7 +49,7 @@ const createGameBoard = (rows: number, columns: number) => {
     }
     return board
   }
-
+  
   
 const getRandomInt = (max: number) => {
     return Math.floor(Math.random() * Math.floor(max));

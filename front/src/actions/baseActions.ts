@@ -7,12 +7,24 @@ const updateBase = (base: letterObject[]) => {
     }
 }
 
-const createBase = (board: string[][]) => {
+const createBase = (base: letterObject[]) => {
+    const possibleWordsTable: {[key:string]: string[]} = {}
+    for (const [i, letter] of base.entries()){
+        for (const [j, possibility] of letter.possibleWords.entries()) {
+            const word = letter.letter + possibility.map(o => o.letter).join('')
+            if(!(word in possibleWordsTable)){
+                possibleWordsTable[word] = [`${letter.row},${letter.column}`]
+            } else {
+                possibleWordsTable[word].push(`${letter.row},${letter.column}`)
+            }
+        }
+    }
     return {
-        type: "UPDATEBASE",
-        payload: startingBase(board)
+        type: "CREATEBASE",
+        payload: {base: base, possibleWordPositions: possibleWordsTable}
     }
 }
+
 
 const updateSelection = (selection: letterObject[]) => {
     return {
@@ -56,27 +68,30 @@ const changePlayerName = (playerName: string) => {
     }
 }
 
-const resetBase = (board: string[][]) => {
+const resetBase = (base: letterObject[], max: number, playerName: string) => {
     const played: playedWord[] = []
     const selection: letterObject[] = []
     return {
         type: "RESETGAME",
-        payload: {base: startingBase(board), played: played, selection: selection}
+        payload: {base: startingBase(base, max, playerName), played: played, selection: selection}
     }
 }
 
-const startingBase = (board: string[][]) => {
-    const playerOneBase = board[0].map( (letter, column) => ({'letter': letter, 'row': 0, 'column': column, 'owner': 'player'}))
-    const playerTwoBase = board[board.length-1].map( (letter, column) => ({'letter': letter, 'row': board.length-1, 'column': column, 'owner': 'computer'}))
-    return  playerOneBase.concat(playerTwoBase)
+const startingBase = (base: letterObject[], max: number, playerName: string) => {
+    const startingBase = base.map(letter => {
+        if(letter.row === 0){
+            letter = {...letter, owner: playerName}
+        } else if (letter.row === max-1){
+            letter = {...letter, owner: 'computer'}
+        } else {
+            letter = {...letter, owner:'none'}
+        }
+        return letter
+    })
+    return startingBase
 }
 
-const updateBoardValues = (wholeBase: letterObject[]) => {
-    return {
-        type: "UPDATEBOARDVALUES",
-        payload: wholeBase
-    }
-}
+
 
 export default {
     updateBase,
@@ -87,6 +102,5 @@ export default {
     confirmSelection,
     changePlayerName,
     resetBase,
-    removeSelectionAndPlayedWords,
-    updateBoardValues
+    removeSelectionAndPlayedWords
 }

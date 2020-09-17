@@ -5,11 +5,17 @@ const initialState: BaseState = {
     selection: [],
     playedWords: [],
     playerName: 'player',
-    wholeBoard: []
+    possibleWordPositions: {}
   }
 
 const baseReducer = (state = initialState, action: {type: string, payload: any}) => {
     switch(action.type){
+        case "CREATEBASE":
+            return {
+                ...state,
+                base: action.payload.base,
+                possibleWordPositions: action.payload.possibleWordPositions
+            }
         case "UPDATEBASE":
             return {
                 ...state,
@@ -19,7 +25,6 @@ const baseReducer = (state = initialState, action: {type: string, payload: any})
             return {
                 ...state,
                 selection: action.payload
-                
             }
         case "UPDATEPLAYEDWORDS":
             return {
@@ -56,11 +61,6 @@ const baseReducer = (state = initialState, action: {type: string, payload: any})
                 selection: action.payload.selection,
                 playedWords: action.payload.played
             }
-        case "UPDATEBOARDVALUES":
-            return {
-                ...state,
-                wholeBoard: action.payload
-                }
         default: {
             return state
         }       

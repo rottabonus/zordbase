@@ -2,7 +2,7 @@ import { GameBoardState }  from '../types/types'
 import boardActions from '../actions/boardActions'
 
 const initialState: GameBoardState = {
-    board: boardActions.createGameBoard(8, 10),
+    board: boardActions.createGameBoard(12, 10),
     newGame: true,
     turn: 'player',
     isLoading: true
@@ -33,11 +33,16 @@ const boardReducer = (state = initialState, action: {type: string, payload: any}
                 ...state,
                 newGame: action.payload        
             }
-        case "HASLOADED":
+        case "ISLOADING":
             return {
                 ...state,
                 isLoading: action.payload        
                 }
+        case "UPDATELOADINGBOARD":
+            return {
+                ...state,
+                loadingBoard: action.payload        
+            }
         default: {
             return state
         }       

@@ -4,6 +4,7 @@ import { Board } from '../components/Board'
 import { GameBoardButtons } from '../components/GameBoardButtons'
 import { GameBoardHeader } from '../components/GameBoardHeader'
 import { PlayedWordList } from '../components/PlayedWordList'
+import { LoadingTable } from '../components/LoadingTable'
 import { letterObject, selectionObject, playedWord, LetterStyle, PlayerWordStyle, ButtonVisibility } from '../types/types'
 import { useSelector, useDispatch } from 'react-redux'
 import allActions from '../actions/allActions'
@@ -14,11 +15,12 @@ export const GameBoardPage: React.FC = () => {
     const board: string[][] = useSelector((state: RootState) => state.board.board)
     const turn: string = useSelector((state: RootState) => state.board.turn)
     const newGame: boolean = useSelector((state: RootState) => state.board.newGame)
-    const confirmedSelections: letterObject[] = useSelector((state: RootState) => state.base.base)
+    const base: letterObject[] = useSelector((state: RootState) => state.base.base)
     const selected: letterObject[] = useSelector((state: RootState) => state.base.selection)
     const playedWords: playedWord[] = useSelector((state: RootState) => state.base.playedWords)
     const playerName: string = useSelector((state: RootState) => state.base.playerName)
     const isLoading: boolean = useSelector((state: RootState) => state.board.isLoading)
+    const possibleWordPositions: {[key:string]: string[]} = useSelector((state: RootState) => state.base.possibleWordPositions)
     
     const gameChange = () => {
         setTimeout(() => {
@@ -34,22 +36,20 @@ export const GameBoardPage: React.FC = () => {
     }
 
     const checkBoard = async () => {
-        const wholeBoard = await gameService.updateValues_start(board, playerName)
+        const wholeBoard = await gameService.calculateValues(board, playerName)
         const positionsWithPossibleWords = wholeBoard.filter(w => w.possibleWords.length > 0)
         const possibleWordsPercentage =  100 * positionsWithPossibleWords.length / wholeBoard.length
         console.log('possibleWordsPercentage', possibleWordsPercentage)
         if(possibleWordsPercentage < 74){
-            dispatch(allActions.baseActions.createBase(board))
             startNewGame()
         } else {
-            dispatch(allActions.boardActions.gameStart())
             dispatch(allActions.boardActions.hasLoaded())
-            dispatch(allActions.baseActions.updateBoardValues(wholeBoard))
+            dispatch(allActions.baseActions.createBase(wholeBoard))
         }
     }
 
     const resetGame = () => {
-        dispatch(allActions.baseActions.resetBase(board))
+        dispatch(allActions.baseActions.resetBase(base, board.length, playerName))
     }
 
     const confirmSelection = async () => {
@@ -57,10 +57,10 @@ export const GameBoardPage: React.FC = () => {
         const wordExist = await gameService.fetchMatch(newWord)
         const playedAgain = playedWords.filter(word => word.owner === turn).filter(word => word.word === newWord)
         if(wordExist && playedAgain.length === 0){
-            const newSelectionConfirmed = selected.map(s => ({'letter': s.letter, 'row': s.row, 'column': s.column, 'owner': turn, possibleWords: []}))
-            const confirmedAndFiltered = gameService.removeDuplicates(newSelectionConfirmed, confirmedSelections, board, turn)
+            const newSelectionConfirmed = selected.map(s => ({'letter': s.letter, 'row': s.row, 'column': s.column, 'owner': turn}))
+            const confirmedAndFiltered = gameService.updateOwnersAndRemoveIsolatedNodes(newSelectionConfirmed, base, board, turn)
             const checkGame = gameService.checkIfWin(newSelectionConfirmed, turn, board.length)
-            dispatch(allActions.baseActions.confirmSelection(confirmedAndFiltered.concat(newSelectionConfirmed), [...playedWords, {word: newWord, owner: turn}], []))
+            dispatch(allActions.baseActions.confirmSelection(confirmedAndFiltered, [...playedWords, {word: newWord, owner: turn}], []))
             checkGame ? gameChange() : dispatch(allActions.boardActions.changeTurn('computer'))       
         } else {
             const message = playedAgain.length > 0 ? `cant play same word twice, ${newWord} already played` :  `word ${newWord}, does not exist`
@@ -73,19 +73,19 @@ export const GameBoardPage: React.FC = () => {
         dispatch(allActions.baseActions.removeFromSelection(0))
     }
 
-    const computersTurn = async () => {
-        const updateSelections = await gameService.updateValues(confirmedSelections, board, playedWords.filter(f => f.owner === turn), turn)
-        const computerSelected = gameService.getBestWord(updateSelections, turn, board.length)
+    const computersTurn =  () => {
+        const computerSelected = gameService.getBestWord(base, turn, board.length)
         const newSelectionConfirmed = computerSelected.map(s => ({'letter': s.letter, 'row': s.row, 'column': s.column, 'owner': turn, possibleWords: s.possibleWords}))
-        const confirmedAndFiltered = gameService.removeDuplicates(newSelectionConfirmed, updateSelections, board, turn)
+        const confirmedAndFiltered = gameService.updateOwnersAndRemoveIsolatedNodes(newSelectionConfirmed, base, board, turn)
+        const fullyUpdatedBase = gameService.updateBaseWithPossibleWordTable(newSelectionConfirmed, possibleWordPositions, confirmedAndFiltered)
         const checkGame = gameService.checkIfWin(newSelectionConfirmed, turn, board.length)
-        dispatch(allActions.baseActions.confirmSelection(confirmedAndFiltered.concat(newSelectionConfirmed), [...playedWords, {word: computerSelected.map(s => s.letter).join(''), owner: turn}], []))
+        dispatch(allActions.baseActions.confirmSelection(fullyUpdatedBase, [...playedWords, {word: computerSelected.map(s => s.letter).join(''), owner: turn}], []))
         checkGame ? gameChange() : dispatch(allActions.boardActions.changeTurn(playerName))
     }
 
     const selectLetter = async (letter: string, row: number, column: number, owner: string) => {
         let obj = { letter: letter, row: row, column: column, owner: owner}
-        const selectionOnBase = confirmedSelections.filter(s => s.owner === obj.owner && s.column === obj.column && s.row === obj.row)
+        const selectionOnBase = base.filter(s => s.owner === obj.owner && s.column === obj.column && s.row === obj.row)
         if (selectionOnBase.length || selected.length > 0){
             const result: selectionObject = gameService.checkIfLetterSelectionIsallowed(obj, board, selected, turn)
             if (result.possibleSelection){
@@ -101,7 +101,7 @@ export const GameBoardPage: React.FC = () => {
         const isSelected = found.length === 0 ? 'none' : 'selectedLetter'
         const cursorStyle = turn  === 'computer' ? 'progress' : 'pointer'
         const selectedWithOwner: letterObject[] = selected.map(s => ({'row':s.row, 'column': s.column, 'letter': s.letter, 'owner': turn}))
-        const allSelected = selectedWithOwner.concat(confirmedSelections)
+        const allSelected = selectedWithOwner.concat(base)
         const ownerArr = allSelected.filter(a => a.row === r && a.column === c)
         const owner = ownerArr.length === 0 ? 'none' : ownerArr[0].owner
         const backgroundColor = owner === 'computer' ? 'lightsalmon' : owner === playerName ? 'paleturquoise' : null
@@ -118,12 +118,12 @@ export const GameBoardPage: React.FC = () => {
     
     const scrollToBottom = () => {
         messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
-      }
+    }
+
 
       useEffect(() => {
         scrollToBottom()
           if (newGame){
-            dispatch(allActions.baseActions.createBase(board))
             dispatch(allActions.boardActions.gameStart())
             checkBoard()
           }  
@@ -132,23 +132,19 @@ export const GameBoardPage: React.FC = () => {
           }
       }, [turn, newGame])
 
+
       const dispatch = useDispatch()
 
       const messagesEndRef = useRef(null)
 
         return  <div className='gameboard-page-container'>
                     <div className='board-and-word-list'>
-                    {isLoading ?  
-                    <div className='gameboard'>
-                        <p>Loading...</p>
-                    </div> 
-                    :
                         <div className='gameboard'>
                             <GameBoardHeader />
-                             <Board selectLetter={selectLetter} getLetterStyle={getLetterStyle}/>
+                            { isLoading ? <LoadingTable />
+                            :<Board selectLetter={selectLetter} getLetterStyle={getLetterStyle}/> }
                             <GameBoardButtons newGame={startNewGame} resetGame={resetGame} confirmSelection={confirmSelection} removeSelection={removeSelection} getButtonStyle={getButtonStyle}/>
                         </div> 
-                     }
                         <div>
                             <PlayedWordList messagesEndRef={messagesEndRef} getWordStyle={getWordStyle}/>
                         </div>

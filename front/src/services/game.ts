@@ -1,6 +1,5 @@
 import {
-  letterObject, 
-  playedWord
+  letterObject
 } from '../types/types'
 
 
@@ -20,15 +19,40 @@ const fetchMatch = async (word: string) => {
   return false
 }
 
-const removeDuplicates = (newSelectionConfirmed: letterObject[], confirmedSelections: letterObject[], board: string[][], turn: string) => {
-  const toFilter =  confirmedSelections.filter(array => newSelectionConfirmed.some(filter => filter.row === array.row && filter.column === array.column))
+const updateOwnersAndRemoveIsolatedNodes = (newSelectionConfirmed: letterObject[], base: letterObject[], board: string[][], turn: string) => {
+  const toFilter =  base.filter(array => newSelectionConfirmed.some(filter => filter.row === array.row && filter.column === array.column))
   toFilter.forEach((filter) => {
-      const index = confirmedSelections.indexOf(filter)
+      const index: number = base.indexOf(filter)
       if (index !== -1) {
-        confirmedSelections.splice(index, 1)
+        base[index].owner = turn
       }
   })
-  return removeIsolatedNodes(confirmedSelections, board, turn)
+  return removeIsolatedNodes(base, board, turn)
+}
+
+
+const updateBaseWithPossibleWordTable = (selectedLetters: letterObject[], possibleWordTable: {[key:string]: string[]}, base: letterObject[]) => {
+  const word = selectedLetters.map(obj => obj.letter).join('')
+  const newBase: letterObject[] = [...base]
+  if(word in possibleWordTable){
+      const changed: letterObject[] = newBase.map(o => {
+        if(checkIfPositionMatches(possibleWordTable[word], o)){
+          o = {...o, possibleWords: o.possibleWords.filter(wordArr => wordArr.map(word => word.letter).join('') !== word.substring(1, word.length))}
+        }
+        return o
+      })
+      return changed
+  }
+}
+
+const checkIfPositionMatches = (posArr: string[], obj: letterObject) => {
+  for(const position of posArr){
+    const posValues = position.split(',')
+    if( obj.row.toString() === posValues[0] && obj.column.toString() === posValues[1] ){
+      return true
+    }
+  }
+  return false
 }
 
 const checkIfWin = (selections: letterObject[], turn: string, max: number) => {
@@ -37,21 +61,7 @@ const checkIfWin = (selections: letterObject[], turn: string, max: number) => {
   return win.length > 0
 }
 
-const updateValues = async (base: letterObject[], board: string[][], playedWords: playedWord[], turn: string) => {
-  for (const [i, letter] of base.entries()) {
-    const allWords: string[] = await fetchAll()
-    const playedWordsList: string[] = playedWords.filter(w => w.owner === turn).map(s => s.word)
-    const words: string[] = allWords.map((w: string) => w.toUpperCase()).filter((word: string) => !playedWordsList.includes(word))
-    const reCheck = playedWords.length > 0 ? playedWords[playedWords.length-1].word.startsWith(letter.letter) : false
-    if( letter.possibleWords === undefined || reCheck){
-      base[i].possibleWords = undefined
-      base[i].possibleWords = await checkAllPossibleWordsAndRoutes(letter, board, words )
-    }
-  } 
-  return base
-}
-
-const updateValues_start = async (board: string[][], playerName: string) => {
+const calculateValues = async (board: string[][], playerName: string) => {
   let base: letterObject[] = []
   const allWords = await fetchAll()
   for(const [j, boardRow] of board.entries()){
@@ -59,7 +69,6 @@ const updateValues_start = async (board: string[][], playerName: string) => {
     const row: letterObject[] = boardRow.map( (letter, column): letterObject => ({'letter': letter, 'row': j, 'column': column, 'owner': owner}))
     base.push(...row)
   }
-  
   for (const [i, letter] of base.entries()) {
     const possibilities = checkAllPossibleWordsAndRoutes(letter, board, allWords)
     base[i].possibleWords =  possibilities
@@ -129,7 +138,6 @@ const getBestWord = (base: letterObject[], turn: string, max: number) => {
         if(wordValue > greatestWordValue){
           greatestWordValue = wordValue
           selection = [computerBase[i], ...computerBase[i].possibleWords[j]]
-          //selection = computerBase[i].possibleWords[j]
         }
       }
     }
@@ -143,27 +151,28 @@ const getChangeInHeight = (word: letterObject[], turn: string) => {
 }
 
 const getCommonElements = (base: letterObject[], word: letterObject[]) => {
-let commonElements: { [key:string] : boolean }  = {}
-let commonIterator = 0
-for(const [i, obj] of base.entries()){
-  if(!commonElements[`${obj.row},${obj.column}`]){
-    commonElements[`${obj.row},${obj.column}`] = true
+  let commonElements: { [key:string] : boolean }  = {}
+  let commonIterator = 0
+  for(const [i, obj] of base.entries()){
+    if(!commonElements[`${obj.row},${obj.column}`]){
+      commonElements[`${obj.row},${obj.column}`] = true
+    }
   }
-}
-for(const [j, obj] of word.entries()){
-  if(commonElements[`${obj.row},${obj.column}`]){
-    commonIterator++
+  for(const [j, obj] of word.entries()){
+    if(commonElements[`${obj.row},${obj.column}`]){
+      commonIterator++
+    }
   }
-}
-return commonIterator
-}
+  return commonIterator
+  }
 
 const removeIsolatedNodes = (confirmedSelections: letterObject[], board: string[][], turn: string) => {
   const queue = []
+  const baseFilteredFromNone = confirmedSelections.filter(s => s.owner !== 'none')
   const movements = generateMovements(board)
   const attachedNodes: letterObject[] = []
   const searched : { [key:string] : letterObject } = {}
-  const nodesToCheck = confirmedSelections.filter(m => m.owner !== turn).sort((a, b) => {
+  const nodesToCheck = baseFilteredFromNone.filter(m => m.owner !== turn).sort((a, b) => {
     return turn === 'computer' ? a.row - b.row || a.column - b.column : b.row - a.row || a.column - b.column 
   })
   queue.push(nodesToCheck[0])
@@ -181,7 +190,7 @@ const removeIsolatedNodes = (confirmedSelections: letterObject[], board: string[
       }
     })
   } while (queue.length > 0)
-  return attachedNodes.concat(confirmedSelections.filter(obj => obj.owner === turn))
+  return attachedNodes.concat(confirmedSelections.filter(obj => obj.owner === turn), confirmedSelections.filter(s => s.owner === 'none'))
 }
 
 const checkIfLetterSelectionIsallowed = (letter: letterObject, board: string[][], selected: letterObject[], turn: string) => {
@@ -246,10 +255,10 @@ const returnNonPathSearchedNodeIndexes = (searched: letterObject[], obj: letterO
 
 export default {
   checkIfLetterSelectionIsallowed, 
-  removeDuplicates,
+  updateOwnersAndRemoveIsolatedNodes,
   checkIfWin, 
-  updateValues,
   getBestWord,
   fetchMatch,
-  updateValues_start
+  calculateValues,
+  updateBaseWithPossibleWordTable
 }

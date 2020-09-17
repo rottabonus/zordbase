@@ -28,7 +28,7 @@ export interface BaseState {
       selection: letterObject[],
       playedWords: playedWord[],
       playerName: string,
-      wholeBoard: letterObject[]
+      possibleWordPositions: {[key:string]: string[]}
 }
 
 export interface PlayedWordState {
