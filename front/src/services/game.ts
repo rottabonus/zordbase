@@ -49,11 +49,24 @@ const removeIsolatedNodes = (confirmedSelections: letterObject[], board: string[
           if(nodeIndex !== -1){
             attachedNodes.push(nodesToCheck[nodeIndex])
             queue.push(nodesToCheck[nodeIndex])
-        }
+        } 
       }
     })
   } while (queue.length > 0)
-  return attachedNodes.concat(confirmedSelections.filter(obj => obj.owner === turn), confirmedSelections.filter(s => s.owner === 'none'))
+  const neutralNodes = confirmedSelections.filter(s => s.owner === 'none')
+  const turnNodes = confirmedSelections.filter(obj => obj.owner === turn)
+  const IsolatedWithAttachedNodes = getIsolatedNodes(attachedNodes, confirmedSelections.filter(obj => obj.owner !== turn && obj.owner !== 'none'))
+  return IsolatedWithAttachedNodes.concat(turnNodes, neutralNodes)
+}
+
+const getIsolatedNodes = (attached: letterObject[], base: letterObject[]) => {
+  const unAttached =  base.map(o => {
+    if(!checkIfExistInSelection(attached, o)){
+      o = {...o, owner: 'none'}
+    }
+    return o
+  })
+  return unAttached
 }
 
 const checkIfExistInSelection = (sel: letterObject[], o: letterObject) => {
@@ -95,14 +108,14 @@ const calculateValues = async (board: string[][], playerName: string) => {
   const allWords = await fetchAll()
   for(const [j, boardRow] of board.entries()){
     const owner = j === 0 ? playerName :  j === board.length-1 ? 'computer' : 'none'
-    const row: letterObject[] = boardRow.map( (letter, column): letterObject => ({'letter': letter, 'row': j, 'column': column, 'owner': owner}))
+    const row: letterObject[] = boardRow.map((letter, column): letterObject => ({'letter': letter, 'row': j, 'column': column, 'owner': owner}))
     base.push(...row)
   }
-  for (const [i, letter] of base.entries()) {
-    const possibilities = checkAllPossibleWordsAndRoutes(letter, board, allWords)
-    base[i].possibleWords =  possibilities
-    }
-  return base
+  const mappedWithPossibilities = base.map(letter => {
+    letter = {...letter, possibleWords: checkAllPossibleWordsAndRoutes(letter, board, allWords)}
+    return letter
+  })
+  return mappedWithPossibilities
 }
 
 const checkAllPossibleWordsAndRoutes = (letter: letterObject, board: string[][], all: string[]) => {

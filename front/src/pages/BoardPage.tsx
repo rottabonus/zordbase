@@ -89,7 +89,7 @@ export const GameBoardPage: React.FC = () => {
             const checkGame = gameService.checkIfWin(newSelectionConfirmed, turn, board.length)
             dispatch(allActions.baseActions.confirmSelection(fullyUpdatedBase, [...playedWords, {word: computerSelected.map(s => s.letter).join(''), owner: turn, turn: stateHistory.length}], []))
             checkGame ? gameChange() : dispatch(allActions.boardActions.changeTurn(playerName))
-        }, timeOutCounter * 800);
+        }, timeOutCounter * 500 + 700  );
         
     }
 
@@ -114,7 +114,7 @@ export const GameBoardPage: React.FC = () => {
         setTimeout(() => {
             backToPresent(currentBase)
             removeSelection()
-        }, timeOutCounter * 800);
+        }, timeOutCounter * 500 + 700 );
     }
 
     const computerSelect = (selection: letterObject[]) => {
@@ -131,7 +131,6 @@ export const GameBoardPage: React.FC = () => {
     }
     
     const getLetterStyle = (r: number, c:number): LetterStyle => {
-        console.log('in getLetterStyle', selected)
         const found = selected.filter(a => a.row === r && a.column === c)
         const isSelected = found.length === 0 ? 'none' : 'selectedLetter'
         const cursorStyle = turn  === 'computer' ? 'progress' : 'pointer'
