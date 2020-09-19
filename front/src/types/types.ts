@@ -13,7 +13,8 @@ export type selectionObject = {
 
 export type playedWord = {
     word: string,
-    owner: string
+    owner: string,
+    turn: number
 }
 
 export interface GameBoardState {
@@ -29,6 +30,11 @@ export interface BaseState {
       playedWords: playedWord[],
       playerName: string,
       possibleWordPositions: {[key:string]: string[]}
+      stateHistory: [{
+          base: letterObject[],
+          selection: letterObject[],
+          turn: string
+      }]
 }
 
 export interface PlayedWordState {
@@ -50,3 +56,4 @@ export type ButtonVisibility = {
     visibility: 'visible' | 'hidden' | 'collapse',
     cursor: 'pointer' | 'auto'
 }
+

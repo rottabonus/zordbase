@@ -5,7 +5,8 @@ import { RootState } from '../reducers/combineReducer'
 
 interface PlayedWordProps {
     messagesEndRef: any
-    getWordStyle: (owner: string) => PlayerWordStyle
+    getWordStyle: (owner: string) => PlayerWordStyle,
+    timeTravel: (turn: number) => void
 }
 
 export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
@@ -21,7 +22,7 @@ export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
             <div className='wordListWords'>
                 {played.map((w, i )=> {
                     const styleValues = props.getWordStyle(w.owner)
-                    return (<span key={i} style={{color: styleValues.color, textAlign: styleValues.textAlign}}>{w.word}</span>)
+                    return (<span key={i} onClick={() => props.timeTravel(w.turn)} style={{color: styleValues.color, textAlign: styleValues.textAlign}}>{w.word}</span>)
                 }                    
                 )}
                     <div ref={props.messagesEndRef} />

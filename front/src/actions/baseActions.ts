@@ -21,7 +21,7 @@ const createBase = (base: letterObject[]) => {
     }
     return {
         type: "CREATEBASE",
-        payload: {base: base, possibleWordPositions: possibleWordsTable}
+        payload: {base, possibleWordPositions: possibleWordsTable}
     }
 }
 
@@ -36,7 +36,7 @@ const updateSelection = (selection: letterObject[]) => {
 const removeSelectionAndPlayedWords = (selection: letterObject[], played: playedWord[]) => {
     return {
         type: "REMOVESELECTIONANDPLAYED",
-        payload: {selection: selection, played: played}
+        payload: {selection, played}
     }
 }
 
@@ -57,7 +57,7 @@ const updatePlayedWords = (played: playedWord[]) => {
 const confirmSelection = (base: letterObject[], played: playedWord[], selection: letterObject[]) => {
     return {
         type: "CONFIRMSELECTION",
-        payload: {base: base, played: played, selection: selection}
+        payload: {base, played, selection}
     }
 }
 
@@ -68,12 +68,12 @@ const changePlayerName = (playerName: string) => {
     }
 }
 
-const resetBase = (base: letterObject[], max: number, playerName: string) => {
+const resetBase = (base: letterObject[]) => {
     const played: playedWord[] = []
     const selection: letterObject[] = []
     return {
         type: "RESETGAME",
-        payload: {base: startingBase(base, max, playerName), played: played, selection: selection}
+        payload: {base, played, selection}
     }
 }
 
@@ -91,7 +91,12 @@ const startingBase = (base: letterObject[], max: number, playerName: string) => 
     return startingBase
 }
 
-
+const createHistory = (base: letterObject[], selection: letterObject[], turn: string) => {
+    return {
+        type: "CREATEHISTORY",
+        payload: {base, selection, turn}
+    }
+}
 
 export default {
     updateBase,
@@ -102,5 +107,6 @@ export default {
     confirmSelection,
     changePlayerName,
     resetBase,
-    removeSelectionAndPlayedWords
+    removeSelectionAndPlayedWords,
+    createHistory
 }

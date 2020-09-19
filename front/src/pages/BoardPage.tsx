@@ -21,6 +21,7 @@ export const GameBoardPage: React.FC = () => {
     const playerName: string = useSelector((state: RootState) => state.base.playerName)
     const isLoading: boolean = useSelector((state: RootState) => state.board.isLoading)
     const possibleWordPositions: {[key:string]: string[]} = useSelector((state: RootState) => state.base.possibleWordPositions)
+    const stateHistory = useSelector((state: RootState) => state.base.stateHistory)
     
     const gameChange = () => {
         setTimeout(() => {
@@ -49,7 +50,7 @@ export const GameBoardPage: React.FC = () => {
     }
 
     const resetGame = () => {
-        dispatch(allActions.baseActions.resetBase(base, board.length, playerName))
+        dispatch(allActions.baseActions.resetBase(stateHistory[1].base))
     }
 
     const confirmSelection = async () => {
@@ -57,10 +58,12 @@ export const GameBoardPage: React.FC = () => {
         const wordExist = await gameService.fetchMatch(newWord)
         const playedAgain = playedWords.filter(word => word.owner === turn).filter(word => word.word === newWord)
         if(wordExist && playedAgain.length === 0){
+            const history = [...base]
+            dispatch(allActions.baseActions.createHistory(history, selected, turn))
             const newSelectionConfirmed = selected.map(s => ({'letter': s.letter, 'row': s.row, 'column': s.column, 'owner': turn}))
             const confirmedAndFiltered = gameService.updateOwnersAndRemoveIsolatedNodes(newSelectionConfirmed, base, board, turn)
             const checkGame = gameService.checkIfWin(newSelectionConfirmed, turn, board.length)
-            dispatch(allActions.baseActions.confirmSelection(confirmedAndFiltered, [...playedWords, {word: newWord, owner: turn}], []))
+            dispatch(allActions.baseActions.confirmSelection(confirmedAndFiltered, [...playedWords, {word: newWord, owner: turn, turn: stateHistory.length}], []))
             checkGame ? gameChange() : dispatch(allActions.boardActions.changeTurn('computer'))       
         } else {
             const message = playedAgain.length > 0 ? `cant play same word twice, ${newWord} already played` :  `word ${newWord}, does not exist`
@@ -74,13 +77,20 @@ export const GameBoardPage: React.FC = () => {
     }
 
     const computersTurn =  () => {
+        const history = [...base]
         const computerSelected = gameService.getBestWord(base, turn, board.length)
         const newSelectionConfirmed = computerSelected.map(s => ({'letter': s.letter, 'row': s.row, 'column': s.column, 'owner': turn, possibleWords: s.possibleWords}))
-        const confirmedAndFiltered = gameService.updateOwnersAndRemoveIsolatedNodes(newSelectionConfirmed, base, board, turn)
-        const fullyUpdatedBase = gameService.updateBaseWithPossibleWordTable(newSelectionConfirmed, possibleWordPositions, confirmedAndFiltered)
-        const checkGame = gameService.checkIfWin(newSelectionConfirmed, turn, board.length)
-        dispatch(allActions.baseActions.confirmSelection(fullyUpdatedBase, [...playedWords, {word: computerSelected.map(s => s.letter).join(''), owner: turn}], []))
-        checkGame ? gameChange() : dispatch(allActions.boardActions.changeTurn(playerName))
+        dispatch(allActions.baseActions.createHistory(history, newSelectionConfirmed, turn))
+        computerSelect(newSelectionConfirmed)
+        const timeOutCounter = newSelectionConfirmed.length
+        setTimeout(() => {
+            const confirmedAndFiltered = gameService.updateOwnersAndRemoveIsolatedNodes(newSelectionConfirmed, base, board, turn)
+            const fullyUpdatedBase = gameService.updateBaseWithPossibleWordTable(newSelectionConfirmed, possibleWordPositions, confirmedAndFiltered)
+            const checkGame = gameService.checkIfWin(newSelectionConfirmed, turn, board.length)
+            dispatch(allActions.baseActions.confirmSelection(fullyUpdatedBase, [...playedWords, {word: computerSelected.map(s => s.letter).join(''), owner: turn, turn: stateHistory.length}], []))
+            checkGame ? gameChange() : dispatch(allActions.boardActions.changeTurn(playerName))
+        }, timeOutCounter * 800);
+        
     }
 
     const selectLetter = async (letter: string, row: number, column: number, owner: string) => {
@@ -94,13 +104,38 @@ export const GameBoardPage: React.FC = () => {
                 dispatch(allActions.baseActions.removeFromSelection(result.selectedBeforeIndex))
                 }
             }
-        }  
+        }
+    
+    const timeTravel = (turn: number) => {
+        const currentBase = [...base]
+        const timeOutCounter = stateHistory[turn].selection.length
+        dispatch(allActions.baseActions.updateBase(stateHistory[turn].base))
+        computerSelect(stateHistory[turn].selection)
+        setTimeout(() => {
+            backToPresent(currentBase)
+            removeSelection()
+        }, timeOutCounter * 800);
+    }
+
+    const computerSelect = (selection: letterObject[]) => {
+        for(const [i, s] of selection.entries()){
+            const selectionArray: letterObject[] = selection.filter((s: letterObject, j: number) => j <= i)
+            setTimeout(() => {
+                dispatch(allActions.baseActions.updateSelection(selectionArray))
+            }, (i+1)*500);
+        }
+    }
+
+    const backToPresent = (base: letterObject[]) => {
+        dispatch(allActions.baseActions.updateBase(base))
+    }
     
     const getLetterStyle = (r: number, c:number): LetterStyle => {
+        console.log('in getLetterStyle', selected)
         const found = selected.filter(a => a.row === r && a.column === c)
         const isSelected = found.length === 0 ? 'none' : 'selectedLetter'
         const cursorStyle = turn  === 'computer' ? 'progress' : 'pointer'
-        const selectedWithOwner: letterObject[] = selected.map(s => ({'row':s.row, 'column': s.column, 'letter': s.letter, 'owner': turn}))
+        const selectedWithOwner: letterObject[] = selected.map(s => ({'row':s.row, 'column': s.column, 'letter': s.letter, 'owner': s.owner}))
         const allSelected = selectedWithOwner.concat(base)
         const ownerArr = allSelected.filter(a => a.row === r && a.column === c)
         const owner = ownerArr.length === 0 ? 'none' : ownerArr[0].owner
@@ -146,7 +181,7 @@ export const GameBoardPage: React.FC = () => {
                             <GameBoardButtons newGame={startNewGame} resetGame={resetGame} confirmSelection={confirmSelection} removeSelection={removeSelection} getButtonStyle={getButtonStyle}/>
                         </div> 
                         <div>
-                            <PlayedWordList messagesEndRef={messagesEndRef} getWordStyle={getWordStyle}/>
+                            <PlayedWordList messagesEndRef={messagesEndRef} getWordStyle={getWordStyle} timeTravel={timeTravel}/>
                         </div>
                     </div>
                 </div>;

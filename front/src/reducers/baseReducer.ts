@@ -5,7 +5,12 @@ const initialState: BaseState = {
     selection: [],
     playedWords: [],
     playerName: 'player',
-    possibleWordPositions: {}
+    possibleWordPositions: {},
+    stateHistory: [{
+        base: [],
+        selection: [],
+        turn: ''
+    }]
   }
 
 const baseReducer = (state = initialState, action: {type: string, payload: any}) => {
@@ -60,6 +65,11 @@ const baseReducer = (state = initialState, action: {type: string, payload: any})
                 ...state,
                 selection: action.payload.selection,
                 playedWords: action.payload.played
+            }
+        case "CREATEHISTORY": 
+            return {
+                ...state,
+                stateHistory: [...state.stateHistory, {base: action.payload.base, selection: action.payload.selection, turn: action.payload.turn}]
             }
         default: {
             return state

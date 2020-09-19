@@ -20,16 +20,45 @@ const fetchMatch = async (word: string) => {
 }
 
 const updateOwnersAndRemoveIsolatedNodes = (newSelectionConfirmed: letterObject[], base: letterObject[], board: string[][], turn: string) => {
-  const toFilter =  base.filter(array => newSelectionConfirmed.some(filter => filter.row === array.row && filter.column === array.column))
-  toFilter.forEach((filter) => {
-      const index: number = base.indexOf(filter)
-      if (index !== -1) {
-        base[index].owner = turn
-      }
+  const filtered =  base.map(o => {
+    if(checkIfExistInSelection(newSelectionConfirmed, o)){
+      o = {...o, owner: turn}
+    }
+    return o
   })
-  return removeIsolatedNodes(base, board, turn)
+  return removeIsolatedNodes(filtered, board, turn)
 }
 
+const removeIsolatedNodes = (confirmedSelections: letterObject[], board: string[][], turn: string) => {
+  const queue = []
+  const baseFilteredFromNone = confirmedSelections.filter(s => s.owner !== 'none')
+  const movements = generateMovements(board)
+  const attachedNodes: letterObject[] = []
+  const searched : { [key:string] : letterObject } = {}
+  const nodesToCheck = baseFilteredFromNone.filter(m => m.owner !== turn).sort((a, b) => {
+    return turn === 'computer' ? a.row - b.row || a.column - b.column : b.row - a.row || a.column - b.column 
+  })
+  queue.push(nodesToCheck[0])
+  do {
+    const toCheck = queue.shift()
+    const neighbors = movements[`${toCheck.row},${toCheck.column}`]
+    neighbors.forEach((node) => {
+      if (!(`${node.row},${node.column}` in searched)){
+        searched[`${node.row},${node.column}`] = node
+        const nodeIndex = nodesToCheck.findIndex(obj => obj.row === node.row && obj.column === node.column)
+          if(nodeIndex !== -1){
+            attachedNodes.push(nodesToCheck[nodeIndex])
+            queue.push(nodesToCheck[nodeIndex])
+        }
+      }
+    })
+  } while (queue.length > 0)
+  return attachedNodes.concat(confirmedSelections.filter(obj => obj.owner === turn), confirmedSelections.filter(s => s.owner === 'none'))
+}
+
+const checkIfExistInSelection = (sel: letterObject[], o: letterObject) => {
+  return sel.filter(s => s.row === o.row && s.column === o.column).length > 0
+}
 
 const updateBaseWithPossibleWordTable = (selectedLetters: letterObject[], possibleWordTable: {[key:string]: string[]}, base: letterObject[]) => {
   const word = selectedLetters.map(obj => obj.letter).join('')
@@ -165,33 +194,6 @@ const getCommonElements = (base: letterObject[], word: letterObject[]) => {
   }
   return commonIterator
   }
-
-const removeIsolatedNodes = (confirmedSelections: letterObject[], board: string[][], turn: string) => {
-  const queue = []
-  const baseFilteredFromNone = confirmedSelections.filter(s => s.owner !== 'none')
-  const movements = generateMovements(board)
-  const attachedNodes: letterObject[] = []
-  const searched : { [key:string] : letterObject } = {}
-  const nodesToCheck = baseFilteredFromNone.filter(m => m.owner !== turn).sort((a, b) => {
-    return turn === 'computer' ? a.row - b.row || a.column - b.column : b.row - a.row || a.column - b.column 
-  })
-  queue.push(nodesToCheck[0])
-  do {
-    const toCheck = queue.shift()
-    const neighbors = movements[`${toCheck.row},${toCheck.column}`]
-    neighbors.forEach((node) => {
-      if (!(`${node.row},${node.column}` in searched)){
-        searched[`${node.row},${node.column}`] = node
-        const nodeIndex = nodesToCheck.findIndex(obj => obj.row === node.row && obj.column === node.column)
-          if(nodeIndex !== -1){
-            attachedNodes.push(nodesToCheck[nodeIndex])
-            queue.push(nodesToCheck[nodeIndex])
-        }
-      }
-    })
-  } while (queue.length > 0)
-  return attachedNodes.concat(confirmedSelections.filter(obj => obj.owner === turn), confirmedSelections.filter(s => s.owner === 'none'))
-}
 
 const checkIfLetterSelectionIsallowed = (letter: letterObject, board: string[][], selected: letterObject[], turn: string) => {
   const selectedAgainIndex: number = selected.findIndex(l => l.row == letter.row && l.column == letter.column) 
