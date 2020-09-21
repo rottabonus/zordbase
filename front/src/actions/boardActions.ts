@@ -19,10 +19,10 @@ const gameStart = () => {
   }
 }
 
-const hasLoaded = () => {
+const isLoading = (loading: boolean) => {
   return {
     type: "ISLOADING",
-    payload: false
+    payload: loading
   }
 }
 
@@ -61,5 +61,5 @@ export default {
     changeTurn,
     createGameBoard,
     gameStart,
-    hasLoaded
+    isLoading
 }

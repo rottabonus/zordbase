@@ -5,7 +5,7 @@ const initialState: GameBoardState = {
     board: boardActions.createGameBoard(12, 10),
     newGame: true,
     turn: 'player',
-    isLoading: true
+    isLoading: false
   }
 
 const boardReducer = (state = initialState, action: {type: string, payload: any}) => {
@@ -38,11 +38,6 @@ const boardReducer = (state = initialState, action: {type: string, payload: any}
                 ...state,
                 isLoading: action.payload        
                 }
-        case "UPDATELOADINGBOARD":
-            return {
-                ...state,
-                loadingBoard: action.payload        
-            }
         default: {
             return state
         }       

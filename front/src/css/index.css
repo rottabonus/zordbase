@@ -40,7 +40,7 @@ body {
 .selectedLetter {
   border-color:  rgba(59, 38, 38, 0.6);
   animation-name: pulse;
-  animation-duration: 0.4s;
+  animation-duration: 0.3s;
 }
 
 @keyframes pulse {

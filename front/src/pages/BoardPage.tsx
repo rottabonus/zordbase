@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import gameService from '../services/game'
+import wordService from '../services/words'
 import { Board } from '../components/Board'
 import { GameBoardButtons } from '../components/GameBoardButtons'
 import { GameBoardHeader } from '../components/GameBoardHeader'
@@ -22,6 +23,8 @@ export const GameBoardPage: React.FC = () => {
     const isLoading: boolean = useSelector((state: RootState) => state.board.isLoading)
     const possibleWordPositions: {[key:string]: string[]} = useSelector((state: RootState) => state.base.possibleWordPositions)
     const stateHistory = useSelector((state: RootState) => state.base.stateHistory)
+    const piWorker = new Worker('../worker/worker.js', { type: 'module' })
+    const dispatch = useDispatch()
     
     const gameChange = () => {
         setTimeout(() => {
@@ -37,16 +40,26 @@ export const GameBoardPage: React.FC = () => {
     }
 
     const checkBoard = async () => {
-        const wholeBoard = await gameService.calculateValues(board, playerName)
-        const positionsWithPossibleWords = wholeBoard.filter(w => w.possibleWords.length > 0)
-        const possibleWordsPercentage =  100 * positionsWithPossibleWords.length / wholeBoard.length
-        console.log('possibleWordsPercentage', possibleWordsPercentage)
-        if(possibleWordsPercentage < 74){
-            startNewGame()
-        } else {
-            dispatch(allActions.boardActions.hasLoaded())
-            dispatch(allActions.baseActions.createBase(wholeBoard))
+        const positionsWithPossibleWords = base.filter(w => w.possibleWords.length > 0)
+        const possibleWordsPercentage =  100 * positionsWithPossibleWords.length / base.length
+        if (!Number.isNaN(possibleWordsPercentage)){
+            if(possibleWordsPercentage < 74){
+                initializeBase()
+            } else {
+                dispatch(allActions.boardActions.isLoading(false))
+            }
         }
+    }
+
+    const initializeBase = async () => {
+        const words: string[] = await wordService.fetchAll()
+        const objToSend = {board, playerName, words}
+        piWorker.postMessage(objToSend)
+        dispatch(allActions.boardActions.isLoading(true))
+        piWorker.onmessage = event => {
+            //console.log('onmessage event')
+            dispatch(allActions.baseActions.createBase(event.data))
+           }
     }
 
     const resetGame = () => {
@@ -55,14 +68,13 @@ export const GameBoardPage: React.FC = () => {
 
     const confirmSelection = async () => {
         const newWord = selected.map(s => s.letter).join('')
-        const wordExist = await gameService.fetchMatch(newWord)
+        const wordExist = await wordService.fetchMatch(newWord)
         const playedAgain = playedWords.filter(word => word.owner === turn).filter(word => word.word === newWord)
         if(wordExist && playedAgain.length === 0){
             const history = [...base]
             dispatch(allActions.baseActions.createHistory(history, selected, turn))
-            const newSelectionConfirmed = selected.map(s => ({'letter': s.letter, 'row': s.row, 'column': s.column, 'owner': turn}))
-            const confirmedAndFiltered = gameService.updateOwnersAndRemoveIsolatedNodes(newSelectionConfirmed, base, board, turn)
-            const checkGame = gameService.checkIfWin(newSelectionConfirmed, turn, board.length)
+            const confirmedAndFiltered = gameService.updateOwnersAndRemoveIsolatedNodes(selected, base, board, turn)
+            const checkGame = gameService.checkIfWin(selected, turn, board.length)
             dispatch(allActions.baseActions.confirmSelection(confirmedAndFiltered, [...playedWords, {word: newWord, owner: turn, turn: stateHistory.length}], []))
             checkGame ? gameChange() : dispatch(allActions.boardActions.changeTurn('computer'))       
         } else {
@@ -154,22 +166,23 @@ export const GameBoardPage: React.FC = () => {
         messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
     }
 
+    const messagesEndRef = useRef(null)
 
-      useEffect(() => {
+    useEffect(() => {
         scrollToBottom()
           if (newGame){
             dispatch(allActions.boardActions.gameStart())
-            checkBoard()
-          }  
-          if (turn === 'computer' && !newGame){
+            initializeBase()
+          } 
+          else if (isLoading) {
+            checkBoard()  
+        }
+         else if (turn === 'computer' && !newGame){
               computersTurn()
           }
-      }, [turn, newGame])
 
+      }, [turn, newGame, possibleWordPositions])
 
-      const dispatch = useDispatch()
-
-      const messagesEndRef = useRef(null)
 
         return  <div className='gameboard-page-container'>
                     <div className='board-and-word-list'>
