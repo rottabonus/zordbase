@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect } from 'react'
 import gameService from '../services/game'
 import wordService from '../services/words'
 import { Board } from '../components/Board'
@@ -40,6 +40,7 @@ export const GameBoardPage: React.FC = () => {
     }
 
     const checkBoard = async () => {
+        console.log('checking board')
         const positionsWithPossibleWords = base.filter(w => w.possibleWords.length > 0)
         const possibleWordsPercentage =  100 * positionsWithPossibleWords.length / base.length
         if (!Number.isNaN(possibleWordsPercentage)){
@@ -142,34 +143,7 @@ export const GameBoardPage: React.FC = () => {
         dispatch(allActions.baseActions.updateBase(base))
     }
     
-    const getLetterStyle = (r: number, c:number): LetterStyle => {
-        const found = selected.filter(a => a.row === r && a.column === c)
-        const isSelected = found.length === 0 ? 'none' : 'selectedLetter'
-        const cursorStyle = turn  === 'computer' ? 'progress' : 'pointer'
-        const selectedWithOwner: letterObject[] = selected.map(s => ({'row':s.row, 'column': s.column, 'letter': s.letter, 'owner': s.owner}))
-        const allSelected = selectedWithOwner.concat(base)
-        const ownerArr = allSelected.filter(a => a.row === r && a.column === c)
-        const owner = ownerArr.length === 0 ? 'none' : ownerArr[0].owner
-        const backgroundColor = owner === 'computer' ? 'lightsalmon' : owner === playerName ? 'paleturquoise' : null
-        return { class: isSelected, backgroundColor: backgroundColor, cursor: cursorStyle}
-    }
-
-    const getWordStyle = (owner: string): PlayerWordStyle => {
-        return owner === 'computer' ? {color: 'lightsalmon', textAlign: 'right'} : {color: 'paleturquoise', textAlign: 'left'} 
-    }
-
-    const getButtonStyle = (): ButtonVisibility => {
-        return selected.length ? {visibility: 'visible', cursor: 'pointer' } : {visibility: 'hidden', cursor: 'auto' }
-    }
-    
-    const scrollToBottom = () => {
-        messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
-    }
-
-    const messagesEndRef = useRef(null)
-
     useEffect(() => {
-        scrollToBottom()
           if (newGame){
             dispatch(allActions.boardActions.gameStart())
             initializeBase()
@@ -180,7 +154,6 @@ export const GameBoardPage: React.FC = () => {
          else if (turn === 'computer' && !newGame){
               computersTurn()
           }
-
       }, [turn, newGame, possibleWordPositions])
 
 
@@ -189,11 +162,11 @@ export const GameBoardPage: React.FC = () => {
                         <div className='gameboard'>
                             <GameBoardHeader />
                             { isLoading ? <LoadingTable />
-                            :<Board selectLetter={selectLetter} getLetterStyle={getLetterStyle}/> }
-                            <GameBoardButtons newGame={startNewGame} resetGame={resetGame} confirmSelection={confirmSelection} removeSelection={removeSelection} getButtonStyle={getButtonStyle}/>
+                            :<Board selectLetter={selectLetter} /> }
+                            <GameBoardButtons newGame={startNewGame} resetGame={resetGame} confirmSelection={confirmSelection} removeSelection={removeSelection} />
                         </div> 
                         <div>
-                            <PlayedWordList messagesEndRef={messagesEndRef} getWordStyle={getWordStyle} timeTravel={timeTravel}/>
+                            <PlayedWordList timeTravel={timeTravel}/>
                         </div>
                     </div>
                 </div>;

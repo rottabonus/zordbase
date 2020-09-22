@@ -6,7 +6,6 @@ import { ButtonVisibility, letterObject } from '../types/types'
 interface BoardButtonProps {
     confirmSelection: () => void
     removeSelection: () => void
-    getButtonStyle: () => ButtonVisibility
     newGame: () => void
     resetGame: (board: string[][]) => void
 }
@@ -15,7 +14,12 @@ export const GameBoardButtons: React.FC<BoardButtonProps> = (props) => {
 
     const board: string[][] = useSelector((state: RootState) => state.board.board)
     const selected: letterObject[] = useSelector((state: RootState) => state.base.selection)
-    const buttonStyles: ButtonVisibility = props.getButtonStyle()
+    
+    const getButtonStyle = (): ButtonVisibility => {
+        return selected.length ? {visibility: 'visible', cursor: 'pointer' } : {visibility: 'hidden', cursor: 'auto' }
+    }
+
+    const buttonStyles: ButtonVisibility = getButtonStyle()
 
     return      <div className='gameboard-button-div'>
                     <div className='gameboard-button'>
