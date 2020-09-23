@@ -29,15 +29,15 @@ export const GameBoardButtons: React.FC<BoardButtonProps> = (props) => {
 
     return      <div className='gameboard-button-div'>
                     <div className='gameboard-button'>
-                        <span><i className="fa fa-plus" onClick={() => props.newGame()} style={{visibility: buttonStylesLoading.visibility, cursor: buttonStylesLoading.cursor}}></i></span>
+                        <span><i className="fa fa-plus-circle" onClick={() => props.newGame()} style={{visibility: buttonStylesLoading.visibility, cursor: buttonStylesLoading.cursor}}></i></span>
                         {isLoading ? null : <span className='helptext'>New game</span>}
                     </div>
                     <div className='gameboard-button'>
-                        <span ><i className='fa fa-check' onClick={() => props.confirmSelection()} style={{visibility: buttonStyles.visibility, cursor: buttonStyles.cursor}}></i></span>
+                        <span ><i className="fa fa-chevron-circle-down" onClick={() => props.confirmSelection()} style={{visibility: buttonStyles.visibility, cursor: buttonStyles.cursor}}></i></span>
                         {selected.length ? <span className='helptext'>Confirm selection</span> : null}
                     </div>
                     <div className='gameboard-button'>
-                        <span><i className='fa fa-times' onClick={() => props.removeSelection()} style={{visibility: buttonStyles.visibility, cursor: buttonStyles.cursor}}></i></span>
+                        <span><i className="fa fa-times-circle-o" onClick={() => props.removeSelection()} style={{visibility: buttonStyles.visibility, cursor: buttonStyles.cursor}}></i></span>
                         {selected.length ? <span className='helptext'>Remove selection</span> : null}
                     </div>
                     <div className='gameboard-button'>

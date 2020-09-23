@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { playedWord, PlayerWordStyle } from '../types/types'
 import { useSelector } from 'react-redux'
 import { RootState } from '../reducers/combineReducer'
+import { useWindowSize } from '../hooks/windowSize'
 
 interface PlayedWordProps {
     timeTravel: (turn: number) => void
@@ -12,13 +13,16 @@ export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
     const played: playedWord[] = useSelector((state: RootState) => state.base.playedWords)
     const playerName: string = useSelector((state: RootState) => state.base.playerName)
     const messagesEndRef = useRef(null)
+    const size = useWindowSize()
 
     const getWordStyle = (owner: string): PlayerWordStyle => {
         return owner === 'computer' ? {color: 'khaki', textAlign: 'right'} : {color: '#87b6b8', textAlign: 'left'} 
     }
 
     const scrollToBottom = () => {
-        messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+        if(size.width > 550 ){
+            messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+        }
     }
 
     useEffect(() => {

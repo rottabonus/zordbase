@@ -6,6 +6,7 @@
   top: 0;
   left: 0;
   text-align: center;
+  z-index: 999;
 }
 
 .topnav span {
@@ -97,7 +98,7 @@ td {
   
 }
 .fa {
-  color: ivory;
+  color: darkslategray;
 }
 
 .gameboard-button .helptext {
@@ -206,3 +207,48 @@ html {
     padding: 40px;
   }
 
+  .about-page-container {
+    display: flex;
+    flex-direction: column;
+    padding: 60px 20px;
+    align-items: center;
+  }
+
+  .about-paragraph {
+    text-align: justify;
+    width: 470px;
+  }
+
+  .about-tail {
+    font-style: italic;
+  }
+
+  .howto-page-container {
+    display: flex;
+    flex-direction: column;
+    padding: 60px 20px;
+    align-items: center;
+  }
+
+  .howto-paragraph {
+    text-align: justify;
+    width: 470px;
+  }
+
+  @media only screen and (max-width: 550px) {
+    .board-and-word-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .wordListContainer {
+      margin-top: 20px;
+      width: 80%;
+      margin-left: 25px;
+  }
+
+  .wordListWords {
+    width: 95%;
+  }
+  
+  }
