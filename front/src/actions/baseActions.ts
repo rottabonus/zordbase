@@ -34,9 +34,10 @@ const updateSelection = (selection: letterObject[]) => {
 }
 
 const removeSelectionAndPlayedWords = (selection: letterObject[], played: playedWord[]) => {
+    const history: {base:letterObject[], selection:letterObject[], turn:string} = {base: [], selection: [], turn: ''}
     return {
         type: "REMOVESELECTIONANDPLAYED",
-        payload: {selection, played}
+        payload: {selection, played, history}
     }
 }
 
@@ -71,9 +72,10 @@ const changePlayerName = (playerName: string) => {
 const resetBase = (base: letterObject[]) => {
     const played: playedWord[] = []
     const selection: letterObject[] = []
+    const history: {base:letterObject[], selection:letterObject[], turn:string} = {base: [], selection: [], turn: ''}
     return {
         type: "RESETGAME",
-        payload: {base, played, selection}
+        payload: {base, played, selection, history}
     }
 }
 

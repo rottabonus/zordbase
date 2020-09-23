@@ -1,15 +1,16 @@
 .topnav {
-  background-color: #ebf2fc;
-  overflow: hidden;
+  background-color: gainsboro;
+  box-shadow: 0 4px 2px -2px grey;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  text-align: center;
 }
 
 .topnav span {
-  float: left;
-  text-align: center;
-  padding: 7px 20px;
-  text-decoration: none;
-  font-size: 17px;
-  height: 30px;
+  display: inline-block;
+  padding: 14px 20px;
 }
 
 .topnav a:hover {
@@ -24,12 +25,14 @@
 
 body {
   font-family: 'Lato', sans-serif;
+  color: darkslategray;
 }
 
 .gameboard-page-container {
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 60px 20px;
+  align-items: center;
 }
 
 .board-and-word-list {
@@ -38,7 +41,8 @@ body {
 }
 
 .selectedLetter {
-  border-color:  rgba(59, 38, 38, 0.6);
+  border-color:  rgba(71, 71, 71, 0.7);
+  /*border-color: whitesmoke;*/
   animation-name: pulse;
   animation-duration: 0.3s;
 }
@@ -56,7 +60,7 @@ table {
 
 td {
   border-style: solid;
-  border-color: white;
+  border-color: lightslategray;
   border-width: 2px;
   border-radius: 3%;
   background-color: white;
@@ -65,13 +69,14 @@ td {
   margin: 0; 
   padding: 0;
   text-align: center;
+  box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);
 }
 
 .gameboard {
-  background-color: #ebf2fc;
+  background-color: gainsboro;
   padding: 6px;
   border-radius: 6%;
-  margin-right: 10px;
+  margin-right: 20px;
   padding-top: 16px;
   box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);
   }
@@ -89,13 +94,17 @@ td {
 
 .gameboard-button {
   margin: 5px;
+  
+}
+.fa {
+  color: ivory;
 }
 
 .gameboard-button .helptext {
   visibility: hidden;
   width: 120px;
-  background-color: rgba(68, 68, 68, 0.9);
-  color: #fff;
+  background-color: #ededed;
+  color: lightslategray;
   text-align: center;
   padding: 2px 0;
   border-radius: 6px;
@@ -117,7 +126,7 @@ td {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  background-color: #ebf2fc;
+  background-color: gainsboro;
   padding: 11px 7px;
   margin-top: auto;
 }
@@ -125,7 +134,7 @@ td {
 .wordListWords {
   display: flex;
   flex-direction: column;
-  border: solid 5px #ebf2fc;
+  border: solid 5px gainsboro;
   overflow-y: scroll;
   width: 150px;
   height: 255px;
@@ -133,6 +142,7 @@ td {
   padding-left: 6px;
   border-bottom-left-radius: 6%;
   border-bottom-right-radius: 6%;
+  background: whitesmoke;
 }
 
 .wordListWords::-webkit-scrollbar {
@@ -155,8 +165,8 @@ td {
 }
 
 html {
-  --scrollbarBG: #ebf2fca1;
-  --thumbBG: #ebf2fc;
+  --scrollbarBG: lightgray;
+  --thumbBG: gainsboro;
 }
 
 .spin {
@@ -166,5 +176,33 @@ html {
 @keyframes rotate {
 	from {transform: rotateY(0deg);}
 	to {transform: rotateY(360deg);}
+  }
+
+  .modal {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 200px;
+    text-align: center;
+    background-color: #ededed;
+    color: lightslategray;
+    border-radius: 2%;
+    box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);
+  }
+
+  .modalButtons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    padding-top: 40px;
+    cursor: pointer;
+  }
+  
+  .modalText {
+    text-align: center;
+    padding: 40px;
   }
 

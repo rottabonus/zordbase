@@ -37,6 +37,13 @@ export interface BaseState {
       }]
 }
 
+export interface MessageState {
+    message: string,
+    show: boolean,
+    type: string,
+    resolution: boolean
+}
+
 export interface PlayedWordState {
     playedWords: playedWord[]
 }

@@ -6,7 +6,8 @@ import { GameBoardButtons } from '../components/GameBoardButtons'
 import { GameBoardHeader } from '../components/GameBoardHeader'
 import { PlayedWordList } from '../components/PlayedWordList'
 import { LoadingTable } from '../components/LoadingTable'
-import { letterObject, selectionObject, playedWord, LetterStyle, PlayerWordStyle, ButtonVisibility } from '../types/types'
+import { Message } from '../components/Message'
+import { letterObject, selectionObject, playedWord } from '../types/types'
 import { useSelector, useDispatch } from 'react-redux'
 import allActions from '../actions/allActions'
 import { RootState } from '../reducers/combineReducer'
@@ -23,24 +24,26 @@ export const GameBoardPage: React.FC = () => {
     const isLoading: boolean = useSelector((state: RootState) => state.board.isLoading)
     const possibleWordPositions: {[key:string]: string[]} = useSelector((state: RootState) => state.base.possibleWordPositions)
     const stateHistory = useSelector((state: RootState) => state.base.stateHistory)
-    const piWorker = new Worker('../worker/worker.js', { type: 'module' })
+    const messageState =  useSelector((state: RootState) => state.message)
+    const webWorker = new Worker('../worker/worker.js', { type: 'module' })
     const dispatch = useDispatch()
     
     const gameChange = () => {
         setTimeout(() => {
-            alert(`winner is ${turn}`)
+            dispatch(allActions.messageActions.setMessage(`winner is ${turn}`, 'message'))
             startNewGame()
-        }, 2000);
+        }, 1500);
     }
 
     const startNewGame = () => {
-        //const nextTurn = turn === 'computer' ? playerName : 'computer'   
         dispatch(allActions.baseActions.removeSelectionAndPlayedWords([], []))
         dispatch(allActions.boardActions.newGame(true, playerName, true))
+        if (messageState.type === 'start'){
+            dispatch(allActions.messageActions.clearMessage()) 
+         }
     }
 
     const checkBoard = async () => {
-        console.log('checking board')
         const positionsWithPossibleWords = base.filter(w => w.possibleWords.length > 0)
         const possibleWordsPercentage =  100 * positionsWithPossibleWords.length / base.length
         if (!Number.isNaN(possibleWordsPercentage)){
@@ -55,23 +58,35 @@ export const GameBoardPage: React.FC = () => {
     const initializeBase = async () => {
         const words: string[] = await wordService.fetchAll()
         const objToSend = {board, playerName, words}
-        piWorker.postMessage(objToSend)
+        webWorker.postMessage(objToSend)
         dispatch(allActions.boardActions.isLoading(true))
-        piWorker.onmessage = event => {
-            //console.log('onmessage event')
+        webWorker.onmessage = event => {
             dispatch(allActions.baseActions.createBase(event.data))
            }
     }
 
+    const showResetModal = () => {
+        dispatch(allActions.messageActions.setMessage('are you sure you want to reset the game?', 'reset'))
+    }
+
+    const showStartModal = () => {
+        dispatch(allActions.messageActions.setMessage('are you sure you want to start new game?', 'start'))
+    }
+
     const resetGame = () => {
         dispatch(allActions.baseActions.resetBase(stateHistory[1].base))
+        dispatch(allActions.messageActions.clearMessage())
+    }
+    
+    const clearMessage = () => {
+        dispatch(allActions.messageActions.clearMessage())
     }
 
     const confirmSelection = async () => {
         const newWord = selected.map(s => s.letter).join('')
         const wordExist = await wordService.fetchMatch(newWord)
         const playedAgain = playedWords.filter(word => word.owner === turn).filter(word => word.word === newWord)
-        if(wordExist && playedAgain.length === 0){
+        if(wordExist && !playedAgain.length){
             const history = [...base]
             dispatch(allActions.baseActions.createHistory(history, selected, turn))
             const confirmedAndFiltered = gameService.updateOwnersAndRemoveIsolatedNodes(selected, base, board, turn)
@@ -80,7 +95,7 @@ export const GameBoardPage: React.FC = () => {
             checkGame ? gameChange() : dispatch(allActions.boardActions.changeTurn('computer'))       
         } else {
             const message = playedAgain.length > 0 ? `cant play same word twice, ${newWord} already played` :  `word ${newWord}, does not exist`
-            alert(message)
+            dispatch(allActions.messageActions.setMessage(message, 'message'))
             removeSelection()
         }   
     }
@@ -92,7 +107,7 @@ export const GameBoardPage: React.FC = () => {
     const computersTurn =  () => {
         const history = [...base]
         const computerSelected = gameService.getBestWord(base, turn, board.length)
-        const newSelectionConfirmed = computerSelected.map(s => ({'letter': s.letter, 'row': s.row, 'column': s.column, 'owner': turn, possibleWords: s.possibleWords}))
+        const newSelectionConfirmed = computerSelected.map(s => ({letter: s.letter, row: s.row, column: s.column, owner: turn, possibleWords: s.possibleWords}))
         dispatch(allActions.baseActions.createHistory(history, newSelectionConfirmed, turn))
         computerSelect(newSelectionConfirmed)
         const timeOutCounter = newSelectionConfirmed.length
@@ -109,7 +124,7 @@ export const GameBoardPage: React.FC = () => {
     const selectLetter = async (letter: string, row: number, column: number, owner: string) => {
         let obj = { letter: letter, row: row, column: column, owner: owner}
         const selectionOnBase = base.filter(s => s.owner === obj.owner && s.column === obj.column && s.row === obj.row)
-        if (selectionOnBase.length || selected.length > 0){
+        if (selectionOnBase.length || selected.length){
             const result: selectionObject = gameService.checkIfLetterSelectionIsallowed(obj, board, selected, turn)
             if (result.possibleSelection){
                 result.selectedBeforeIndex === -1 ?
@@ -163,10 +178,13 @@ export const GameBoardPage: React.FC = () => {
                             <GameBoardHeader />
                             { isLoading ? <LoadingTable />
                             :<Board selectLetter={selectLetter} /> }
-                            <GameBoardButtons newGame={startNewGame} resetGame={resetGame} confirmSelection={confirmSelection} removeSelection={removeSelection} />
+                            <GameBoardButtons newGame={showStartModal} resetGame={showResetModal} confirmSelection={confirmSelection} removeSelection={removeSelection} />
                         </div> 
                         <div>
                             <PlayedWordList timeTravel={timeTravel}/>
+                        </div>
+                        <div>
+                            <Message resetGame={resetGame} clearMessage={clearMessage} startNewGame={startNewGame} />
                         </div>
                     </div>
                 </div>;

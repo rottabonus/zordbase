@@ -35,7 +35,7 @@ const removeIsolatedNodes = (confirmedSelections: letterObject[], board: string[
         } 
       }
     })
-  } while (queue.length > 0)
+  } while (queue.length)
   const neutralNodes = confirmedSelections.filter(s => s.owner === 'none')
   const turnNodes = confirmedSelections.filter(obj => obj.owner === turn)
   const IsolatedWithAttachedNodes = getIsolatedNodes(attachedNodes, confirmedSelections.filter(obj => obj.owner !== turn && obj.owner !== 'none'))
@@ -89,18 +89,17 @@ const checkIfWin = (selections: letterObject[], turn: string, max: number) => {
 const getBestWord = (base: letterObject[], turn: string, max: number) => {
   const computerBase = base.filter(s => s.owner === turn)
   const opponentBase = base.filter(s => s.owner !== turn)
-  let letterValueArray = [0, 0, 0, 0, 0, 0] //0 possible words starting, 1 word length, 2 letters touching opponents base, 3 letters touching own base, 4 letters touching goal 5 higher than starting pos
+  let letterValueArray = [0, 0, 0, 0, 0] //word length,letters touching opponents base,letters touching own base,letters touching goal 5 higher than starting pos
   let greatestWordValue = 0
   let selection: letterObject[] = []
   for (const [i, letter] of computerBase.entries()) { 
-    if(letter.hasOwnProperty('possibleWords') && letter.possibleWords.length > 0){
-      letterValueArray[0] = letter.possibleWords.length //possibilities
+    if(letter.hasOwnProperty('possibleWords') && letter.possibleWords.length){
       for (const [j, possibleWord] of computerBase[i].possibleWords.entries()){
-        letterValueArray[1] = possibleWord.length //word length
-        letterValueArray[2] = getCommonElements(opponentBase, possibleWord) * 2.5 //letters touching opp base
-        letterValueArray[3] = getCommonElements(computerBase, possibleWord) * (-1) //letters touching own base
-        letterValueArray[4] = checkIfWin(possibleWord, turn, max) ? 30 : 0 //if touching goal 20 points
-        letterValueArray[5] = getChangeInHeight(possibleWord, turn) * 0.5 //change going upward/downward
+        letterValueArray[0] = possibleWord.length //word length
+        letterValueArray[1] = getCommonElements(opponentBase, possibleWord) * 2.5 //letters touching opp base
+        letterValueArray[2] = getCommonElements(computerBase, possibleWord) * (-1) //letters touching own base
+        letterValueArray[3] = checkIfWin(possibleWord, turn, max) ? 30 : 0 //if touching goal 20 points
+        letterValueArray[4] = getChangeInHeight(possibleWord, turn) * 0.5 //change going upward/downward
         let wordValue = letterValueArray.reduce((acc, curr) => acc+curr)
         if(wordValue > greatestWordValue){
           greatestWordValue = wordValue
@@ -135,7 +134,7 @@ const getCommonElements = (base: letterObject[], word: letterObject[]) => {
 
 const checkIfLetterSelectionIsallowed = (letter: letterObject, board: string[][], selected: letterObject[], turn: string) => {
   const selectedAgainIndex: number = selected.findIndex(l => l.row == letter.row && l.column == letter.column) 
-  if (selected.length === 0){
+  if (!selected.length){
     return (letter.owner === turn) ?  { possibleSelection: true, selectedBeforeIndex: selectedAgainIndex} : { possibleSelection: false, selectedBeforeIndex: selectedAgainIndex}
  }
   const possibleXpositions = [selected[selected.length-1].row, selected[selected.length-1].row + 1, selected[selected.length-1].row - 1].filter(x => x >= 0 && x < board.length)

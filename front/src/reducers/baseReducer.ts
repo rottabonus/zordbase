@@ -58,13 +58,15 @@ const baseReducer = (state = initialState, action: {type: string, payload: any})
                 ...state,
                 base: action.payload.base,
                 selection: action.payload.selection,
-                playedWords: action.payload.played
+                playedWords: action.payload.played,
+                stateHistory: [action.payload.history]
             }
         case "REMOVESELECTIONANDPLAYED":
             return {
                 ...state,
                 selection: action.payload.selection,
-                playedWords: action.payload.played
+                playedWords: action.payload.played,
+                stateHistory: [action.payload.history]
             }
         case "CREATEHISTORY": 
             return {

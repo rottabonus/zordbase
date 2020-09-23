@@ -23,7 +23,7 @@ export const Board: React.FC<BoardProps> = (props) => {
         const allSelected = selectedWithOwner.concat(base)
         const ownerArr = allSelected.filter(a => a.row === r && a.column === c)
         const owner = ownerArr.length === 0 ? 'none' : ownerArr[0].owner
-        const backgroundColor = owner === 'computer' ? 'lightsalmon' : owner === playerName ? 'paleturquoise' : null
+        const backgroundColor = owner === 'computer' ? 'khaki' : owner === playerName ? '#87b6b8' : null
         return { class: isSelected, backgroundColor: backgroundColor, cursor: cursorStyle}
     }
 

@@ -1,9 +1,11 @@
 import boardActions from './boardActions'
 import baseActions from './baseActions'
+import messageActions from './messageActions'
 
 const allActions = {
     boardActions,
-    baseActions
+    baseActions,
+    messageActions
 }
 
 export default allActions

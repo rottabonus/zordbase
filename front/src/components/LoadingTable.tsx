@@ -1,11 +1,6 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
-import { RootState } from '../reducers/combineReducer'
 
-interface BoardProps {
-}
-
-export const LoadingTable: React.FC<BoardProps> = (props) => {
+export const LoadingTable: React.FC = () => {
 
     const loadingBoard: string[][] = [
         ["L","O","A","D","I","N","G",".",".","."],

@@ -14,7 +14,7 @@ export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
     const messagesEndRef = useRef(null)
 
     const getWordStyle = (owner: string): PlayerWordStyle => {
-        return owner === 'computer' ? {color: 'lightsalmon', textAlign: 'right'} : {color: 'paleturquoise', textAlign: 'left'} 
+        return owner === 'computer' ? {color: 'khaki', textAlign: 'right'} : {color: '#87b6b8', textAlign: 'left'} 
     }
 
     const scrollToBottom = () => {
