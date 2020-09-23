@@ -11,7 +11,8 @@
     "tsc": "tsc",
     "dev": "ts-node-dev index.ts",
     "lint": "eslint --ext .ts .",
-    "start": "node build/index.js"
+    "start": "node build/back/index.js",
+    "build":"echo 'hello build'"
   },
   "author": "",
   "license": "ISC",

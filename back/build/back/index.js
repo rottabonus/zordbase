@@ -14,7 +14,7 @@ app.get('/ping', (_req, res) => {
     res.send('pong');
 });
 app.use('/api/words', words_1.default);
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT ? process.env.PORT : 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
