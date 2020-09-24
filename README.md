@@ -6,32 +6,27 @@ This is a [WordBase](https://apkpure.com/wordbase-%E2%80%93-fun-word-search-batt
 
 WordBase was a fun android-game, which I played a lot myself.<br>
 Sadly, it was closed for unprofitability.<br>
-This is a tribute to WordBase, which I have developed to amuse myself.
+I have developed the project to amuse myself.
 
 For now, you can play against a computer in Finnish.
 
-If you want to run the software now, you have to run both client and server side applications.<br>
-Short instructions:
+The [Finnish wordlist](http://kaino.kotus.fi/sanat/nykysuomi/) is from the [Institute for the languages of Finland](https://www.kotus.fi/en)
+
+First demo-version hosted in [Heroku](http://ancient-sierra-67919.herokuapp.com/)
+
+If you want to run the software in your own device:
 
 clone repo
 ```
 $ git clone https://github.com/rottabonus/zordbase
 ```
 
-start backend 
+start backend (which serves front as a static file) 
 ```
 $ cd zordbase
 $ cd back
 $ npm install
 $ npm run dev
 ```
-start frontend
-```
-$ cd zordbase
-$ cd front
-$ npm install
-$ npm start
-```
 
-Note that you have to have both running at the same time!
-Then you can access the game in localhost:8080
+Then you can access the game in localhost:3000
