@@ -6,6 +6,7 @@ import { GameBoardButtons } from '../components/GameBoardButtons'
 import { GameBoardHeader } from '../components/GameBoardHeader'
 import { PlayedWordList } from '../components/PlayedWordList'
 import { LoadingTable } from '../components/LoadingTable'
+import { GameInfo } from '../components/GameInfo'
 import { Message } from '../components/Message'
 import { letterObject, selectionObject, playedWord } from '../types/types'
 import { useSelector, useDispatch } from 'react-redux'
@@ -180,8 +181,9 @@ export const GameBoardPage: React.FC = () => {
                             :<Board selectLetter={selectLetter} /> }
                             <GameBoardButtons newGame={showStartModal} resetGame={showResetModal} confirmSelection={confirmSelection} removeSelection={removeSelection} />
                         </div> 
-                        <div>
+                        <div className='wordlist-and-info-container'>
                             <PlayedWordList timeTravel={timeTravel}/>
+                            <GameInfo />
                         </div>
                         <div>
                             <Message resetGame={resetGame} clearMessage={clearMessage} startNewGame={startNewGame} />

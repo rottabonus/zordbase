@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
-import { playedWord, PlayerWordStyle } from '../types/types'
+import { playedWord, PlayerWordStyle, letterObject } from '../types/types'
+import { BalanceOfPower } from './BalanceOfPower'
 import { useSelector } from 'react-redux'
 import { RootState } from '../reducers/combineReducer'
 import { useWindowSize } from '../hooks/windowSize'
@@ -12,6 +13,13 @@ export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
 
     const played: playedWord[] = useSelector((state: RootState) => state.base.playedWords)
     const playerName: string = useSelector((state: RootState) => state.base.playerName)
+    const base: letterObject[] = useSelector((state: RootState) => state.base.base)
+    const isLoading: boolean = useSelector((state: RootState) => state.board.isLoading)
+
+    const playerNodes = base.filter(f => f.owner === playerName).length
+    const comNodes = base.filter(f => f.owner === 'computer').length
+    const percentageDifference = isLoading ? 50 : ((playerNodes - comNodes) / (playerNodes + comNodes / 2) * 100) + 50
+
     const messagesEndRef = useRef(null)
     const size = useWindowSize()
 
@@ -30,14 +38,11 @@ export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
       }, [played])
  
     return <div className='wordListContainer' >
-        <div className='wordListHeader'>
-            <div>{playerName}</div>
-            <div>computer</div>
-        </div>
+           <BalanceOfPower playerPercentage={percentageDifference} playerName={playerName} />
             <div className='wordListWords'>
                 {played.map((w, i )=> {
                     const styleValues = getWordStyle(w.owner)
-                    return (<span key={i} onClick={() => props.timeTravel(w.turn)} style={{color: styleValues.color, textAlign: styleValues.textAlign, cursor: 'pointer'}}>{w.word}</span>)
+                    return (<span key={i} onClick={() => props.timeTravel(w.turn)} style={{color: styleValues.color, textAlign: styleValues.textAlign, cursor: 'pointer', padding:'4px'}}>{w.word}</span>)
                 }                    
                 )}
                     <div ref={messagesEndRef} />

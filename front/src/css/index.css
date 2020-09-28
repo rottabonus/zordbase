@@ -1,5 +1,7 @@
+
+
 .topnav {
-  background-color: gainsboro;
+  background-color: whitesmoke;
   box-shadow: 0 4px 2px -2px grey;
   width: 100%;
   position: fixed;
@@ -82,9 +84,9 @@ td {
 }
 
 .gameboard {
-  background-color: gainsboro;
+  background-color: whitesmoke;
   padding: 6px;
-  border-radius: 6%;
+  /*border-radius: 6%;*/
   margin-right: 20px;
   padding-top: 16px;
   box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);
@@ -117,7 +119,7 @@ td {
   color: lightslategray;
   text-align: center;
   padding: 2px 0;
-  border-radius: 6px;
+  /*border-radius: 6%;*/
   position: absolute;
   z-index: 1;
 }
@@ -128,30 +130,38 @@ td {
 
 .wordListContainer {
   box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);
-  border-radius: 6%;
+  /*border-radius: 6%;*/
   overflow: auto;
+  background-color:whitesmoke;
 }
 
 .wordListHeader {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  background-color: gainsboro;
+  background-color: whitesmoke;
   padding: 11px 7px;
   margin-top: auto;
+}
+
+.wordlist-and-info-container {
+  display:flex;
+  flex-direction:column;
+  width: 200px;
 }
 
 .wordListWords {
   display: flex;
   flex-direction: column;
-  border: solid 5px gainsboro;
+  border: solid 5px whitesmoke;
+  border-top:none;
   overflow-y: scroll;
-  width: 150px;
-  height: 255px;
+  height: 15vw;
   padding-bottom: 6px;
   padding-left: 6px;
   border-bottom-left-radius: 6%;
   border-bottom-right-radius: 6%;
+  background-color: white;
 }
 
 .wordListWords::-webkit-scrollbar {
@@ -169,13 +179,39 @@ td {
 
 .wordListWords::-webkit-scrollbar-thumb {
   background-color: var(--thumbBG);
-  border-radius: 6px;
+  /*border-radius: 6%;*/
   border: 3px solid var(--scrollbarBG);
 }
 
+.game-info-container {
+  background-color: whitesmoke;
+  height: 7vw;
+  /*border-radius: 6%;*/
+  margin-top: 20px;
+  box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);
+}
+
+.balanceBar {
+  height: 22px;
+  width: 100%;
+  background-color: khaki;
+}
+
+.playerLabel {
+  padding: 5px;
+  color: white;
+}
+
+.comLabel {
+  color: white;
+  position: absolute;
+  right: 33.5%;
+}
+
 html {
-  --scrollbarBG: lightgray;
-  --thumbBG: gainsboro;
+  --scrollbarBG: gainsboro;
+  --thumbBG: whitesmoke;
+  overflow-x: hidden;
 }
 
 .spin {
@@ -264,17 +300,18 @@ html {
 
   .wordListWords {
     width: auto;
-    border-radius: 0%;
+    /*border-radius: 0%;*/
+    height: 50vw;
   }
 
   .gameboard {
     width: 100vw;
-    margin-left: 40px;
-    border-radius: 0%;
+    margin-left: 3%;
+     /*border-radius: 0%;*/
   }
 
   table {
-    margin: 20px;
+    margin-left: 5.5%;
   }
 
   td {
@@ -284,20 +321,31 @@ html {
   }
 
   .gameboard-header {
-    padding: 15px;
+    padding-top: 7px;
+    padding-bottom: 9px;
     font-size: large
   }
 
+  .wordlist-and-info-container {
+    flex-direction:row;
+  }
+
   .wordListContainer {
-    margin-top: 20px;
+    margin-top: 10px;
     width: 60vw;
-    margin-left: 8px;
-    border-radius: 0%;
-    margin-left: 40px;
+    margin-right: 5px;
+     /*border-radius: 0%;*/
+    margin-left: 3.5%;
+  }
+
+  .game-info-container {
+    height: 70vw;
+     /*border-radius: 0%;*/
+    margin-top: 10px;
   }
 
   .gameboard-button-div {
-    padding-bottom: 20px;
+    padding-bottom: 10px;
   }
 
   .howto-paragraph {
@@ -321,7 +369,7 @@ html {
 
   .gameboard {
     width: 100vw;
-    border-radius: 0%;
+     /*border-radius: 0%;*/
     margin-right: 0;
   }
 
@@ -336,7 +384,7 @@ html {
   }
 
   table {
-    margin: 7px;
+    margin: 2%;
   }
 
 
@@ -349,20 +397,32 @@ html {
     padding: 50px 10px;
   }
 
+  .wordlist-and-info-container {
+    flex-direction:row;
+  }
+
+  .game-info-container {
+    width: 40vw;
+    height: 50vw;
+     /*border-radius: 0%;*/
+    margin-top: 10px;
+  }
+
   .wordListContainer {
     margin-top: 10px;
     width: 60vw;
-    border-radius: 0%;
-    margin-left: 7px;
+     /*border-radius: 0%;*/
+    margin-left: 1.5%;
   }
 
   .wordListWords {
     width: auto;
-    border-radius: 0%;
+     /*border-radius: 0%;*/
+    height: 30vw;
   }
 
   .gameboard-button-div {
-    padding-bottom: 15px;
+    padding-bottom: 12px;
   }
 
   .howto-paragraph {
