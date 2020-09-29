@@ -165,7 +165,7 @@ td {
   border: solid 5px whitesmoke;
   border-top:none;
   overflow-y: scroll;
-  height: 15vw;
+  height: 200px;
   padding-bottom: 6px;
   padding-left: 6px;
   border-bottom-left-radius: 6%;
@@ -194,7 +194,7 @@ td {
 
 .dog-container {
   /*background-color: whitesmoke;*/
-  height: 10vw;
+  height: 160px;
   /*border-radius: 6%;*/
   margin-top: 10px;
   /*box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);*/
@@ -212,17 +212,19 @@ td {
   height: 22px;
   width: 100%;
   background-color: khaki;
+  position: relative;
 }
 
 .playerLabel {
-  padding: 5px;
   color: white;
+  position: absolute;
+  left: 4px;
 }
 
 .comLabel {
   color: white;
   position: absolute;
-  right:  33.2vw;
+  right: 4px;
 }
 
 html {
@@ -258,6 +260,7 @@ html {
   color: lightslategray;
   border-radius: 2%;
   box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);
+  z-index: 888;
 }
 
 .modalButtons {
@@ -305,11 +308,50 @@ html {
   border-bottom: 1px solid grey;
 }
 
-@media only screen and (max-width: 1024px) and (min-width:551px) {
-  .comLabel {
-    right: 17vw;
+
+
+@media only screen and (max-width: 768px) and (min-width:600px) {
+
+
+  .wordListWords {
+      height: 200px;
   }
+
+  .wordListContainer {
+    height: auto;
+  }
+
+.dog-container {
+  height: 20vw;
 }
+
+.modalButtons {
+  padding: auto;
+  }
+
+}
+
+@media only screen and (max-width: 599px) and (min-width:551px) {
+
+
+  .wordListWords {
+      height: 180px;
+  }
+
+  .wordListContainer {
+    height: auto;
+}
+
+.dog-container {
+  height: 25vw;
+}
+
+.modalButtons {
+  padding: auto;
+  }
+
+}
+
 
 @media only screen and (max-width: 550px) and (min-width: 331px) {
   .board-and-word-list {
@@ -325,9 +367,6 @@ html {
     padding: 10px;
   }
 
-  .comLabel {
-    right: 3vw;
-  }
 
   .wordListWords {
     width: auto;
@@ -388,6 +427,10 @@ html {
     width: 330px;
   }
 
+  .modalButtons {
+    padding: auto;
+    }
+
 }
 
 @media only screen and (max-width: 330px) {
@@ -405,10 +448,6 @@ html {
 
   .fa {
     font-size: 24px;
-  }
-
-  .comLabel {
-    right: 8vw
   }
 
   td {
@@ -466,5 +505,9 @@ html {
     text-align: justify;
     width: 310px;
   }
+
+  .modalButtons {
+    padding: auto;
+    }
 
 }
