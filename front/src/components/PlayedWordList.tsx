@@ -15,11 +15,9 @@ export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
     const playerName: string = useSelector((state: RootState) => state.base.playerName)
     const base: letterObject[] = useSelector((state: RootState) => state.base.base)
     const isLoading: boolean = useSelector((state: RootState) => state.board.isLoading)
-
     const playerNodes = base.filter(f => f.owner === playerName).length
     const comNodes = base.filter(f => f.owner === 'computer').length
     const percentageDifference = isLoading ? 50 : ((playerNodes - comNodes) / (playerNodes + comNodes / 2) * 100) + 50
-
     const messagesEndRef = useRef(null)
     const size = useWindowSize()
 

@@ -12,8 +12,6 @@ export const BalanceOfPower: React.FC<BalanceOfPowerProps> = (props) => {
         width: `${props.playerPercentage}%`,
         backgroundColor: '#87b6b8',
         borderRadius: 'inherit'
-        //paddingBottom: '4px',
-       // paddingLeft: '4px',
       }
 
   return (

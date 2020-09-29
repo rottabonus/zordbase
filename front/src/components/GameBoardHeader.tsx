@@ -3,11 +3,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../reducers/combineReducer'
 import { letterObject } from '../types/types'
 
-interface BoardHeaderProps {
-
-}
-
-export const GameBoardHeader: React.FC<BoardHeaderProps> = (props) => {
+export const GameBoardHeader: React.FC = () => {
 
     const turn: string = useSelector((state: RootState) => state.board.turn)
     const isLoading: boolean = useSelector((state: RootState) => state.board.isLoading)

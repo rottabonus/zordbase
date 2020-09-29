@@ -31970,7 +31970,7 @@ const changeTurn = (turn) => {
     };
 };
 const createGameBoard = (rows, columns) => {
-    const letters = 'aaaaaaaabcdeeeeeefgghhiiiiiiijjkkllllmmmnnnnnoooopprrssssstttttuuuvvyöäääää';
+    const letters = 'aaaaaaaaabcdeeeeeeefgghhhhiiiiiiiijjjjkkkkllllllmmmmmnnnnnnnooooopppprrrrsssssstttttttuuuuvvvvyyööääääää';
     const letterArr = letters.split('');
     const board = [];
     let rowArray = [];
@@ -32141,8 +32141,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _css_index_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(66);
 /* harmony import */ var _css_index_css__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_css_index_css__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _pages_BoardPage__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(70);
-/* harmony import */ var _pages_Howto__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(84);
-/* harmony import */ var _pages_About__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(85);
+/* harmony import */ var _pages_Howto__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(87);
+/* harmony import */ var _pages_About__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(88);
 
 
 
@@ -35416,7 +35416,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(false);
 // Module
-___CSS_LOADER_EXPORT___.push([module.i, ".topnav {\r\n  background-color: gainsboro;\r\n  box-shadow: 0 4px 2px -2px grey;\r\n  width: 100%;\r\n  position: fixed;\r\n  top: 0;\r\n  left: 0;\r\n  text-align: center;\r\n  z-index: 999;\r\n}\r\n\r\n.topnav span {\r\n  display: inline-block;\r\n  padding: 14px 20px;\r\n}\r\n\r\n.topnav a:hover {\r\n  background-color: #ddd;\r\n  color: black;\r\n}\r\n\r\n.topnav a.active {\r\n  background-color: #eee1c8;\r\n  color: white;\r\n}\r\n\r\nbody {\r\n  font-family: 'Lato', sans-serif;\r\n  color: darkslategray;\r\n}\r\n\r\n.gameboard-page-container {\r\n  display: flex;\r\n  flex-direction: column;\r\n  padding: 60px 20px;\r\n  align-items: center;\r\n}\r\n\r\n.board-and-word-list {\r\n  display: flex;\r\n  flex-direction: row;\r\n}\r\n\r\n.selectedLetter {\r\n  border-color: rgba(71, 71, 71, 0.9);\r\n  /*border-color: whitesmoke;*/\r\n  animation-name: pulse;\r\n  animation-duration: 0.3s;\r\n}\r\n\r\n@keyframes pulse {\r\n  0% {\r\n    transform: scale(1);\r\n  }\r\n\r\n  80% {\r\n    transform: scale(1.1);\r\n  }\r\n\r\n  100% {\r\n    transform: scale(1);\r\n  }\r\n}\r\n\r\ntable {\r\n  table-layout: fixed;\r\n  margin: 0 11px;\r\n}\r\n\r\ntd {\r\n  border-style: solid;\r\n  border-color: lightslategray;\r\n  border-width: 2px;\r\n  border-radius: 3%;\r\n  background-color: white;\r\n  height: 23px;\r\n  width: 20px;\r\n  margin: 0;\r\n  padding: 0;\r\n  text-align: center;\r\n  box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);\r\n}\r\n\r\n.gameboard {\r\n  background-color: gainsboro;\r\n  padding: 6px;\r\n  border-radius: 6%;\r\n  margin-right: 20px;\r\n  padding-top: 16px;\r\n  box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);\r\n}\r\n\r\n.gameboard-header {\r\n  text-align: center;\r\n  padding-bottom: 8px;\r\n}\r\n\r\n.gameboard-button-div {\r\n  display: flex;\r\n  flex-direction: row;\r\n  justify-content: space-evenly;\r\n}\r\n\r\n.gameboard-button {\r\n  margin: 5px;\r\n\r\n}\r\n\r\n.fa {\r\n  color: darkslategray;\r\n}\r\n\r\n.gameboard-button .helptext {\r\n  visibility: hidden;\r\n  width: 120px;\r\n  background-color: #ededed;\r\n  color: lightslategray;\r\n  text-align: center;\r\n  padding: 2px 0;\r\n  border-radius: 6px;\r\n  position: absolute;\r\n  z-index: 1;\r\n}\r\n\r\n.gameboard-button:hover .helptext {\r\n  visibility: visible;\r\n}\r\n\r\n.wordListContainer {\r\n  box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);\r\n  border-radius: 6%;\r\n  overflow: auto;\r\n}\r\n\r\n.wordListHeader {\r\n  display: flex;\r\n  flex-direction: row;\r\n  justify-content: space-between;\r\n  background-color: gainsboro;\r\n  padding: 11px 7px;\r\n  margin-top: auto;\r\n}\r\n\r\n.wordListWords {\r\n  display: flex;\r\n  flex-direction: column;\r\n  border: solid 5px gainsboro;\r\n  overflow-y: scroll;\r\n  width: 150px;\r\n  height: 255px;\r\n  padding-bottom: 6px;\r\n  padding-left: 6px;\r\n  border-bottom-left-radius: 6%;\r\n  border-bottom-right-radius: 6%;\r\n}\r\n\r\n.wordListWords::-webkit-scrollbar {\r\n  width: 11px;\r\n}\r\n\r\n.wordListWords {\r\n  scrollbar-width: thin;\r\n  scrollbar-color: var(--thumbBG) var(--scrollbarBG);\r\n}\r\n\r\n.wordListWords::-webkit-scrollbar-track {\r\n  background: var(--scrollbarBG);\r\n}\r\n\r\n.wordListWords::-webkit-scrollbar-thumb {\r\n  background-color: var(--thumbBG);\r\n  border-radius: 6px;\r\n  border: 3px solid var(--scrollbarBG);\r\n}\r\n\r\nhtml {\r\n  --scrollbarBG: lightgray;\r\n  --thumbBG: gainsboro;\r\n}\r\n\r\n.spin {\r\n  animation: 3s rotate linear infinite;\r\n}\r\n\r\n@keyframes rotate {\r\n  from {\r\n    transform: rotateY(0deg);\r\n  }\r\n\r\n  to {\r\n    transform: rotateY(360deg);\r\n  }\r\n}\r\n\r\n.modal {\r\n  display: flex;\r\n  flex-direction: column;\r\n  position: fixed;\r\n  top: 35%;\r\n  left: 50%;\r\n  transform: translate(-50%, -50%);\r\n  height: 200px;\r\n  text-align: center;\r\n  background-color: #ededed;\r\n  color: lightslategray;\r\n  border-radius: 2%;\r\n  box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);\r\n}\r\n\r\n.modalButtons {\r\n  display: flex;\r\n  flex-direction: row;\r\n  justify-content: space-evenly;\r\n  padding-top: 40px;\r\n  cursor: pointer;\r\n}\r\n\r\n.modalText {\r\n  text-align: center;\r\n  padding: 40px;\r\n}\r\n\r\n.about-page-container {\r\n  display: flex;\r\n  flex-direction: column;\r\n  padding: 60px 20px;\r\n  align-items: center;\r\n}\r\n\r\n.about-paragraph {\r\n  text-align: justify;\r\n  width: 420px;\r\n}\r\n\r\n.about-tail {\r\n  font-style: italic;\r\n}\r\n\r\n.howto-page-container {\r\n  display: flex;\r\n  flex-direction: column;\r\n  padding: 60px 20px;\r\n  align-items: center;\r\n}\r\n\r\n.howto-paragraph {\r\n  text-align: justify;\r\n  width: 420px;\r\n}\r\n\r\n@media only screen and (max-width: 550px) and (min-width: 331px) {\r\n  .board-and-word-list {\r\n    display: flex;\r\n    flex-direction: column;\r\n  }\r\n\r\n  .fa {\r\n    font-size: 24px;\r\n  }\r\n\r\n  .gameboard-button-div {\r\n    padding: 10px;\r\n  }\r\n\r\n  .wordListWords {\r\n    width: auto;\r\n    border-radius: 0%;\r\n  }\r\n\r\n  .gameboard {\r\n    width: 100vw;\r\n    margin-left: 40px;\r\n    border-radius: 0%;\r\n  }\r\n\r\n  table {\r\n    margin: 20px;\r\n  }\r\n\r\n  td {\r\n    height: 30px;\r\n    width: 30px;\r\n    font-size: large;\r\n  }\r\n\r\n  .gameboard-header {\r\n    padding: 15px;\r\n    font-size: large\r\n  }\r\n\r\n  .wordListContainer {\r\n    margin-top: 20px;\r\n    width: 60vw;\r\n    margin-left: 8px;\r\n    border-radius: 0%;\r\n    margin-left: 40px;\r\n  }\r\n\r\n  .gameboard-button-div {\r\n    padding-bottom: 20px;\r\n  }\r\n\r\n  .howto-paragraph {\r\n    text-align: justify;\r\n    width: 330px;\r\n  }\r\n\r\n  .about-paragraph {\r\n    text-align: justify;\r\n    width: 330px;\r\n  }\r\n\r\n}\r\n\r\n@media only screen and (max-width: 330px) {\r\n\r\n  .board-and-word-list {\r\n    display: flex;\r\n    flex-direction: column;\r\n  }\r\n\r\n  .gameboard {\r\n    width: 100vw;\r\n    border-radius: 0%;\r\n    margin-right: 0;\r\n  }\r\n\r\n  .fa {\r\n    font-size: 24px;\r\n  }\r\n\r\n  td {\r\n    height: 28px;\r\n    width: 28px;\r\n    font-size: large;\r\n  }\r\n\r\n  table {\r\n    margin: 7px;\r\n  }\r\n\r\n\r\n  .gameboard-header {\r\n    padding: 10px;\r\n    font-size: large\r\n  }\r\n\r\n  .gameboard-page-container {\r\n    padding: 50px 10px;\r\n  }\r\n\r\n  .wordListContainer {\r\n    margin-top: 10px;\r\n    width: 60vw;\r\n    border-radius: 0%;\r\n    margin-left: 7px;\r\n  }\r\n\r\n  .wordListWords {\r\n    width: auto;\r\n    border-radius: 0%;\r\n  }\r\n\r\n  .gameboard-button-div {\r\n    padding-bottom: 15px;\r\n  }\r\n\r\n  .howto-paragraph {\r\n    text-align: justify;\r\n    width: 310px;\r\n  }\r\n\r\n  .about-paragraph {\r\n    text-align: justify;\r\n    width: 310px;\r\n  }\r\n\r\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.i, "\r\n\r\n.topnav {\r\n  background-color: whitesmoke;\r\n  box-shadow: 0 4px 2px -2px grey;\r\n  width: 100%;\r\n  position: fixed;\r\n  top: 0;\r\n  left: 0;\r\n  text-align: center;\r\n  z-index: 999;\r\n}\r\n\r\n.topnav span {\r\n  display: inline-block;\r\n  padding: 14px 20px;\r\n}\r\n\r\na {\r\n  text-decoration: none;\r\n}\r\n\r\n@media (hover) {\r\n.topnav a:hover {\r\n  background-color: #ddd;\r\n  color: black;\r\n  height: 100%;\r\n}\r\n}\r\n\r\n.topnav a.active {\r\n  background-color: #eee1c8;\r\n  color: white;\r\n}\r\n\r\nbody {\r\n  font-family: 'Lato', sans-serif;\r\n  color: darkslategray;\r\n}\r\n\r\n.gameboard-page-container {\r\n  display: flex;\r\n  flex-direction: column;\r\n  padding: 60px 20px;\r\n  align-items: center;\r\n}\r\n\r\n.board-and-word-list {\r\n  display: flex;\r\n  flex-direction: row;\r\n}\r\n\r\n.selectedLetter {\r\n  border-color: rgba(71, 71, 71, 0.9);\r\n  /*border-color: whitesmoke;*/\r\n  animation-name: pulse;\r\n  animation-duration: 0.3s;\r\n}\r\n\r\n@keyframes pulse {\r\n  0% {\r\n    transform: scale(1);\r\n  }\r\n\r\n  80% {\r\n    transform: scale(1.1);\r\n  }\r\n\r\n  100% {\r\n    transform: scale(1);\r\n  }\r\n}\r\n\r\ntable {\r\n  table-layout: fixed;\r\n  margin: 0 11px;\r\n}\r\n\r\ntd {\r\n  border-style: solid;\r\n  border-color: lightslategray;\r\n  border-width: 2px;\r\n  border-radius: 3%;\r\n  background-color: white;\r\n  height: 23px;\r\n  width: 20px;\r\n  margin: 0;\r\n  padding: 0;\r\n  text-align: center;\r\n  box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);\r\n}\r\n\r\n.gameboard {\r\n  background-color: whitesmoke;\r\n  padding: 6px;\r\n  /*border-radius: 6%;*/\r\n  margin-right: 20px;\r\n  padding-top: 16px;\r\n  box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);\r\n}\r\n\r\n.gameboard-header {\r\n  text-align: center;\r\n  padding-bottom: 8px;\r\n}\r\n\r\n.gameboard-button-div {\r\n  display: flex;\r\n  flex-direction: row;\r\n  justify-content: space-evenly;\r\n}\r\n\r\n.gameboard-button {\r\n  margin: 5px;\r\n\r\n}\r\n\r\n.fa {\r\n  color: darkslategray;\r\n}\r\n\r\n.gameboard-button .helptext {\r\n  visibility: hidden;\r\n  width: 120px;\r\n  background-color: #ededed;\r\n  color: lightslategray;\r\n  text-align: center;\r\n  padding: 2px 0;\r\n  /*border-radius: 6%;*/\r\n  position: absolute;\r\n  z-index: 1;\r\n}\r\n\r\n@media (hover) {\r\n.gameboard-button:hover .helptext {\r\n  visibility: visible;\r\n}\r\n}\r\n\r\n.wordListContainer {\r\n  box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);\r\n  /*border-radius: 6%;*/\r\n  overflow: auto;\r\n  background-color:whitesmoke;\r\n}\r\n\r\n.wordListHeader {\r\n  display: flex;\r\n  flex-direction: row;\r\n  justify-content: space-between;\r\n  background-color: whitesmoke;\r\n  padding: 11px 7px;\r\n  margin-top: auto;\r\n}\r\n\r\n.wordlist-and-info-container {\r\n  display:flex;\r\n  flex-direction:column;\r\n  width: 200px;\r\n}\r\n\r\n.wordListWords {\r\n  display: flex;\r\n  flex-direction: column;\r\n  border: solid 5px whitesmoke;\r\n  border-top:none;\r\n  overflow-y: scroll;\r\n  height: 15vw;\r\n  padding-bottom: 6px;\r\n  padding-left: 6px;\r\n  border-bottom-left-radius: 6%;\r\n  border-bottom-right-radius: 6%;\r\n  background-color: white;\r\n}\r\n\r\n.wordListWords::-webkit-scrollbar {\r\n  width: 11px;\r\n}\r\n\r\n.wordListWords {\r\n  scrollbar-width: thin;\r\n  scrollbar-color: var(--thumbBG) var(--scrollbarBG);\r\n}\r\n\r\n.wordListWords::-webkit-scrollbar-track {\r\n  background: var(--scrollbarBG);\r\n}\r\n\r\n.wordListWords::-webkit-scrollbar-thumb {\r\n  background-color: var(--thumbBG);\r\n  /*border-radius: 6%;*/\r\n  border: 3px solid var(--scrollbarBG);\r\n}\r\n\r\n.dog-container {\r\n  /*background-color: whitesmoke;*/\r\n  height: 10vw;\r\n  /*border-radius: 6%;*/\r\n  margin-top: 10px;\r\n  /*box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);*/\r\n}\r\n\r\n.dog-image {\r\n  max-height: 100%;\r\n  width: auto;\r\n  display: block;\r\n  margin-left: auto;\r\n  margin-right: auto;\r\n}\r\n\r\n.balanceBar {\r\n  height: 22px;\r\n  width: 100%;\r\n  background-color: khaki;\r\n}\r\n\r\n.playerLabel {\r\n  padding: 5px;\r\n  color: white;\r\n}\r\n\r\n.comLabel {\r\n  color: white;\r\n  position: absolute;\r\n  right:  33.2vw;\r\n}\r\n\r\nhtml {\r\n  --scrollbarBG: gainsboro;\r\n  --thumbBG: whitesmoke;\r\n  overflow-x: hidden;\r\n}\r\n\r\n.spin {\r\n  animation: 3s rotate linear infinite;\r\n}\r\n\r\n@keyframes rotate {\r\n  from {\r\n    transform: rotateY(0deg);\r\n  }\r\n\r\n  to {\r\n    transform: rotateY(360deg);\r\n  }\r\n}\r\n\r\n.modal {\r\n  display: flex;\r\n  flex-direction: column;\r\n  position: fixed;\r\n  top: 35%;\r\n  left: 50%;\r\n  transform: translate(-50%, -50%);\r\n  height: 200px;\r\n  text-align: center;\r\n  background-color: #ededed;\r\n  color: lightslategray;\r\n  border-radius: 2%;\r\n  box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);\r\n}\r\n\r\n.modalButtons {\r\n  display: flex;\r\n  flex-direction: row;\r\n  justify-content: space-evenly;\r\n  padding-top: 40px;\r\n  cursor: pointer;\r\n}\r\n\r\n.modalText {\r\n  text-align: center;\r\n  padding: 40px;\r\n}\r\n\r\n.about-page-container {\r\n  display: flex;\r\n  flex-direction: column;\r\n  padding: 60px 20px;\r\n  align-items: center;\r\n\r\n}\r\n\r\n.about-paragraph {\r\n  text-align: justify;\r\n  width: 420px;\r\n  border-bottom: 1px solid grey;\r\n}\r\n\r\n.about-tail {\r\n  font-style: italic;\r\n}\r\n\r\n.howto-page-container {\r\n  display: flex;\r\n  flex-direction: column;\r\n  padding: 60px 20px;\r\n  align-items: center;\r\n\r\n}\r\n\r\n.howto-paragraph {\r\n  text-align: justify;\r\n  width: 420px;\r\n  border-bottom: 1px solid grey;\r\n}\r\n\r\n@media only screen and (max-width: 1024px) and (min-width:551px) {\r\n  .comLabel {\r\n    right: 17vw;\r\n  }\r\n}\r\n\r\n@media only screen and (max-width: 550px) and (min-width: 331px) {\r\n  .board-and-word-list {\r\n    display: flex;\r\n    flex-direction: column;\r\n  }\r\n\r\n  .fa {\r\n    font-size: 24px;\r\n  }\r\n\r\n  .gameboard-button-div {\r\n    padding: 10px;\r\n  }\r\n\r\n  .comLabel {\r\n    right: 3vw;\r\n  }\r\n\r\n  .wordListWords {\r\n    width: auto;\r\n    /*border-radius: 0%;*/\r\n    height: 50vw;\r\n  }\r\n\r\n  .gameboard {\r\n    width: 100vw;\r\n    margin-left: 3%;\r\n     /*border-radius: 0%;*/\r\n  }\r\n\r\n  table {\r\n    margin-left: 5.5%;\r\n  }\r\n\r\n  td {\r\n    height: 30px;\r\n    width: 30px;\r\n    font-size: large;\r\n  }\r\n\r\n  .gameboard-header {\r\n    padding-top: 7px;\r\n    padding-bottom: 9px;\r\n    font-size: large\r\n  }\r\n\r\n  .wordlist-and-info-container {\r\n    flex-direction:row;\r\n    width: 100%;\r\n  }\r\n\r\n  .wordListContainer {\r\n    margin-top: 10px;\r\n    width: 90%;\r\n    margin-right: 5%;\r\n    /* border-radius: 0%; */\r\n    margin-left: 5%;\r\n  }\r\n\r\n  .dog-container {\r\n    display: none;\r\n  }\r\n\r\n  .gameboard-button-div {\r\n    padding-bottom: 10px;\r\n  }\r\n\r\n  .howto-paragraph {\r\n    text-align: justify;\r\n    width: 330px;\r\n  }\r\n\r\n  .about-paragraph {\r\n    text-align: justify;\r\n    width: 330px;\r\n  }\r\n\r\n}\r\n\r\n@media only screen and (max-width: 330px) {\r\n\r\n  .board-and-word-list {\r\n    display: flex;\r\n    flex-direction: column;\r\n  }\r\n\r\n  .gameboard {\r\n    width: 100vw;\r\n     /*border-radius: 0%;*/\r\n    margin-right: 0;\r\n  }\r\n\r\n  .fa {\r\n    font-size: 24px;\r\n  }\r\n\r\n  .comLabel {\r\n    right: 8vw\r\n  }\r\n\r\n  td {\r\n    height: 28px;\r\n    width: 28px;\r\n    font-size: large;\r\n  }\r\n\r\n  table {\r\n    margin: 2%;\r\n  }\r\n\r\n\r\n  .gameboard-header {\r\n    padding: 10px;\r\n    font-size: large\r\n  }\r\n\r\n  .gameboard-page-container {\r\n    padding: 50px 10px;\r\n  }\r\n\r\n  .wordlist-and-info-container {\r\n    flex-direction:row;\r\n    width: 100%;\r\n  }\r\n\r\n  .dog-container {\r\n    display: none;\r\n  }\r\n\r\n  .wordListContainer {\r\n    margin-top: 10px;\r\n    width: 90vw;\r\n    /* border-radius: 0%; */\r\n    margin-left: 5%;\r\n  }\r\n\r\n  .wordListWords {\r\n    width: auto;\r\n     /*border-radius: 0%;*/\r\n    height: 30vw;\r\n  }\r\n\r\n  .gameboard-button-div {\r\n    padding-bottom: 12px;\r\n  }\r\n\r\n  .howto-paragraph {\r\n    text-align: justify;\r\n    width: 310px;\r\n  }\r\n\r\n  .about-paragraph {\r\n    text-align: justify;\r\n    width: 310px;\r\n  }\r\n\r\n}", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
@@ -35536,10 +35536,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_GameBoardButtons__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(75);
 /* harmony import */ var _components_GameBoardHeader__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(76);
 /* harmony import */ var _components_PlayedWordList__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(77);
-/* harmony import */ var _components_LoadingTable__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(79);
-/* harmony import */ var _components_Message__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(80);
-/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(12);
-/* harmony import */ var _actions_allActions__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(81);
+/* harmony import */ var _components_LoadingTable__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(80);
+/* harmony import */ var _components_LogoContainer__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(81);
+/* harmony import */ var _components_Message__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(83);
+/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(12);
+/* harmony import */ var _actions_allActions__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(84);
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35560,31 +35561,32 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 
+
 const GameBoardPage = () => {
-    const board = Object(react_redux__WEBPACK_IMPORTED_MODULE_9__["useSelector"])((state) => state.board.board);
-    const turn = Object(react_redux__WEBPACK_IMPORTED_MODULE_9__["useSelector"])((state) => state.board.turn);
-    const newGame = Object(react_redux__WEBPACK_IMPORTED_MODULE_9__["useSelector"])((state) => state.board.newGame);
-    const base = Object(react_redux__WEBPACK_IMPORTED_MODULE_9__["useSelector"])((state) => state.base.base);
-    const selected = Object(react_redux__WEBPACK_IMPORTED_MODULE_9__["useSelector"])((state) => state.base.selection);
-    const playedWords = Object(react_redux__WEBPACK_IMPORTED_MODULE_9__["useSelector"])((state) => state.base.playedWords);
-    const playerName = Object(react_redux__WEBPACK_IMPORTED_MODULE_9__["useSelector"])((state) => state.base.playerName);
-    const isLoading = Object(react_redux__WEBPACK_IMPORTED_MODULE_9__["useSelector"])((state) => state.board.isLoading);
-    const possibleWordPositions = Object(react_redux__WEBPACK_IMPORTED_MODULE_9__["useSelector"])((state) => state.base.possibleWordPositions);
-    const stateHistory = Object(react_redux__WEBPACK_IMPORTED_MODULE_9__["useSelector"])((state) => state.base.stateHistory);
-    const messageState = Object(react_redux__WEBPACK_IMPORTED_MODULE_9__["useSelector"])((state) => state.message);
+    const board = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])((state) => state.board.board);
+    const turn = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])((state) => state.board.turn);
+    const newGame = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])((state) => state.board.newGame);
+    const base = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])((state) => state.base.base);
+    const selected = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])((state) => state.base.selection);
+    const playedWords = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])((state) => state.base.playedWords);
+    const playerName = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])((state) => state.base.playerName);
+    const isLoading = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])((state) => state.board.isLoading);
+    const possibleWordPositions = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])((state) => state.base.possibleWordPositions);
+    const stateHistory = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])((state) => state.base.stateHistory);
+    const messageState = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])((state) => state.message);
     const webWorker = new Worker(__webpack__worker__0, undefined);
-    const dispatch = Object(react_redux__WEBPACK_IMPORTED_MODULE_9__["useDispatch"])();
+    const dispatch = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useDispatch"])();
     const gameChange = () => {
         setTimeout(() => {
-            dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].messageActions.setMessage(`winner is ${turn}`, 'message'));
+            dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].messageActions.setMessage(`winner is ${turn}`, 'message'));
             startNewGame();
         }, 1500);
     };
     const startNewGame = () => {
-        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].baseActions.removeSelectionAndPlayedWords([], []));
-        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].boardActions.newGame(true, playerName, true));
+        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.removeSelectionAndPlayedWords([], []));
+        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].boardActions.newGame(true, playerName, true));
         if (messageState.type === 'start') {
-            dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].messageActions.clearMessage());
+            dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].messageActions.clearMessage());
         }
     };
     const checkBoard = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -35595,7 +35597,7 @@ const GameBoardPage = () => {
                 initializeBase();
             }
             else {
-                dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].boardActions.isLoading(false));
+                dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].boardActions.isLoading(false));
             }
         }
     });
@@ -35603,23 +35605,23 @@ const GameBoardPage = () => {
         const words = yield _services_words__WEBPACK_IMPORTED_MODULE_2__["default"].fetchAll();
         const objToSend = { board, playerName, words };
         webWorker.postMessage(objToSend);
-        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].boardActions.isLoading(true));
+        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].boardActions.isLoading(true));
         webWorker.onmessage = event => {
-            dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].baseActions.createBase(event.data));
+            dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.createBase(event.data));
         };
     });
     const showResetModal = () => {
-        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].messageActions.setMessage('are you sure you want to reset the game?', 'reset'));
+        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].messageActions.setMessage('are you sure you want to reset the game?', 'reset'));
     };
     const showStartModal = () => {
-        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].messageActions.setMessage('are you sure you want to start new game?', 'start'));
+        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].messageActions.setMessage('are you sure you want to start new game?', 'start'));
     };
     const resetGame = () => {
-        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].baseActions.resetBase(stateHistory[1].base));
-        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].messageActions.clearMessage());
+        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.resetBase(stateHistory[1].base));
+        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].messageActions.clearMessage());
     };
     const clearMessage = () => {
-        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].messageActions.clearMessage());
+        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].messageActions.clearMessage());
     };
     const confirmSelection = () => __awaiter(void 0, void 0, void 0, function* () {
         const newWord = selected.map(s => s.letter).join('');
@@ -35627,34 +35629,34 @@ const GameBoardPage = () => {
         const playedAgain = playedWords.filter(word => word.owner === turn).filter(word => word.word === newWord);
         if (wordExist && !playedAgain.length) {
             const history = [...base];
-            dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].baseActions.createHistory(history, selected, turn));
+            dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.createHistory(history, selected, turn));
             const confirmedAndFiltered = _services_game__WEBPACK_IMPORTED_MODULE_1__["default"].updateOwnersAndRemoveIsolatedNodes(selected, base, board, turn);
             const checkGame = _services_game__WEBPACK_IMPORTED_MODULE_1__["default"].checkIfWin(selected, turn, board.length);
-            dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].baseActions.confirmSelection(confirmedAndFiltered, [...playedWords, { word: newWord, owner: turn, turn: stateHistory.length }], []));
-            checkGame ? gameChange() : dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].boardActions.changeTurn('computer'));
+            dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.confirmSelection(confirmedAndFiltered, [...playedWords, { word: newWord, owner: turn, turn: stateHistory.length }], []));
+            checkGame ? gameChange() : dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].boardActions.changeTurn('computer'));
         }
         else {
             const message = playedAgain.length > 0 ? `cant play same word twice, ${newWord} already played` : `word ${newWord}, does not exist`;
-            dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].messageActions.setMessage(message, 'message'));
+            dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].messageActions.setMessage(message, 'message'));
             removeSelection();
         }
     });
     const removeSelection = () => {
-        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].baseActions.removeFromSelection(0));
+        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.removeFromSelection(0));
     };
     const computersTurn = () => {
         const history = [...base];
         const computerSelected = _services_game__WEBPACK_IMPORTED_MODULE_1__["default"].getBestWord(base, turn, board.length);
         const newSelectionConfirmed = computerSelected.map(s => ({ letter: s.letter, row: s.row, column: s.column, owner: turn, possibleWords: s.possibleWords }));
-        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].baseActions.createHistory(history, newSelectionConfirmed, turn));
+        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.createHistory(history, newSelectionConfirmed, turn));
         computerSelect(newSelectionConfirmed);
         const timeOutCounter = newSelectionConfirmed.length;
         setTimeout(() => {
             const confirmedAndFiltered = _services_game__WEBPACK_IMPORTED_MODULE_1__["default"].updateOwnersAndRemoveIsolatedNodes(newSelectionConfirmed, base, board, turn);
             const fullyUpdatedBase = _services_game__WEBPACK_IMPORTED_MODULE_1__["default"].updateBaseWithPossibleWordTable(newSelectionConfirmed, possibleWordPositions, confirmedAndFiltered);
             const checkGame = _services_game__WEBPACK_IMPORTED_MODULE_1__["default"].checkIfWin(newSelectionConfirmed, turn, board.length);
-            dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].baseActions.confirmSelection(fullyUpdatedBase, [...playedWords, { word: computerSelected.map(s => s.letter).join(''), owner: turn, turn: stateHistory.length }], []));
-            checkGame ? gameChange() : dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].boardActions.changeTurn(playerName));
+            dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.confirmSelection(fullyUpdatedBase, [...playedWords, { word: computerSelected.map(s => s.letter).join(''), owner: turn, turn: stateHistory.length }], []));
+            checkGame ? gameChange() : dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].boardActions.changeTurn(playerName));
         }, timeOutCounter * 500 + 700);
     };
     const selectLetter = (letter, row, column, owner) => __awaiter(void 0, void 0, void 0, function* () {
@@ -35664,15 +35666,15 @@ const GameBoardPage = () => {
             const result = _services_game__WEBPACK_IMPORTED_MODULE_1__["default"].checkIfLetterSelectionIsallowed(obj, board, selected, turn);
             if (result.possibleSelection) {
                 result.selectedBeforeIndex === -1 ?
-                    dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].baseActions.updateSelection([...selected, obj])) :
-                    dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].baseActions.removeFromSelection(result.selectedBeforeIndex));
+                    dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.updateSelection([...selected, obj])) :
+                    dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.removeFromSelection(result.selectedBeforeIndex));
             }
         }
     });
     const timeTravel = (turn) => {
         const currentBase = [...base];
         const timeOutCounter = stateHistory[turn].selection.length;
-        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].baseActions.updateBase(stateHistory[turn].base));
+        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.updateBase(stateHistory[turn].base));
         computerSelect(stateHistory[turn].selection);
         setTimeout(() => {
             backToPresent(currentBase);
@@ -35683,16 +35685,16 @@ const GameBoardPage = () => {
         for (const [i, s] of selection.entries()) {
             const selectionArray = selection.filter((s, j) => j <= i);
             setTimeout(() => {
-                dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].baseActions.updateSelection(selectionArray));
+                dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.updateSelection(selectionArray));
             }, (i + 1) * 500);
         }
     };
     const backToPresent = (base) => {
-        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].baseActions.updateBase(base));
+        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.updateBase(base));
     };
     Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(() => {
         if (newGame) {
-            dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_10__["default"].boardActions.gameStart());
+            dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].boardActions.gameStart());
             initializeBase();
         }
         else if (isLoading) {
@@ -35709,10 +35711,11 @@ const GameBoardPage = () => {
                 isLoading ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_LoadingTable__WEBPACK_IMPORTED_MODULE_7__["LoadingTable"], null)
                     : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Board__WEBPACK_IMPORTED_MODULE_3__["Board"], { selectLetter: selectLetter }),
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_GameBoardButtons__WEBPACK_IMPORTED_MODULE_4__["GameBoardButtons"], { newGame: showStartModal, resetGame: showResetModal, confirmSelection: confirmSelection, removeSelection: removeSelection })),
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'wordlist-and-info-container' },
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_PlayedWordList__WEBPACK_IMPORTED_MODULE_6__["PlayedWordList"], { timeTravel: timeTravel }),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_LogoContainer__WEBPACK_IMPORTED_MODULE_8__["LogoContainer"], null)),
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null,
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_PlayedWordList__WEBPACK_IMPORTED_MODULE_6__["PlayedWordList"], { timeTravel: timeTravel })),
-            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null,
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Message__WEBPACK_IMPORTED_MODULE_8__["Message"], { resetGame: resetGame, clearMessage: clearMessage, startNewGame: startNewGame }))));
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Message__WEBPACK_IMPORTED_MODULE_9__["Message"], { resetGame: resetGame, clearMessage: clearMessage, startNewGame: startNewGame }))));
 };
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(71)))
@@ -36020,7 +36023,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
 
 
-const GameBoardHeader = (props) => {
+const GameBoardHeader = () => {
     const turn = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])((state) => state.board.turn);
     const isLoading = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])((state) => state.board.isLoading);
     const selected = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])((state) => state.base.selection);
@@ -36038,16 +36041,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlayedWordList", function() { return PlayedWordList; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
-/* harmony import */ var _hooks_windowSize__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(78);
+/* harmony import */ var _BalanceOfPower__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(78);
+/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(12);
+/* harmony import */ var _hooks_windowSize__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(79);
+
 
 
 
 const PlayedWordList = (props) => {
-    const played = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])((state) => state.base.playedWords);
-    const playerName = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])((state) => state.base.playerName);
+    const played = Object(react_redux__WEBPACK_IMPORTED_MODULE_2__["useSelector"])((state) => state.base.playedWords);
+    const playerName = Object(react_redux__WEBPACK_IMPORTED_MODULE_2__["useSelector"])((state) => state.base.playerName);
+    const base = Object(react_redux__WEBPACK_IMPORTED_MODULE_2__["useSelector"])((state) => state.base.base);
+    const isLoading = Object(react_redux__WEBPACK_IMPORTED_MODULE_2__["useSelector"])((state) => state.board.isLoading);
+    const playerNodes = base.filter(f => f.owner === playerName).length;
+    const comNodes = base.filter(f => f.owner === 'computer').length;
+    const percentageDifference = isLoading ? 50 : ((playerNodes - comNodes) / (playerNodes + comNodes / 2) * 100) + 50;
     const messagesEndRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
-    const size = Object(_hooks_windowSize__WEBPACK_IMPORTED_MODULE_2__["useWindowSize"])();
+    const size = Object(_hooks_windowSize__WEBPACK_IMPORTED_MODULE_3__["useWindowSize"])();
     const getWordStyle = (owner) => {
         return owner === 'computer' ? { color: 'khaki', textAlign: 'right' } : { color: '#87b6b8', textAlign: 'left' };
     };
@@ -36060,13 +36070,11 @@ const PlayedWordList = (props) => {
         scrollToBottom();
     }, [played]);
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'wordListContainer' },
-        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'wordListHeader' },
-            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, playerName),
-            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, "computer")),
+        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_BalanceOfPower__WEBPACK_IMPORTED_MODULE_1__["BalanceOfPower"], { playerPercentage: percentageDifference, playerName: playerName }),
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'wordListWords' },
             played.map((w, i) => {
                 const styleValues = getWordStyle(w.owner);
-                return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { key: i, onClick: () => props.timeTravel(w.turn), style: { color: styleValues.color, textAlign: styleValues.textAlign, cursor: 'pointer' } }, w.word));
+                return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { key: i, onClick: () => props.timeTravel(w.turn), style: { color: styleValues.color, textAlign: styleValues.textAlign, cursor: 'pointer', padding: '4px' } }, w.word));
             }),
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { ref: messagesEndRef })));
 };
@@ -36074,6 +36082,30 @@ const PlayedWordList = (props) => {
 
 /***/ }),
 /* 78 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BalanceOfPower", function() { return BalanceOfPower; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+
+const BalanceOfPower = (props) => {
+    const fillerStyles = {
+        height: '100%',
+        width: `${props.playerPercentage}%`,
+        backgroundColor: '#87b6b8',
+        borderRadius: 'inherit'
+    };
+    return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'balanceBar' },
+        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { style: fillerStyles },
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: 'playerLabel' }, props.playerName),
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: 'comLabel' }, "computer"))));
+};
+
+
+/***/ }),
+/* 79 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -36100,7 +36132,7 @@ const useWindowSize = () => {
 
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -36133,7 +36165,34 @@ const LoadingTable = () => {
 
 
 /***/ }),
-/* 80 */
+/* 81 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LogoContainer", function() { return LogoContainer; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _media_doggiedoo_png__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(82);
+
+
+const LogoContainer = () => {
+    return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "dog-container" },
+        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null,
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", { className: 'dog-image', src: _media_doggiedoo_png__WEBPACK_IMPORTED_MODULE_1__["default"] }))));
+};
+
+
+/***/ }),
+/* 82 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = (__webpack_require__.p + "images/75b58a02f14895ea6e558d375ab607e4-doggiedoo.png");
+
+/***/ }),
+/* 83 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -36171,14 +36230,14 @@ const Message = (props) => {
 
 
 /***/ }),
-/* 81 */
+/* 84 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _boardActions__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(49);
-/* harmony import */ var _baseActions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(82);
-/* harmony import */ var _messageActions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(83);
+/* harmony import */ var _baseActions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(85);
+/* harmony import */ var _messageActions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(86);
 
 
 
@@ -36191,7 +36250,7 @@ const allActions = {
 
 
 /***/ }),
-/* 82 */
+/* 85 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -36302,7 +36361,7 @@ const createHistory = (base, selection, turn) => {
 
 
 /***/ }),
-/* 83 */
+/* 86 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -36333,7 +36392,7 @@ const resolveMessage = (resolution) => {
 
 
 /***/ }),
-/* 84 */
+/* 87 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -36347,29 +36406,27 @@ const Howto = () => {
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'howto-header' },
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", null, "How to play")),
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'howto-paragraph' },
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "The goal is to reach the opponents base by playing words."),
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Words are created by selecting letters one by one."),
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Letter selection must start from your own base, and only the neighboring node can be selected. However you can move in any direction."),
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null,
-                "The goal is to reach the opponents base by playing words.",
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null),
-                "Words are created by selecting letters one by one.",
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null),
-                "Letter selection must start from your own base, and only the neighboring node can be selected. However you can move in any direction.",
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null),
-                "Bases are highlighted by colors. Player starts from top and computer from bottom",
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null),
-                "When you are happy with your selection, you may confirm the selection from the confirm-button, on the bottom of the board.",
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null),
-                "Every time a word is played, your base is expanded. ",
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null),
-                "All nodes that are not connected to your base, are cut off. This way you may block your opponents advances. ",
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null),
-                "The words must be in the basic form and at the moment only Finnish wordlist is found in the game.",
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null)),
+                "Bases are highlighted by colors. ",
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { style: { color: '#87b6b8' } }, "Player"),
+                " starts from top and ",
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { style: { color: 'khaki' } }, "computer"),
+                " from bottom"),
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null,
+                " When you are happy with your selection, you may confirm the selection from the confirm-button ",
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-chevron-circle-down" }),
+                ", on the bottom of the board."),
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Every time a word is played, your base is expanded. All nodes that are not connected to your base, are cut off. This way you may block your opponents advances. "),
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "The words must be in the basic form and at the moment only Finnish wordlist is found in the game."),
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Have fun!"))));
 };
 
 
 /***/ }),
-/* 85 */
+/* 88 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -36385,22 +36442,26 @@ const About = () => {
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'about-paragraph' },
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null,
                 "I have created this game inspired by ",
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", { href: "https://apkpure.com/wordbase-%E2%80%93-fun-word-search-battles-with-friends/com.wordbaseapp" }, "WordBase"),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", { href: 'https://apkpure.com/wordbase-%E2%80%93-fun-word-search-battles-with-friends/com.wordbaseapp', style: { color: 'khaki' } }, "WordBase"),
                 ", which was a great multiplayer-android game (really!), and sadly shut down due to unprofitability.",
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null),
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null),
                 "My motivations for creating this game has been learning. :)",
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null),
-                "I got the idea when my friend showed a neat scrabble solver script he wrote to help in games against his girlfriend.",
+                "I got the idea when a buddy of mine showed a ",
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", { href: 'https://github.com/pheis/riti-rati', style: { color: '#87b6b8' } }, "neat scrabble solver script"),
+                " he wrote to help in games against his girlfriend.",
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null),
-                "I thought the script was pretty elegant, and I wanted to see if I could create a WordBase solver myself. Ofcourse, I made a lot of spaghetti, but creating the app was fun. In the process I decided that instead of a solver, I would create a singleplayer-game to play against computer",
+                "I thought the script was pretty elegant, and I wanted to see if I could create a WordBase solver myself. In the creating process I decided that instead of a solver, I would make a singleplayer-game to play against a computer instead.",
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null)),
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null,
                 "The ",
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", { href: "http://kaino.kotus.fi/sanat/nykysuomi/" }, "Finnish wordlist"),
-                " used to evaluate played words, is from the Institute of the Language of Finland."),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", { href: 'http://kaino.kotus.fi/sanat/nykysuomi/', style: { color: '#87b6b8' } }, "Finnish wordlist"),
+                " used to evaluate played words, is from the ",
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", { href: 'https://www.kotus.fi/en', style: { color: 'khaki' } }, "Institute of the Language of Finland.")),
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null,
                 "The source code can be found from my ",
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", { href: "https://github.com/rottabonus/zordbase" }, "github page."),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", { href: 'https://github.com/rottabonus/zordbase', style: { color: '#87b6b8' } }, "github page."),
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null))),
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'about-tail' },
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Felix Hallenberg"))));

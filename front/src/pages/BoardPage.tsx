@@ -6,7 +6,7 @@ import { GameBoardButtons } from '../components/GameBoardButtons'
 import { GameBoardHeader } from '../components/GameBoardHeader'
 import { PlayedWordList } from '../components/PlayedWordList'
 import { LoadingTable } from '../components/LoadingTable'
-import { GameInfo } from '../components/GameInfo'
+import { LogoContainer } from '../components/LogoContainer'
 import { Message } from '../components/Message'
 import { letterObject, selectionObject, playedWord } from '../types/types'
 import { useSelector, useDispatch } from 'react-redux'
@@ -183,7 +183,7 @@ export const GameBoardPage: React.FC = () => {
                         </div> 
                         <div className='wordlist-and-info-container'>
                             <PlayedWordList timeTravel={timeTravel}/>
-                            <GameInfo />
+                            <LogoContainer />
                         </div>
                         <div>
                             <Message resetGame={resetGame} clearMessage={clearMessage} startNewGame={startNewGame} />
