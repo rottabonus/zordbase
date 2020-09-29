@@ -1,4 +1,15 @@
+body {
+  font-family: 'Lato', sans-serif;
+  color: darkslategray;
+  overflow-x: hidden;
+  position: relative
+}
 
+html {
+  --scrollbarBG: gainsboro;
+  --thumbBG: whitesmoke;
+  overflow-x: hidden;
+}
 
 .topnav {
   background-color: whitesmoke;
@@ -31,11 +42,6 @@ a {
 .topnav a.active {
   background-color: #eee1c8;
   color: white;
-}
-
-body {
-  font-family: 'Lato', sans-serif;
-  color: darkslategray;
 }
 
 .gameboard-page-container {
@@ -227,12 +233,6 @@ td {
   right: 4px;
 }
 
-html {
-  --scrollbarBG: gainsboro;
-  --thumbBG: whitesmoke;
-  overflow-x: hidden;
-}
-
 .spin {
   animation: 3s rotate linear infinite;
 }
@@ -257,7 +257,7 @@ html {
   height: 200px;
   text-align: center;
   background-color: #ededed;
-  color: lightslategray;
+  color: darkslategray;
   border-radius: 2%;
   box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);
   z-index: 888;
@@ -308,8 +308,6 @@ html {
   border-bottom: 1px solid grey;
 }
 
-
-
 @media only screen and (max-width: 768px) and (min-width:600px) {
 
 
@@ -333,7 +331,6 @@ html {
 
 @media only screen and (max-width: 599px) and (min-width:551px) {
 
-
   .wordListWords {
       height: 180px;
   }
@@ -351,7 +348,6 @@ html {
   }
 
 }
-
 
 @media only screen and (max-width: 550px) and (min-width: 331px) {
   .board-and-word-list {
@@ -430,7 +426,6 @@ html {
   .modalButtons {
     padding: auto;
     }
-
 }
 
 @media only screen and (max-width: 330px) {
@@ -509,5 +504,4 @@ html {
   .modalButtons {
     padding: auto;
     }
-
 }

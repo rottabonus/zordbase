@@ -14,7 +14,7 @@ export const About: React.FC = () => {
         I thought the script was pretty elegant, and I wanted to see if I could create a WordBase solver myself. 
         In the creating process I decided that instead of a solver, I would make a singleplayer-game to play against a computer instead.<br></br>
         </p>
-        <p>The <a href='http://kaino.kotus.fi/sanat/nykysuomi/' style={{color: '#87b6b8'}}>Finnish wordlist</a> used to evaluate played words, is from the <a href='https://www.kotus.fi/en' style={{color: 'khaki'}}>Institute of the Language of Finland.</a></p>
+        <p>The <a href='http://kaino.kotus.fi/sanat/nykysuomi/' style={{color: '#87b6b8'}}>Finnish wordlist</a> used to evaluate played words, is from the <a href='https://www.kotus.fi/en' style={{color: 'khaki'}}>Institute for the Languages of Finland.</a></p>
         <p>The source code can be found from my <a href='https://github.com/rottabonus/zordbase' style={{color: '#87b6b8'}}>github page.</a><br></br></p>
     </div>
     <div className='about-tail'>
