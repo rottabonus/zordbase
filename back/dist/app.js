@@ -108,7 +108,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const store = Object(redux__WEBPACK_IMPORTED_MODULE_3__["createStore"])(_reducers_combineReducer__WEBPACK_IMPORTED_MODULE_4__["default"], Object(redux_devtools_extension__WEBPACK_IMPORTED_MODULE_5__["composeWithDevTools"])(Object(redux__WEBPACK_IMPORTED_MODULE_3__["applyMiddleware"])(redux_thunk__WEBPACK_IMPORTED_MODULE_6__["default"])));
+var store = Object(redux__WEBPACK_IMPORTED_MODULE_3__["createStore"])(_reducers_combineReducer__WEBPACK_IMPORTED_MODULE_4__["default"], Object(redux_devtools_extension__WEBPACK_IMPORTED_MODULE_5__["composeWithDevTools"])(Object(redux__WEBPACK_IMPORTED_MODULE_3__["applyMiddleware"])(redux_thunk__WEBPACK_IMPORTED_MODULE_6__["default"])));
 
 react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_redux__WEBPACK_IMPORTED_MODULE_2__["Provider"], { store: store },
     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_App__WEBPACK_IMPORTED_MODULE_7__["default"], null)), document.querySelector('#root'));
@@ -31891,7 +31891,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const rootReducer = Object(redux__WEBPACK_IMPORTED_MODULE_3__["combineReducers"])({
+var rootReducer = Object(redux__WEBPACK_IMPORTED_MODULE_3__["combineReducers"])({
     board: _boardReducer__WEBPACK_IMPORTED_MODULE_0__["default"],
     base: _baseReducer__WEBPACK_IMPORTED_MODULE_1__["default"],
     message: _messageReducer__WEBPACK_IMPORTED_MODULE_2__["default"]
@@ -31906,25 +31906,37 @@ const rootReducer = Object(redux__WEBPACK_IMPORTED_MODULE_3__["combineReducers"]
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _actions_boardActions__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(49);
+var __assign = (undefined && undefined.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 
-const initialState = {
+var initialState = {
     board: _actions_boardActions__WEBPACK_IMPORTED_MODULE_0__["default"].createGameBoard(12, 10),
     newGame: true,
     turn: 'player',
     isLoading: false
 };
-const boardReducer = (state = initialState, action) => {
+var boardReducer = function (state, action) {
+    if (state === void 0) { state = initialState; }
     switch (action.type) {
         case "CREATEBOARD":
-            return Object.assign(Object.assign({}, state), { board: action.payload });
+            return __assign(__assign({}, state), { board: action.payload });
         case "NEWGAME":
-            return Object.assign(Object.assign({}, state), { newGame: action.payload.newGame, board: action.payload.board, turn: action.payload.turn, isLoading: action.payload.isLoading });
+            return __assign(__assign({}, state), { newGame: action.payload.newGame, board: action.payload.board, turn: action.payload.turn, isLoading: action.payload.isLoading });
         case "CHANGETURN":
-            return Object.assign(Object.assign({}, state), { turn: action.payload });
+            return __assign(__assign({}, state), { turn: action.payload });
         case "GAMESTART":
-            return Object.assign(Object.assign({}, state), { newGame: action.payload });
+            return __assign(__assign({}, state), { newGame: action.payload });
         case "ISLOADING":
-            return Object.assign(Object.assign({}, state), { isLoading: action.payload });
+            return __assign(__assign({}, state), { isLoading: action.payload });
         default: {
             return state;
         }
@@ -31939,62 +31951,62 @@ const boardReducer = (state = initialState, action) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-const createBoard = () => {
+var createBoard = function () {
     return {
         type: "CREATEBOARD",
         payload: createGameBoard(12, 10)
     };
 };
-const newGame = (newGame, turn, isLoading) => {
+var newGame = function (newGame, turn, isLoading) {
     return {
         type: "NEWGAME",
-        payload: { newGame, board: createGameBoard(12, 10), turn, isLoading }
+        payload: { newGame: newGame, board: createGameBoard(12, 10), turn: turn, isLoading: isLoading }
     };
 };
-const gameStart = () => {
+var gameStart = function () {
     return {
         type: "GAMESTART",
         payload: false
     };
 };
-const isLoading = (loading) => {
+var isLoading = function (loading) {
     return {
         type: "ISLOADING",
         payload: loading
     };
 };
-const changeTurn = (turn) => {
+var changeTurn = function (turn) {
     return {
         type: "CHANGETURN",
         payload: turn
     };
 };
-const createGameBoard = (rows, columns) => {
-    const letters = 'aaaaaaaaaaaaiiiiiiiiiiittttttttttnnnnnnnnneeeeeeeesssssssslllllloooookkkkkuuuuuääääämmmmvvrrjjhhyyppdö';
-    const letterArr = letters.split('');
-    const board = [];
-    let rowArray = [];
-    for (let i = 0; i <= rows; i++) {
+var createGameBoard = function (rows, columns) {
+    var letters = 'aaaaaaaaaaaaiiiiiiiiiiittttttttttnnnnnnnnneeeeeeeesssssssslllllloooookkkkkuuuuuääääämmmmvvrrjjhhyyppdö';
+    var letterArr = letters.split('');
+    var board = [];
+    var rowArray = [];
+    for (var i = 0; i <= rows; i++) {
         if (i !== 0) {
             board.push(rowArray);
         }
         rowArray = [];
-        for (let j = 0; j < columns; j++) {
+        for (var j = 0; j < columns; j++) {
             rowArray.push(letterArr[getRandomInt(letterArr.length)].toUpperCase());
         }
     }
     return board;
 };
-const getRandomInt = (max) => {
+var getRandomInt = function (max) {
     return Math.floor(Math.random() * Math.floor(max));
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
-    createBoard,
-    newGame,
-    changeTurn,
-    createGameBoard,
-    gameStart,
-    isLoading
+    createBoard: createBoard,
+    newGame: newGame,
+    changeTurn: changeTurn,
+    createGameBoard: createGameBoard,
+    gameStart: gameStart,
+    isLoading: isLoading
 });
 
 
@@ -32004,7 +32016,38 @@ const getRandomInt = (max) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-const initialState = {
+var __assign = (undefined && undefined.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var __read = (undefined && undefined.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spread = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
+    return ar;
+};
+var initialState = {
     base: [],
     selection: [],
     playedWords: [],
@@ -32016,28 +32059,29 @@ const initialState = {
             turn: ''
         }]
 };
-const baseReducer = (state = initialState, action) => {
+var baseReducer = function (state, action) {
+    if (state === void 0) { state = initialState; }
     switch (action.type) {
         case "CREATEBASE":
-            return Object.assign(Object.assign({}, state), { base: action.payload.base, possibleWordPositions: action.payload.possibleWordPositions });
+            return __assign(__assign({}, state), { base: action.payload.base, possibleWordPositions: action.payload.possibleWordPositions });
         case "UPDATEBASE":
-            return Object.assign(Object.assign({}, state), { base: action.payload });
+            return __assign(__assign({}, state), { base: action.payload });
         case "UPDATESELECTION":
-            return Object.assign(Object.assign({}, state), { selection: action.payload });
+            return __assign(__assign({}, state), { selection: action.payload });
         case "UPDATEPLAYEDWORDS":
-            return Object.assign(Object.assign({}, state), { playedWords: action.payload });
+            return __assign(__assign({}, state), { playedWords: action.payload });
         case "REMOVEFROMSELECTION":
-            return Object.assign(Object.assign({}, state), { selection: state.selection.slice(0, action.payload) });
+            return __assign(__assign({}, state), { selection: state.selection.slice(0, action.payload) });
         case "CONFIRMSELECTION":
-            return Object.assign(Object.assign({}, state), { selection: action.payload.selection, base: action.payload.base, playedWords: action.payload.played });
+            return __assign(__assign({}, state), { selection: action.payload.selection, base: action.payload.base, playedWords: action.payload.played });
         case "CHANGEPLAYERNAME":
-            return Object.assign(Object.assign({}, state), { playerName: action.payload });
+            return __assign(__assign({}, state), { playerName: action.payload });
         case "RESETGAME":
-            return Object.assign(Object.assign({}, state), { base: action.payload.base, selection: action.payload.selection, playedWords: action.payload.played, stateHistory: [action.payload.history] });
+            return __assign(__assign({}, state), { base: action.payload.base, selection: action.payload.selection, playedWords: action.payload.played, stateHistory: [action.payload.history] });
         case "REMOVESELECTIONANDPLAYED":
-            return Object.assign(Object.assign({}, state), { selection: action.payload.selection, playedWords: action.payload.played, stateHistory: [action.payload.history] });
+            return __assign(__assign({}, state), { selection: action.payload.selection, playedWords: action.payload.played, stateHistory: [action.payload.history] });
         case "CREATEHISTORY":
-            return Object.assign(Object.assign({}, state), { stateHistory: [...state.stateHistory, { base: action.payload.base, selection: action.payload.selection, turn: action.payload.turn }] });
+            return __assign(__assign({}, state), { stateHistory: __spread(state.stateHistory, [{ base: action.payload.base, selection: action.payload.selection, turn: action.payload.turn }]) });
         default: {
             return state;
         }
@@ -32052,20 +32096,32 @@ const baseReducer = (state = initialState, action) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-const initialState = {
+var __assign = (undefined && undefined.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var initialState = {
     message: '',
     type: '',
     show: false,
     resolution: false
 };
-const messageReducer = (state = initialState, action) => {
+var messageReducer = function (state, action) {
+    if (state === void 0) { state = initialState; }
     switch (action.type) {
         case "SETMESSAGE":
-            return Object.assign(Object.assign({}, state), { message: action.payload.message, type: action.payload.type, show: true });
+            return __assign(__assign({}, state), { message: action.payload.message, type: action.payload.type, show: true });
         case "CLEARMESSAGE":
-            return Object.assign(Object.assign({}, state), { message: action.payload, type: '', show: false });
+            return __assign(__assign({}, state), { message: action.payload, type: '', show: false });
         case "RESOLVEMESSAGE":
-            return Object.assign(Object.assign({}, state), { resolution: action.payload, message: '', show: false });
+            return __assign(__assign({}, state), { resolution: action.payload, message: '', show: false });
         default: {
             return state;
         }
@@ -32149,7 +32205,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const App = () => {
+var App = function () {
     return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_router_dom__WEBPACK_IMPORTED_MODULE_1__["BrowserRouter"], null,
         react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { className: 'topnav' },
             react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"], { to: '/' },
@@ -32159,9 +32215,9 @@ const App = () => {
             react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"], { to: '/about' },
                 react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("span", null, "About"))),
         react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", null,
-            react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Route"], { exact: true, path: "/", render: () => react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_pages_BoardPage__WEBPACK_IMPORTED_MODULE_3__["GameBoardPage"], null) }),
-            react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Route"], { path: "/howto", render: () => react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_pages_Howto__WEBPACK_IMPORTED_MODULE_4__["Howto"], null) }),
-            react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Route"], { path: "/about", render: () => react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_pages_About__WEBPACK_IMPORTED_MODULE_5__["About"], null) }))));
+            react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Route"], { exact: true, path: "/", render: function () { return react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_pages_BoardPage__WEBPACK_IMPORTED_MODULE_3__["GameBoardPage"], null); } }),
+            react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Route"], { path: "/howto", render: function () { return react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_pages_Howto__WEBPACK_IMPORTED_MODULE_4__["Howto"], null); } }),
+            react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Route"], { path: "/about", render: function () { return react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_pages_About__WEBPACK_IMPORTED_MODULE_5__["About"], null); } }))));
 };
 /* harmony default export */ __webpack_exports__["default"] = (App);
 
@@ -35550,6 +35606,64 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __generator = (undefined && undefined.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var __read = (undefined && undefined.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spread = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
+    return ar;
+};
+var __values = (undefined && undefined.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 
 
 
@@ -35562,137 +35676,176 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 
-const GameBoardPage = () => {
-    const board = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])((state) => state.board.board);
-    const turn = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])((state) => state.board.turn);
-    const newGame = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])((state) => state.board.newGame);
-    const base = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])((state) => state.base.base);
-    const selected = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])((state) => state.base.selection);
-    const playedWords = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])((state) => state.base.playedWords);
-    const playerName = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])((state) => state.base.playerName);
-    const isLoading = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])((state) => state.board.isLoading);
-    const possibleWordPositions = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])((state) => state.base.possibleWordPositions);
-    const stateHistory = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])((state) => state.base.stateHistory);
-    const messageState = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])((state) => state.message);
-    const webWorker = new Worker(__webpack__worker__0, undefined);
-    const dispatch = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useDispatch"])();
-    const gameChange = () => {
-        setTimeout(() => {
-            dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].messageActions.setMessage(`winner is ${turn}`, 'message'));
+var GameBoardPage = function () {
+    var board = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])(function (state) { return state.board.board; });
+    var turn = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])(function (state) { return state.board.turn; });
+    var newGame = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])(function (state) { return state.board.newGame; });
+    var base = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])(function (state) { return state.base.base; });
+    var selected = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])(function (state) { return state.base.selection; });
+    var playedWords = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])(function (state) { return state.base.playedWords; });
+    var playerName = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])(function (state) { return state.base.playerName; });
+    var isLoading = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])(function (state) { return state.board.isLoading; });
+    var possibleWordPositions = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])(function (state) { return state.base.possibleWordPositions; });
+    var stateHistory = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])(function (state) { return state.base.stateHistory; });
+    var messageState = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useSelector"])(function (state) { return state.message; });
+    var webWorker = new Worker(__webpack__worker__0, undefined);
+    var dispatch = Object(react_redux__WEBPACK_IMPORTED_MODULE_10__["useDispatch"])();
+    var gameChange = function () {
+        setTimeout(function () {
+            dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].messageActions.setMessage("winner is " + turn, 'message'));
             startNewGame();
         }, 1500);
     };
-    const startNewGame = () => {
+    var startNewGame = function () {
         dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.removeSelectionAndPlayedWords([], []));
         dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].boardActions.newGame(true, playerName, true));
         if (messageState.type === 'start') {
             dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].messageActions.clearMessage());
         }
     };
-    const checkBoard = () => __awaiter(void 0, void 0, void 0, function* () {
-        const positionsWithPossibleWords = base.filter(w => w.possibleWords.length > 0);
-        const possibleWordsPercentage = 100 * positionsWithPossibleWords.length / base.length;
-        if (!Number.isNaN(possibleWordsPercentage)) {
-            if (possibleWordsPercentage < 74) {
-                initializeBase();
+    var checkBoard = function () { return __awaiter(void 0, void 0, void 0, function () {
+        var positionsWithPossibleWords, possibleWordsPercentage;
+        return __generator(this, function (_a) {
+            positionsWithPossibleWords = base.filter(function (w) { return w.possibleWords.length > 0; });
+            possibleWordsPercentage = 100 * positionsWithPossibleWords.length / base.length;
+            if (!Number.isNaN(possibleWordsPercentage)) {
+                if (possibleWordsPercentage < 74) {
+                    initializeBase();
+                }
+                else {
+                    dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].boardActions.isLoading(false));
+                }
             }
-            else {
-                dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].boardActions.isLoading(false));
+            return [2 /*return*/];
+        });
+    }); };
+    var initializeBase = function () { return __awaiter(void 0, void 0, void 0, function () {
+        var words, objToSend;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, _services_words__WEBPACK_IMPORTED_MODULE_2__["default"].fetchAll()];
+                case 1:
+                    words = _a.sent();
+                    objToSend = { board: board, playerName: playerName, words: words };
+                    webWorker.postMessage(objToSend);
+                    dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].boardActions.isLoading(true));
+                    webWorker.onmessage = function (event) {
+                        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.createBase(event.data));
+                    };
+                    return [2 /*return*/];
             }
-        }
-    });
-    const initializeBase = () => __awaiter(void 0, void 0, void 0, function* () {
-        const words = yield _services_words__WEBPACK_IMPORTED_MODULE_2__["default"].fetchAll();
-        const objToSend = { board, playerName, words };
-        webWorker.postMessage(objToSend);
-        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].boardActions.isLoading(true));
-        webWorker.onmessage = event => {
-            dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.createBase(event.data));
-        };
-    });
-    const showResetModal = () => {
+        });
+    }); };
+    var showResetModal = function () {
         dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].messageActions.setMessage('are you sure you want to reset the game?', 'reset'));
     };
-    const showStartModal = () => {
+    var showStartModal = function () {
         dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].messageActions.setMessage('are you sure you want to start new game?', 'start'));
     };
-    const resetGame = () => {
+    var resetGame = function () {
         dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.resetBase(stateHistory[1].base));
         dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].messageActions.clearMessage());
     };
-    const clearMessage = () => {
+    var clearMessage = function () {
         dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].messageActions.clearMessage());
     };
-    const confirmSelection = () => __awaiter(void 0, void 0, void 0, function* () {
-        const newWord = selected.map(s => s.letter).join('');
-        const wordExist = yield _services_words__WEBPACK_IMPORTED_MODULE_2__["default"].fetchMatch(newWord);
-        const playedAgain = playedWords.filter(word => word.owner === turn).filter(word => word.word === newWord);
-        if (wordExist && !playedAgain.length) {
-            const history = [...base];
-            dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.createHistory(history, selected, turn));
-            const confirmedAndFiltered = _services_game__WEBPACK_IMPORTED_MODULE_1__["default"].updateOwnersAndRemoveIsolatedNodes(selected, base, board, turn);
-            const checkGame = _services_game__WEBPACK_IMPORTED_MODULE_1__["default"].checkIfWin(selected, turn, board.length);
-            dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.confirmSelection(confirmedAndFiltered, [...playedWords, { word: newWord, owner: turn, turn: stateHistory.length }], []));
-            checkGame ? gameChange() : dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].boardActions.changeTurn('computer'));
-        }
-        else {
-            const message = playedAgain.length > 0 ? `cant play same word twice, ${newWord} already played` : `word ${newWord}, does not exist`;
-            dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].messageActions.setMessage(message, 'message'));
-            removeSelection();
-        }
-    });
-    const removeSelection = () => {
+    var confirmSelection = function () { return __awaiter(void 0, void 0, void 0, function () {
+        var newWord, wordExist, playedAgain, history_1, confirmedAndFiltered, checkGame, message;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    newWord = selected.map(function (s) { return s.letter; }).join('');
+                    return [4 /*yield*/, _services_words__WEBPACK_IMPORTED_MODULE_2__["default"].fetchMatch(newWord)];
+                case 1:
+                    wordExist = _a.sent();
+                    playedAgain = playedWords.filter(function (word) { return word.owner === turn; }).filter(function (word) { return word.word === newWord; });
+                    if (wordExist && !playedAgain.length) {
+                        history_1 = __spread(base);
+                        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.createHistory(history_1, selected, turn));
+                        confirmedAndFiltered = _services_game__WEBPACK_IMPORTED_MODULE_1__["default"].updateOwnersAndRemoveIsolatedNodes(selected, base, board, turn);
+                        checkGame = _services_game__WEBPACK_IMPORTED_MODULE_1__["default"].checkIfWin(selected, turn, board.length);
+                        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.confirmSelection(confirmedAndFiltered, __spread(playedWords, [{ word: newWord, owner: turn, turn: stateHistory.length }]), []));
+                        checkGame ? gameChange() : dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].boardActions.changeTurn('computer'));
+                    }
+                    else {
+                        message = playedAgain.length > 0 ? "cant play same word twice, " + newWord + " already played" : "word " + newWord + ", does not exist";
+                        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].messageActions.setMessage(message, 'message'));
+                        removeSelection();
+                    }
+                    return [2 /*return*/];
+            }
+        });
+    }); };
+    var removeSelection = function () {
         dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.removeFromSelection(0));
     };
-    const computersTurn = () => {
-        const history = [...base];
-        const computerSelected = _services_game__WEBPACK_IMPORTED_MODULE_1__["default"].getBestWord(base, turn, board.length);
-        const newSelectionConfirmed = computerSelected.map(s => ({ letter: s.letter, row: s.row, column: s.column, owner: turn, possibleWords: s.possibleWords }));
+    var computersTurn = function () {
+        var history = __spread(base);
+        var computerSelected = _services_game__WEBPACK_IMPORTED_MODULE_1__["default"].getBestWord(base, turn, board.length);
+        var newSelectionConfirmed = computerSelected.map(function (s) { return ({ letter: s.letter, row: s.row, column: s.column, owner: turn, possibleWords: s.possibleWords }); });
         dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.createHistory(history, newSelectionConfirmed, turn));
         computerSelect(newSelectionConfirmed);
-        const timeOutCounter = newSelectionConfirmed.length;
-        setTimeout(() => {
-            const confirmedAndFiltered = _services_game__WEBPACK_IMPORTED_MODULE_1__["default"].updateOwnersAndRemoveIsolatedNodes(newSelectionConfirmed, base, board, turn);
-            const fullyUpdatedBase = _services_game__WEBPACK_IMPORTED_MODULE_1__["default"].updateBaseWithPossibleWordTable(newSelectionConfirmed, possibleWordPositions, confirmedAndFiltered);
-            const checkGame = _services_game__WEBPACK_IMPORTED_MODULE_1__["default"].checkIfWin(newSelectionConfirmed, turn, board.length);
-            dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.confirmSelection(fullyUpdatedBase, [...playedWords, { word: computerSelected.map(s => s.letter).join(''), owner: turn, turn: stateHistory.length }], []));
+        var timeOutCounter = newSelectionConfirmed.length;
+        setTimeout(function () {
+            var confirmedAndFiltered = _services_game__WEBPACK_IMPORTED_MODULE_1__["default"].updateOwnersAndRemoveIsolatedNodes(newSelectionConfirmed, base, board, turn);
+            var fullyUpdatedBase = _services_game__WEBPACK_IMPORTED_MODULE_1__["default"].updateBaseWithPossibleWordTable(newSelectionConfirmed, possibleWordPositions, confirmedAndFiltered);
+            var checkGame = _services_game__WEBPACK_IMPORTED_MODULE_1__["default"].checkIfWin(newSelectionConfirmed, turn, board.length);
+            dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.confirmSelection(fullyUpdatedBase, __spread(playedWords, [{ word: computerSelected.map(function (s) { return s.letter; }).join(''), owner: turn, turn: stateHistory.length }]), []));
             checkGame ? gameChange() : dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].boardActions.changeTurn(playerName));
         }, timeOutCounter * 500 + 700);
     };
-    const selectLetter = (letter, row, column, owner) => __awaiter(void 0, void 0, void 0, function* () {
-        let obj = { letter: letter, row: row, column: column, owner: owner };
-        const selectionOnBase = base.filter(s => s.owner === obj.owner && s.column === obj.column && s.row === obj.row);
-        if (selectionOnBase.length || selected.length) {
-            const result = _services_game__WEBPACK_IMPORTED_MODULE_1__["default"].checkIfLetterSelectionIsallowed(obj, board, selected, turn);
-            if (result.possibleSelection) {
-                result.selectedBeforeIndex === -1 ?
-                    dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.updateSelection([...selected, obj])) :
-                    dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.removeFromSelection(result.selectedBeforeIndex));
+    var selectLetter = function (letter, row, column, owner) { return __awaiter(void 0, void 0, void 0, function () {
+        var obj, selectionOnBase, result;
+        return __generator(this, function (_a) {
+            obj = { letter: letter, row: row, column: column, owner: owner };
+            selectionOnBase = base.filter(function (s) { return s.owner === obj.owner && s.column === obj.column && s.row === obj.row; });
+            if (selectionOnBase.length || selected.length) {
+                result = _services_game__WEBPACK_IMPORTED_MODULE_1__["default"].checkIfLetterSelectionIsallowed(obj, board, selected, turn);
+                if (result.possibleSelection) {
+                    result.selectedBeforeIndex === -1 ?
+                        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.updateSelection(__spread(selected, [obj]))) :
+                        dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.removeFromSelection(result.selectedBeforeIndex));
+                }
             }
-        }
-    });
-    const timeTravel = (turn) => {
-        const currentBase = [...base];
-        const timeOutCounter = stateHistory[turn].selection.length;
+            return [2 /*return*/];
+        });
+    }); };
+    var timeTravel = function (turn) {
+        var currentBase = __spread(base);
+        var timeOutCounter = stateHistory[turn].selection.length;
         dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.updateBase(stateHistory[turn].base));
         computerSelect(stateHistory[turn].selection);
-        setTimeout(() => {
+        setTimeout(function () {
             backToPresent(currentBase);
             removeSelection();
         }, timeOutCounter * 500 + 700);
     };
-    const computerSelect = (selection) => {
-        for (const [i, s] of selection.entries()) {
-            const selectionArray = selection.filter((s, j) => j <= i);
-            setTimeout(() => {
+    var computerSelect = function (selection) {
+        var e_1, _a;
+        var _loop_1 = function (i, s) {
+            var selectionArray = selection.filter(function (s, j) { return j <= i; });
+            setTimeout(function () {
                 dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.updateSelection(selectionArray));
             }, (i + 1) * 500);
+        };
+        try {
+            for (var _b = __values(selection.entries()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read(_c.value, 2), i = _d[0], s = _d[1];
+                _loop_1(i, s);
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
         }
     };
-    const backToPresent = (base) => {
+    var backToPresent = function (base) {
         dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].baseActions.updateBase(base));
     };
-    Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(() => {
+    Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
         if (newGame) {
             dispatch(_actions_allActions__WEBPACK_IMPORTED_MODULE_11__["default"].boardActions.gameStart());
             initializeBase();
@@ -35732,32 +35885,74 @@ module.exports = __webpack_require__.p + "0.worker.js"
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-const updateOwnersAndRemoveIsolatedNodes = (newSelectionConfirmed, base, board, turn) => {
-    const filtered = base.map(o => {
+var __assign = (undefined && undefined.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var __read = (undefined && undefined.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spread = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
+    return ar;
+};
+var __values = (undefined && undefined.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+var updateOwnersAndRemoveIsolatedNodes = function (newSelectionConfirmed, base, board, turn) {
+    var filtered = base.map(function (o) {
         if (checkIfExistInSelection(newSelectionConfirmed, o)) {
-            o = Object.assign(Object.assign({}, o), { owner: turn });
+            o = __assign(__assign({}, o), { owner: turn });
         }
         return o;
     });
     return removeIsolatedNodes(filtered, board, turn);
 };
-const removeIsolatedNodes = (confirmedSelections, board, turn) => {
-    const queue = [];
-    const baseFilteredFromNone = confirmedSelections.filter(s => s.owner !== 'none');
-    const movements = generateMovements(board);
-    const attachedNodes = [];
-    const searched = {};
-    const nodesToCheck = baseFilteredFromNone.filter(m => m.owner !== turn).sort((a, b) => {
+var removeIsolatedNodes = function (confirmedSelections, board, turn) {
+    var queue = [];
+    var baseFilteredFromNone = confirmedSelections.filter(function (s) { return s.owner !== 'none'; });
+    var movements = generateMovements(board);
+    var attachedNodes = [];
+    var searched = {};
+    var nodesToCheck = baseFilteredFromNone.filter(function (m) { return m.owner !== turn; }).sort(function (a, b) {
         return turn === 'computer' ? a.row - b.row || a.column - b.column : b.row - a.row || a.column - b.column;
     });
     queue.push(nodesToCheck[0]);
     do {
-        const toCheck = queue.shift();
-        const neighbors = movements[`${toCheck.row},${toCheck.column}`];
-        neighbors.forEach((node) => {
-            if (!(`${node.row},${node.column}` in searched)) {
-                searched[`${node.row},${node.column}`] = node;
-                const nodeIndex = nodesToCheck.findIndex(obj => obj.row === node.row && obj.column === node.column);
+        var toCheck = queue.shift();
+        var neighbors = movements[toCheck.row + "," + toCheck.column];
+        neighbors.forEach(function (node) {
+            if (!(node.row + "," + node.column in searched)) {
+                searched[node.row + "," + node.column] = node;
+                var nodeIndex = nodesToCheck.findIndex(function (obj) { return obj.row === node.row && obj.column === node.column; });
                 if (nodeIndex !== -1) {
                     attachedNodes.push(nodesToCheck[nodeIndex]);
                     queue.push(nodesToCheck[nodeIndex]);
@@ -35765,119 +35960,174 @@ const removeIsolatedNodes = (confirmedSelections, board, turn) => {
             }
         });
     } while (queue.length);
-    const neutralNodes = confirmedSelections.filter(s => s.owner === 'none');
-    const turnNodes = confirmedSelections.filter(obj => obj.owner === turn);
-    const IsolatedWithAttachedNodes = getIsolatedNodes(attachedNodes, confirmedSelections.filter(obj => obj.owner !== turn && obj.owner !== 'none'));
+    var neutralNodes = confirmedSelections.filter(function (s) { return s.owner === 'none'; });
+    var turnNodes = confirmedSelections.filter(function (obj) { return obj.owner === turn; });
+    var IsolatedWithAttachedNodes = getIsolatedNodes(attachedNodes, confirmedSelections.filter(function (obj) { return obj.owner !== turn && obj.owner !== 'none'; }));
     return IsolatedWithAttachedNodes.concat(turnNodes, neutralNodes);
 };
-const getIsolatedNodes = (attached, base) => {
-    const unAttached = base.map(o => {
+var getIsolatedNodes = function (attached, base) {
+    var unAttached = base.map(function (o) {
         if (!checkIfExistInSelection(attached, o)) {
-            o = Object.assign(Object.assign({}, o), { owner: 'none' });
+            o = __assign(__assign({}, o), { owner: 'none' });
         }
         return o;
     });
     return unAttached;
 };
-const checkIfExistInSelection = (sel, o) => {
-    return sel.filter(s => s.row === o.row && s.column === o.column).length > 0;
+var checkIfExistInSelection = function (sel, o) {
+    return sel.filter(function (s) { return s.row === o.row && s.column === o.column; }).length > 0;
 };
-const updateBaseWithPossibleWordTable = (selectedLetters, possibleWordTable, base) => {
-    const word = selectedLetters.map(obj => obj.letter).join('');
-    const newBase = [...base];
+var updateBaseWithPossibleWordTable = function (selectedLetters, possibleWordTable, base) {
+    var word = selectedLetters.map(function (obj) { return obj.letter; }).join('');
+    var newBase = __spread(base);
     if (word in possibleWordTable) {
-        const changed = newBase.map(o => {
+        var changed = newBase.map(function (o) {
             if (checkIfPositionMatches(possibleWordTable[word], o)) {
-                o = Object.assign(Object.assign({}, o), { possibleWords: o.possibleWords.filter(wordArr => wordArr.map(word => word.letter).join('') !== word.substring(1, word.length)) });
+                o = __assign(__assign({}, o), { possibleWords: o.possibleWords.filter(function (wordArr) { return wordArr.map(function (word) { return word.letter; }).join('') !== word.substring(1, word.length); }) });
             }
             return o;
         });
         return changed;
     }
 };
-const checkIfPositionMatches = (posArr, obj) => {
-    for (const position of posArr) {
-        const posValues = position.split(',');
-        if (obj.row.toString() === posValues[0] && obj.column.toString() === posValues[1]) {
-            return true;
+var checkIfPositionMatches = function (posArr, obj) {
+    var e_1, _a;
+    try {
+        for (var posArr_1 = __values(posArr), posArr_1_1 = posArr_1.next(); !posArr_1_1.done; posArr_1_1 = posArr_1.next()) {
+            var position = posArr_1_1.value;
+            var posValues = position.split(',');
+            if (obj.row.toString() === posValues[0] && obj.column.toString() === posValues[1]) {
+                return true;
+            }
         }
+    }
+    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+    finally {
+        try {
+            if (posArr_1_1 && !posArr_1_1.done && (_a = posArr_1.return)) _a.call(posArr_1);
+        }
+        finally { if (e_1) throw e_1.error; }
     }
     return false;
 };
-const checkIfWin = (selections, turn, max) => {
-    const win = selections.filter((sel => turn === 'computer' ? sel.row === 0 : sel.row === max - 1));
+var checkIfWin = function (selections, turn, max) {
+    var win = selections.filter((function (sel) {
+        return turn === 'computer' ? sel.row === 0 : sel.row === max - 1;
+    }));
     return win.length > 0;
 };
-const getBestWord = (base, turn, max) => {
-    const computerBase = base.filter(s => s.owner === turn);
-    const opponentBase = base.filter(s => s.owner !== turn);
-    let letterValueArray = [0, 0, 0, 0, 0]; //word length,letters touching opponents base,letters touching own base,letters touching goal 5 higher than starting pos
-    let greatestWordValue = 0;
-    let selection = [];
-    for (const [i, letter] of computerBase.entries()) {
-        if (letter.hasOwnProperty('possibleWords') && letter.possibleWords.length) {
-            for (const [j, possibleWord] of computerBase[i].possibleWords.entries()) {
-                letterValueArray[0] = possibleWord.length; //word length
-                letterValueArray[1] = getCommonElements(opponentBase, possibleWord) * 2.5; //letters touching opp base
-                letterValueArray[2] = getCommonElements(computerBase, possibleWord) * (-1); //letters touching own base
-                letterValueArray[3] = checkIfWin(possibleWord, turn, max) ? 30 : 0; //if touching goal 20 points
-                letterValueArray[4] = getChangeInHeight(possibleWord, turn) * 0.5; //change going upward/downward
-                let wordValue = letterValueArray.reduce((acc, curr) => acc + curr);
-                if (wordValue > greatestWordValue) {
-                    greatestWordValue = wordValue;
-                    selection = [computerBase[i], ...computerBase[i].possibleWords[j]];
+var getBestWord = function (base, turn, max) {
+    var e_2, _a, e_3, _b;
+    var computerBase = base.filter(function (s) { return s.owner === turn; });
+    var opponentBase = base.filter(function (s) { return s.owner !== turn; });
+    var letterValueArray = [0, 0, 0, 0, 0]; //word length,letters touching opponents base,letters touching own base,letters touching goal 5 higher than starting pos
+    var greatestWordValue = 0;
+    var selection = [];
+    try {
+        for (var _c = __values(computerBase.entries()), _d = _c.next(); !_d.done; _d = _c.next()) {
+            var _e = __read(_d.value, 2), i = _e[0], letter = _e[1];
+            if (letter.hasOwnProperty('possibleWords') && letter.possibleWords.length) {
+                try {
+                    for (var _f = (e_3 = void 0, __values(computerBase[i].possibleWords.entries())), _g = _f.next(); !_g.done; _g = _f.next()) {
+                        var _h = __read(_g.value, 2), j = _h[0], possibleWord = _h[1];
+                        letterValueArray[0] = possibleWord.length; //word length
+                        letterValueArray[1] = getCommonElements(opponentBase, possibleWord) * 2.5; //letters touching opp base
+                        letterValueArray[2] = getCommonElements(computerBase, possibleWord) * (-1); //letters touching own base
+                        letterValueArray[3] = checkIfWin(possibleWord, turn, max) ? 30 : 0; //if touching goal 20 points
+                        letterValueArray[4] = getChangeInHeight(possibleWord, turn) * 0.5; //change going upward/downward
+                        var wordValue = letterValueArray.reduce(function (acc, curr) { return acc + curr; });
+                        if (wordValue > greatestWordValue) {
+                            greatestWordValue = wordValue;
+                            selection = __spread([computerBase[i]], computerBase[i].possibleWords[j]);
+                        }
+                    }
+                }
+                catch (e_3_1) { e_3 = { error: e_3_1 }; }
+                finally {
+                    try {
+                        if (_g && !_g.done && (_b = _f.return)) _b.call(_f);
+                    }
+                    finally { if (e_3) throw e_3.error; }
                 }
             }
         }
     }
+    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+    finally {
+        try {
+            if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
+        }
+        finally { if (e_2) throw e_2.error; }
+    }
     return selection;
 };
-const getChangeInHeight = (word, turn) => {
-    const sortedByRow = word.map(s => s.row).sort((a, b) => { return turn === 'computer' ? a - b : b - a; });
+var getChangeInHeight = function (word, turn) {
+    var sortedByRow = word.map(function (s) { return s.row; }).sort(function (a, b) { return turn === 'computer' ? a - b : b - a; });
     return word[0].row - sortedByRow[0];
 };
-const getCommonElements = (base, word) => {
-    let commonElements = {};
-    let commonIterator = 0;
-    for (const [i, obj] of base.entries()) {
-        if (!commonElements[`${obj.row},${obj.column}`]) {
-            commonElements[`${obj.row},${obj.column}`] = true;
+var getCommonElements = function (base, word) {
+    var e_4, _a, e_5, _b;
+    var commonElements = {};
+    var commonIterator = 0;
+    try {
+        for (var _c = __values(base.entries()), _d = _c.next(); !_d.done; _d = _c.next()) {
+            var _e = __read(_d.value, 2), i = _e[0], obj = _e[1];
+            if (!commonElements[obj.row + "," + obj.column]) {
+                commonElements[obj.row + "," + obj.column] = true;
+            }
         }
     }
-    for (const [j, obj] of word.entries()) {
-        if (commonElements[`${obj.row},${obj.column}`]) {
-            commonIterator++;
+    catch (e_4_1) { e_4 = { error: e_4_1 }; }
+    finally {
+        try {
+            if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
         }
+        finally { if (e_4) throw e_4.error; }
+    }
+    try {
+        for (var _f = __values(word.entries()), _g = _f.next(); !_g.done; _g = _f.next()) {
+            var _h = __read(_g.value, 2), j = _h[0], obj = _h[1];
+            if (commonElements[obj.row + "," + obj.column]) {
+                commonIterator++;
+            }
+        }
+    }
+    catch (e_5_1) { e_5 = { error: e_5_1 }; }
+    finally {
+        try {
+            if (_g && !_g.done && (_b = _f.return)) _b.call(_f);
+        }
+        finally { if (e_5) throw e_5.error; }
     }
     return commonIterator;
 };
-const checkIfLetterSelectionIsallowed = (letter, board, selected, turn) => {
-    const selectedAgainIndex = selected.findIndex(l => l.row == letter.row && l.column == letter.column);
+var checkIfLetterSelectionIsallowed = function (letter, board, selected, turn) {
+    var selectedAgainIndex = selected.findIndex(function (l) { return l.row == letter.row && l.column == letter.column; });
     if (!selected.length) {
         return (letter.owner === turn) ? { possibleSelection: true, selectedBeforeIndex: selectedAgainIndex } : { possibleSelection: false, selectedBeforeIndex: selectedAgainIndex };
     }
-    const possibleXpositions = [selected[selected.length - 1].row, selected[selected.length - 1].row + 1, selected[selected.length - 1].row - 1].filter(x => x >= 0 && x < board.length);
-    const possibleYpositions = [selected[selected.length - 1].column, selected[selected.length - 1].column + 1, selected[selected.length - 1].column - 1].filter(x => x >= 0 && x < (board[0].length));
+    var possibleXpositions = [selected[selected.length - 1].row, selected[selected.length - 1].row + 1, selected[selected.length - 1].row - 1].filter(function (x) { return x >= 0 && x < board.length; });
+    var possibleYpositions = [selected[selected.length - 1].column, selected[selected.length - 1].column + 1, selected[selected.length - 1].column - 1].filter(function (x) { return x >= 0 && x < (board[0].length); });
     if (possibleXpositions.includes(letter.row) && possibleYpositions.includes(letter.column)) {
         return { possibleSelection: true, selectedBeforeIndex: selectedAgainIndex };
     }
     return selectedAgainIndex === -1 ? { possibleSelection: false, selectedBeforeIndex: selectedAgainIndex } : { possibleSelection: true, selectedBeforeIndex: selectedAgainIndex };
 };
-const generateMovements = (board) => {
-    const moves = {};
-    board.forEach((row, r) => {
-        row.forEach((column, c) => {
-            moves[`${r},${c}`] = getNeighborsData({ 'letter': board[r][c], 'row': r, 'column': c, 'owner': 'none' }, board);
+var generateMovements = function (board) {
+    var moves = {};
+    board.forEach(function (row, r) {
+        row.forEach(function (column, c) {
+            moves[r + "," + c] = getNeighborsData({ 'letter': board[r][c], 'row': r, 'column': c, 'owner': 'none' }, board);
         });
     });
     return moves;
 };
-const getNeighborsData = (node, board) => {
-    const possibleMoves = [];
-    const possibleXpositions = [node.row, node.row + 1, node.row - 1].filter(x => x >= 0 && x < board.length);
-    const possibleYpositions = [node.column, node.column + 1, node.column - 1].filter(x => x >= 0 && x < (board[0].length));
-    possibleXpositions.forEach((xPos) => {
-        possibleYpositions.forEach((yPos) => {
+var getNeighborsData = function (node, board) {
+    var possibleMoves = [];
+    var possibleXpositions = [node.row, node.row + 1, node.row - 1].filter(function (x) { return x >= 0 && x < board.length; });
+    var possibleYpositions = [node.column, node.column + 1, node.column - 1].filter(function (x) { return x >= 0 && x < (board[0].length); });
+    possibleXpositions.forEach(function (xPos) {
+        possibleYpositions.forEach(function (yPos) {
             if (!(xPos === node.row && yPos === node.column)) {
                 possibleMoves.push({ 'row': xPos, 'column': yPos, 'letter': board[xPos][yPos], 'owner': 'none' });
             }
@@ -35886,11 +36136,11 @@ const getNeighborsData = (node, board) => {
     return possibleMoves;
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
-    checkIfLetterSelectionIsallowed,
-    updateOwnersAndRemoveIsolatedNodes,
-    checkIfWin,
-    getBestWord,
-    updateBaseWithPossibleWordTable
+    checkIfLetterSelectionIsallowed: checkIfLetterSelectionIsallowed,
+    updateOwnersAndRemoveIsolatedNodes: updateOwnersAndRemoveIsolatedNodes,
+    checkIfWin: checkIfWin,
+    getBestWord: getBestWord,
+    updateBaseWithPossibleWordTable: updateBaseWithPossibleWordTable
 });
 
 
@@ -35909,25 +36159,70 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const baseUrl = '/api/words/';
-const devUrl = 'http://localhost:3000/api/words/';
-const fetchAll = () => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield fetch(baseUrl);
-    const data = yield response.json();
-    return data.words;
-});
-const fetchMatch = (word) => __awaiter(void 0, void 0, void 0, function* () {
-    if (word !== '') {
-        const response = yield fetch(baseUrl);
-        const data = yield response.json();
-        const result = data.words.filter((a) => a.toUpperCase() === word);
-        return result.length > 0;
+var __generator = (undefined && undefined.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
-    return false;
-});
+};
+var baseUrl = '/api/words/';
+var devUrl = 'http://localhost:3000/api/words/';
+var fetchAll = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var response, data;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, fetch(baseUrl)];
+            case 1:
+                response = _a.sent();
+                return [4 /*yield*/, response.json()];
+            case 2:
+                data = _a.sent();
+                return [2 /*return*/, data.words];
+        }
+    });
+}); };
+var fetchMatch = function (word) { return __awaiter(void 0, void 0, void 0, function () {
+    var response, data, result;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (!(word !== '')) return [3 /*break*/, 3];
+                return [4 /*yield*/, fetch(baseUrl)];
+            case 1:
+                response = _a.sent();
+                return [4 /*yield*/, response.json()];
+            case 2:
+                data = _a.sent();
+                result = data.words.filter(function (a) { return a.toUpperCase() === word; });
+                return [2 /*return*/, result.length > 0];
+            case 3: return [2 /*return*/, false];
+        }
+    });
+}); };
 /* harmony default export */ __webpack_exports__["default"] = ({
-    fetchAll,
-    fetchMatch,
+    fetchAll: fetchAll,
+    fetchMatch: fetchMatch,
 });
 
 
@@ -35943,29 +36238,29 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
 
 
-const Board = (props) => {
-    const board = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])((state) => state.board.board);
-    const playerName = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])((state) => state.base.playerName);
-    const selected = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])((state) => state.base.selection);
-    const turn = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])((state) => state.board.turn);
-    const base = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])((state) => state.base.base);
-    const getLetterStyle = (r, c) => {
-        const found = selected.filter(a => a.row === r && a.column === c);
-        const isSelected = found.length === 0 ? 'none' : 'selectedLetter';
-        const cursorStyle = turn === 'computer' ? 'progress' : 'pointer';
-        const selectedWithOwner = selected.map(s => ({ 'row': s.row, 'column': s.column, 'letter': s.letter, 'owner': s.owner }));
-        const allSelected = selectedWithOwner.concat(base);
-        const ownerArr = allSelected.filter(a => a.row === r && a.column === c);
-        const owner = ownerArr.length === 0 ? 'none' : ownerArr[0].owner;
-        const backgroundColor = owner === 'computer' ? 'khaki' : owner === playerName ? '#87b6b8' : null;
+var Board = function (props) {
+    var board = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])(function (state) { return state.board.board; });
+    var playerName = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])(function (state) { return state.base.playerName; });
+    var selected = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])(function (state) { return state.base.selection; });
+    var turn = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])(function (state) { return state.board.turn; });
+    var base = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])(function (state) { return state.base.base; });
+    var getLetterStyle = function (r, c) {
+        var found = selected.filter(function (a) { return a.row === r && a.column === c; });
+        var isSelected = found.length === 0 ? 'none' : 'selectedLetter';
+        var cursorStyle = turn === 'computer' ? 'progress' : 'pointer';
+        var selectedWithOwner = selected.map(function (s) { return ({ 'row': s.row, 'column': s.column, 'letter': s.letter, 'owner': s.owner }); });
+        var allSelected = selectedWithOwner.concat(base);
+        var ownerArr = allSelected.filter(function (a) { return a.row === r && a.column === c; });
+        var owner = ownerArr.length === 0 ? 'none' : ownerArr[0].owner;
+        var backgroundColor = owner === 'computer' ? 'khaki' : owner === playerName ? '#87b6b8' : null;
         return { class: isSelected, backgroundColor: backgroundColor, cursor: cursorStyle };
     };
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null,
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", null,
-            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, board.map((row, i) => (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", { key: i }, row.map((cellId, j) => {
-                const styleValues = getLetterStyle(i, j);
-                return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: styleValues.class, style: { backgroundColor: styleValues.backgroundColor, cursor: styleValues.cursor }, key: j, onClick: () => props.selectLetter(cellId, i, j, playerName) }, cellId));
-            })))))));
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, board.map(function (row, i) { return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", { key: i }, row.map(function (cellId, j) {
+                var styleValues = getLetterStyle(i, j);
+                return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: styleValues.class, style: { backgroundColor: styleValues.backgroundColor, cursor: styleValues.cursor }, key: j, onClick: function () { return props.selectLetter(cellId, i, j, playerName); } }, cellId));
+            }))); }))));
 };
 
 
@@ -35981,34 +36276,34 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
 
 
-const GameBoardButtons = (props) => {
-    const board = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])((state) => state.board.board);
-    const selected = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])((state) => state.base.selection);
-    const isLoading = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])((state) => state.board.isLoading);
-    const getButtonStyle = () => {
+var GameBoardButtons = function (props) {
+    var board = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])(function (state) { return state.board.board; });
+    var selected = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])(function (state) { return state.base.selection; });
+    var isLoading = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])(function (state) { return state.board.isLoading; });
+    var getButtonStyle = function () {
         return selected.length ? { visibility: 'visible', cursor: 'pointer' } : { visibility: 'hidden', cursor: 'auto' };
     };
-    const getButtonStyleLoading = () => {
+    var getButtonStyleLoading = function () {
         return isLoading ? { visibility: 'hidden', cursor: 'auto' } : { visibility: 'visible', cursor: 'pointer' };
     };
-    const buttonStyles = getButtonStyle();
-    const buttonStylesLoading = getButtonStyleLoading();
+    var buttonStyles = getButtonStyle();
+    var buttonStylesLoading = getButtonStyleLoading();
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'gameboard-button-div' },
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'gameboard-button' },
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null,
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-plus-circle", onClick: () => props.newGame(), style: { visibility: buttonStylesLoading.visibility, cursor: buttonStylesLoading.cursor } })),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-plus-circle", onClick: function () { return props.newGame(); }, style: { visibility: buttonStylesLoading.visibility, cursor: buttonStylesLoading.cursor } })),
             isLoading ? null : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: 'helptext' }, "New game")),
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'gameboard-button' },
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null,
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-chevron-circle-down", onClick: () => props.confirmSelection(), style: { visibility: buttonStyles.visibility, cursor: buttonStyles.cursor } })),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-chevron-circle-down", onClick: function () { return props.confirmSelection(); }, style: { visibility: buttonStyles.visibility, cursor: buttonStyles.cursor } })),
             selected.length ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: 'helptext' }, "Confirm selection") : null),
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'gameboard-button' },
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null,
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-times-circle-o", onClick: () => props.removeSelection(), style: { visibility: buttonStyles.visibility, cursor: buttonStyles.cursor } })),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-times-circle-o", onClick: function () { return props.removeSelection(); }, style: { visibility: buttonStyles.visibility, cursor: buttonStyles.cursor } })),
             selected.length ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: 'helptext' }, "Remove selection") : null),
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'gameboard-button' },
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null,
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-refresh", "aria-hidden": "true", onClick: () => props.resetGame(board), style: { visibility: buttonStylesLoading.visibility, cursor: buttonStylesLoading.cursor } })),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-refresh", "aria-hidden": "true", onClick: function () { return props.resetGame(board); }, style: { visibility: buttonStylesLoading.visibility, cursor: buttonStylesLoading.cursor } })),
             isLoading ? null : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: 'helptext' }, "Reset game")));
 };
 
@@ -36025,12 +36320,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
 
 
-const GameBoardHeader = () => {
-    const turn = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])((state) => state.board.turn);
-    const isLoading = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])((state) => state.board.isLoading);
-    const selected = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])((state) => state.base.selection);
-    const headerMessage = turn.endsWith('s') ? `${turn}'s turn` : `${turn}s turn`;
-    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'gameboard-header' }, isLoading ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Generating Board") : selected.length ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, selected.map(s => s.letter).join('')) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, headerMessage));
+var GameBoardHeader = function () {
+    var turn = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])(function (state) { return state.board.turn; });
+    var isLoading = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])(function (state) { return state.board.isLoading; });
+    var selected = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])(function (state) { return state.base.selection; });
+    var headerMessage = turn.endsWith('s') ? turn + "'s turn" : turn + "s turn";
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'gameboard-header' }, isLoading ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Generating Board") : selected.length ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, selected.map(function (s) { return s.letter; }).join('')) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, headerMessage));
 };
 
 
@@ -36050,33 +36345,33 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const PlayedWordList = (props) => {
-    const played = Object(react_redux__WEBPACK_IMPORTED_MODULE_2__["useSelector"])((state) => state.base.playedWords);
-    const playerName = Object(react_redux__WEBPACK_IMPORTED_MODULE_2__["useSelector"])((state) => state.base.playerName);
-    const base = Object(react_redux__WEBPACK_IMPORTED_MODULE_2__["useSelector"])((state) => state.base.base);
-    const isLoading = Object(react_redux__WEBPACK_IMPORTED_MODULE_2__["useSelector"])((state) => state.board.isLoading);
-    const playerNodes = base.filter(f => f.owner === playerName).length;
-    const comNodes = base.filter(f => f.owner === 'computer').length;
-    const percentageDifference = isLoading ? 50 : ((playerNodes - comNodes) / (playerNodes + comNodes / 2) * 100) + 50;
-    const messagesEndRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
-    const size = Object(_hooks_windowSize__WEBPACK_IMPORTED_MODULE_3__["useWindowSize"])();
-    const getWordStyle = (owner) => {
+var PlayedWordList = function (props) {
+    var played = Object(react_redux__WEBPACK_IMPORTED_MODULE_2__["useSelector"])(function (state) { return state.base.playedWords; });
+    var playerName = Object(react_redux__WEBPACK_IMPORTED_MODULE_2__["useSelector"])(function (state) { return state.base.playerName; });
+    var base = Object(react_redux__WEBPACK_IMPORTED_MODULE_2__["useSelector"])(function (state) { return state.base.base; });
+    var isLoading = Object(react_redux__WEBPACK_IMPORTED_MODULE_2__["useSelector"])(function (state) { return state.board.isLoading; });
+    var playerNodes = base.filter(function (f) { return f.owner === playerName; }).length;
+    var comNodes = base.filter(function (f) { return f.owner === 'computer'; }).length;
+    var percentageDifference = isLoading ? 50 : ((playerNodes - comNodes) / (playerNodes + comNodes / 2) * 100) + 50;
+    var messagesEndRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
+    var size = Object(_hooks_windowSize__WEBPACK_IMPORTED_MODULE_3__["useWindowSize"])();
+    var getWordStyle = function (owner) {
         return owner === 'computer' ? { color: 'khaki', textAlign: 'right' } : { color: '#87b6b8', textAlign: 'left' };
     };
-    const scrollToBottom = () => {
+    var scrollToBottom = function () {
         if (size.width > 550) {
             messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
     };
-    Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(() => {
+    Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
         scrollToBottom();
     }, [played]);
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'wordListContainer' },
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_BalanceOfPower__WEBPACK_IMPORTED_MODULE_1__["BalanceOfPower"], { playerPercentage: percentageDifference, playerName: playerName }),
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'wordListWords' },
-            played.map((w, i) => {
-                const styleValues = getWordStyle(w.owner);
-                return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { key: i, onClick: () => props.timeTravel(w.turn), style: { color: styleValues.color, textAlign: styleValues.textAlign, cursor: 'pointer', padding: '4px' } }, w.word));
+            played.map(function (w, i) {
+                var styleValues = getWordStyle(w.owner);
+                return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { key: i, onClick: function () { return props.timeTravel(w.turn); }, style: { color: styleValues.color, textAlign: styleValues.textAlign, cursor: 'pointer', padding: '4px' } }, w.word));
             }),
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { ref: messagesEndRef })));
 };
@@ -36092,10 +36387,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 
-const BalanceOfPower = (props) => {
-    const fillerStyles = {
+var BalanceOfPower = function (props) {
+    var fillerStyles = {
         height: '100%',
-        width: `${props.playerPercentage}%`,
+        width: props.playerPercentage + "%",
         backgroundColor: '#87b6b8',
         borderRadius: 'inherit'
     };
@@ -36115,11 +36410,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "useWindowSize", function() { return useWindowSize; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+var __read = (undefined && undefined.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 
-const useWindowSize = () => {
-    const [windowSize, setWindowSize] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])({ width: undefined, height: undefined });
-    Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(() => {
-        const handleResize = () => {
+var useWindowSize = function () {
+    var _a = __read(Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])({ width: undefined, height: undefined }), 2), windowSize = _a[0], setWindowSize = _a[1];
+    Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
+        var handleResize = function () {
             setWindowSize({
                 width: window.innerWidth,
                 height: window.innerHeight,
@@ -36127,7 +36438,7 @@ const useWindowSize = () => {
         };
         window.addEventListener("resize", handleResize);
         handleResize();
-        return () => window.removeEventListener("resize", handleResize);
+        return function () { return window.removeEventListener("resize", handleResize); };
     }, []);
     return windowSize;
 };
@@ -36143,8 +36454,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 
-const LoadingTable = () => {
-    const loadingBoard = [
+var LoadingTable = function () {
+    var loadingBoard = [
         ["L", "O", "A", "D", "I", "N", "G", ".", ".", "."],
         ["C", "R", "E", "A", "T", "I", "N", "G", ".", "."],
         ["C", "A", "L", "C", "U", "L", "A", "T", "I", "N"],
@@ -36160,9 +36471,9 @@ const LoadingTable = () => {
     ];
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null,
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", null,
-            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, loadingBoard.map((row, i) => (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", { key: i }, row.map((cellId, j) => {
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, loadingBoard.map(function (row, i) { return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", { key: i }, row.map(function (cellId, j) {
                 return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { key: j, className: 'spin' }, cellId));
-            })))))));
+            }))); }))));
 };
 
 
@@ -36178,7 +36489,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _media_doggiedoo_png__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(82);
 
 
-const LogoContainer = () => {
+var LogoContainer = function () {
     return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "dog-container" },
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null,
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", { className: 'dog-image', src: _media_doggiedoo_png__WEBPACK_IMPORTED_MODULE_1__["default"] }))));
@@ -36205,8 +36516,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
 
 
-const Message = (props) => {
-    const messageState = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])((state) => state.message);
+var Message = function (props) {
+    var messageState = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["useSelector"])(function (state) { return state.message; });
     return messageState.show ?
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'modal' },
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'modalText' },
@@ -36243,7 +36554,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const allActions = {
+var allActions = {
     boardActions: _boardActions__WEBPACK_IMPORTED_MODULE_0__["default"],
     baseActions: _baseActions__WEBPACK_IMPORTED_MODULE_1__["default"],
     messageActions: _messageActions__WEBPACK_IMPORTED_MODULE_2__["default"]
@@ -36257,108 +36568,167 @@ const allActions = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-const updateBase = (base) => {
+var __assign = (undefined && undefined.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var __values = (undefined && undefined.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+var __read = (undefined && undefined.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var updateBase = function (base) {
     return {
         type: "UPDATEBASE",
         payload: base
     };
 };
-const createBase = (base) => {
-    const possibleWordsTable = {};
-    for (const [i, letter] of base.entries()) {
-        for (const [j, possibility] of letter.possibleWords.entries()) {
-            const word = letter.letter + possibility.map(o => o.letter).join('');
-            if (!(word in possibleWordsTable)) {
-                possibleWordsTable[word] = [`${letter.row},${letter.column}`];
+var createBase = function (base) {
+    var e_1, _a, e_2, _b;
+    var possibleWordsTable = {};
+    try {
+        for (var _c = __values(base.entries()), _d = _c.next(); !_d.done; _d = _c.next()) {
+            var _e = __read(_d.value, 2), i = _e[0], letter = _e[1];
+            try {
+                for (var _f = (e_2 = void 0, __values(letter.possibleWords.entries())), _g = _f.next(); !_g.done; _g = _f.next()) {
+                    var _h = __read(_g.value, 2), j = _h[0], possibility = _h[1];
+                    var word = letter.letter + possibility.map(function (o) { return o.letter; }).join('');
+                    if (!(word in possibleWordsTable)) {
+                        possibleWordsTable[word] = [letter.row + "," + letter.column];
+                    }
+                    else {
+                        possibleWordsTable[word].push(letter.row + "," + letter.column);
+                    }
+                }
             }
-            else {
-                possibleWordsTable[word].push(`${letter.row},${letter.column}`);
+            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            finally {
+                try {
+                    if (_g && !_g.done && (_b = _f.return)) _b.call(_f);
+                }
+                finally { if (e_2) throw e_2.error; }
             }
         }
     }
+    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+    finally {
+        try {
+            if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
+        }
+        finally { if (e_1) throw e_1.error; }
+    }
     return {
         type: "CREATEBASE",
-        payload: { base, possibleWordPositions: possibleWordsTable }
+        payload: { base: base, possibleWordPositions: possibleWordsTable }
     };
 };
-const updateSelection = (selection) => {
+var updateSelection = function (selection) {
     return {
         type: "UPDATESELECTION",
         payload: selection
     };
 };
-const removeSelectionAndPlayedWords = (selection, played) => {
-    const history = { base: [], selection: [], turn: '' };
+var removeSelectionAndPlayedWords = function (selection, played) {
+    var history = { base: [], selection: [], turn: '' };
     return {
         type: "REMOVESELECTIONANDPLAYED",
-        payload: { selection, played, history }
+        payload: { selection: selection, played: played, history: history }
     };
 };
-const removeFromSelection = (index) => {
+var removeFromSelection = function (index) {
     return {
         type: "REMOVEFROMSELECTION",
         payload: index
     };
 };
-const updatePlayedWords = (played) => {
+var updatePlayedWords = function (played) {
     return {
         type: "UPDATEPLAYEDWORDS",
         payload: played
     };
 };
-const confirmSelection = (base, played, selection) => {
+var confirmSelection = function (base, played, selection) {
     return {
         type: "CONFIRMSELECTION",
-        payload: { base, played, selection }
+        payload: { base: base, played: played, selection: selection }
     };
 };
-const changePlayerName = (playerName) => {
+var changePlayerName = function (playerName) {
     return {
         type: "CHANGEPLAYERNAME",
         payload: playerName
     };
 };
-const resetBase = (base) => {
-    const played = [];
-    const selection = [];
-    const history = { base: [], selection: [], turn: '' };
+var resetBase = function (base) {
+    var played = [];
+    var selection = [];
+    var history = { base: [], selection: [], turn: '' };
     return {
         type: "RESETGAME",
-        payload: { base, played, selection, history }
+        payload: { base: base, played: played, selection: selection, history: history }
     };
 };
-const startingBase = (base, max, playerName) => {
-    const startingBase = base.map(letter => {
+var startingBase = function (base, max, playerName) {
+    var startingBase = base.map(function (letter) {
         if (letter.row === 0) {
-            letter = Object.assign(Object.assign({}, letter), { owner: playerName });
+            letter = __assign(__assign({}, letter), { owner: playerName });
         }
         else if (letter.row === max - 1) {
-            letter = Object.assign(Object.assign({}, letter), { owner: 'computer' });
+            letter = __assign(__assign({}, letter), { owner: 'computer' });
         }
         else {
-            letter = Object.assign(Object.assign({}, letter), { owner: 'none' });
+            letter = __assign(__assign({}, letter), { owner: 'none' });
         }
         return letter;
     });
     return startingBase;
 };
-const createHistory = (base, selection, turn) => {
+var createHistory = function (base, selection, turn) {
     return {
         type: "CREATEHISTORY",
-        payload: { base, selection, turn }
+        payload: { base: base, selection: selection, turn: turn }
     };
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
-    updateBase,
-    updateSelection,
-    createBase,
-    removeFromSelection,
-    updatePlayedWords,
-    confirmSelection,
-    changePlayerName,
-    resetBase,
-    removeSelectionAndPlayedWords,
-    createHistory
+    updateBase: updateBase,
+    updateSelection: updateSelection,
+    createBase: createBase,
+    removeFromSelection: removeFromSelection,
+    updatePlayedWords: updatePlayedWords,
+    confirmSelection: confirmSelection,
+    changePlayerName: changePlayerName,
+    resetBase: resetBase,
+    removeSelectionAndPlayedWords: removeSelectionAndPlayedWords,
+    createHistory: createHistory
 });
 
 
@@ -36368,28 +36738,28 @@ const createHistory = (base, selection, turn) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-const setMessage = (message, type) => {
+var setMessage = function (message, type) {
     return {
         type: "SETMESSAGE",
-        payload: { message, type }
+        payload: { message: message, type: type }
     };
 };
-const clearMessage = () => {
+var clearMessage = function () {
     return {
         type: "CLEARMESSAGE",
         payload: ''
     };
 };
-const resolveMessage = (resolution) => {
+var resolveMessage = function (resolution) {
     return {
         type: "RESOLVEMESSAGE",
         payload: resolution
     };
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
-    setMessage,
-    clearMessage,
-    resolveMessage
+    setMessage: setMessage,
+    clearMessage: clearMessage,
+    resolveMessage: resolveMessage
 });
 
 
@@ -36403,7 +36773,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 
-const Howto = () => {
+var Howto = function () {
     return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'howto-page-container' },
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'howto-header' },
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", null, "How to play")),
@@ -36437,7 +36807,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 
-const About = () => {
+var About = function () {
     return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'about-page-container' },
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'about-header' },
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", null, "ZordBase")),
