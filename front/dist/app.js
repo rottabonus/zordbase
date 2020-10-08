@@ -36163,7 +36163,7 @@ var fetchAll = function () { return __awaiter(void 0, void 0, void 0, function (
     var response, data;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, fetch(devUrl)];
+            case 0: return [4 /*yield*/, fetch(baseUrl)];
             case 1:
                 response = _a.sent();
                 return [4 /*yield*/, response.json()];
@@ -36179,7 +36179,7 @@ var fetchMatch = function (word) { return __awaiter(void 0, void 0, void 0, func
         switch (_a.label) {
             case 0:
                 if (!(word !== '')) return [3 /*break*/, 3];
-                return [4 /*yield*/, fetch(devUrl)];
+                return [4 /*yield*/, fetch(baseUrl)];
             case 1:
                 response = _a.sent();
                 return [4 /*yield*/, response.json()];
