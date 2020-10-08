@@ -99,19 +99,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _reducers_combineReducer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(47);
 /* harmony import */ var redux_devtools_extension__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(52);
 /* harmony import */ var redux_devtools_extension__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(redux_devtools_extension__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var redux_thunk__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(53);
-/* harmony import */ var _App__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(54);
+/* harmony import */ var _App__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(53);
 
 
 
 
 
 
-
-var store = Object(redux__WEBPACK_IMPORTED_MODULE_3__["createStore"])(_reducers_combineReducer__WEBPACK_IMPORTED_MODULE_4__["default"], Object(redux_devtools_extension__WEBPACK_IMPORTED_MODULE_5__["composeWithDevTools"])(Object(redux__WEBPACK_IMPORTED_MODULE_3__["applyMiddleware"])(redux_thunk__WEBPACK_IMPORTED_MODULE_6__["default"])));
+var store = Object(redux__WEBPACK_IMPORTED_MODULE_3__["createStore"])(_reducers_combineReducer__WEBPACK_IMPORTED_MODULE_4__["default"], Object(redux_devtools_extension__WEBPACK_IMPORTED_MODULE_5__["composeWithDevTools"])());
 
 react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_redux__WEBPACK_IMPORTED_MODULE_2__["Provider"], { store: store },
-    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_App__WEBPACK_IMPORTED_MODULE_7__["default"], null)), document.querySelector('#root'));
+    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_App__WEBPACK_IMPORTED_MODULE_6__["default"], null)), document.querySelector('#root'));
 
 
 /***/ }),
@@ -32163,42 +32161,15 @@ exports.devToolsEnhancer = (
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-function createThunkMiddleware(extraArgument) {
-  return function (_ref) {
-    var dispatch = _ref.dispatch,
-        getState = _ref.getState;
-    return function (next) {
-      return function (action) {
-        if (typeof action === 'function') {
-          return action(dispatch, getState, extraArgument);
-        }
-
-        return next(action);
-      };
-    };
-  };
-}
-
-var thunk = createThunkMiddleware();
-thunk.withExtraArgument = createThunkMiddleware;
-
-/* harmony default export */ __webpack_exports__["default"] = (thunk);
-
-/***/ }),
-/* 54 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "App", function() { return App; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(55);
-/* harmony import */ var _css_index_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(66);
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(54);
+/* harmony import */ var _css_index_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(65);
 /* harmony import */ var _css_index_css__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_css_index_css__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _pages_BoardPage__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(70);
-/* harmony import */ var _pages_Howto__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(87);
-/* harmony import */ var _pages_About__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(88);
+/* harmony import */ var _pages_BoardPage__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(69);
+/* harmony import */ var _pages_Howto__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(86);
+/* harmony import */ var _pages_About__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(87);
 
 
 
@@ -32223,7 +32194,7 @@ var App = function () {
 
 
 /***/ }),
-/* 55 */
+/* 54 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -32232,7 +32203,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HashRouter", function() { return HashRouter; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Link", function() { return Link; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NavLink", function() { return NavLink; });
-/* harmony import */ var react_router__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(56);
+/* harmony import */ var react_router__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(55);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MemoryRouter", function() { return react_router__WEBPACK_IMPORTED_MODULE_0__["MemoryRouter"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Prompt", function() { return react_router__WEBPACK_IMPORTED_MODULE_0__["Prompt"]; });
@@ -32261,16 +32232,16 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "withRouter", function() { return react_router__WEBPACK_IMPORTED_MODULE_0__["withRouter"]; });
 
-/* harmony import */ var _babel_runtime_helpers_esm_inheritsLoose__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(57);
+/* harmony import */ var _babel_runtime_helpers_esm_inheritsLoose__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(56);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var history__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(58);
+/* harmony import */ var history__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(57);
 /* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(14);
 /* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var tiny_warning__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(61);
+/* harmony import */ var tiny_warning__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(60);
 /* harmony import */ var _babel_runtime_helpers_esm_extends__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(22);
 /* harmony import */ var _babel_runtime_helpers_esm_objectWithoutPropertiesLoose__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(23);
-/* harmony import */ var tiny_invariant__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(62);
+/* harmony import */ var tiny_invariant__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(61);
 
 
 
@@ -32591,7 +32562,7 @@ if (true) {
 
 
 /***/ }),
-/* 56 */
+/* 55 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -32612,17 +32583,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "useParams", function() { return useParams; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "useRouteMatch", function() { return useRouteMatch; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "withRouter", function() { return withRouter; });
-/* harmony import */ var _babel_runtime_helpers_esm_inheritsLoose__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(57);
+/* harmony import */ var _babel_runtime_helpers_esm_inheritsLoose__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(56);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(14);
 /* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var history__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(58);
-/* harmony import */ var tiny_warning__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(61);
-/* harmony import */ var mini_create_react_context__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(63);
-/* harmony import */ var tiny_invariant__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(62);
+/* harmony import */ var history__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(57);
+/* harmony import */ var tiny_warning__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(60);
+/* harmony import */ var mini_create_react_context__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(62);
+/* harmony import */ var tiny_invariant__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(61);
 /* harmony import */ var _babel_runtime_helpers_esm_extends__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(22);
-/* harmony import */ var path_to_regexp__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(64);
+/* harmony import */ var path_to_regexp__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(63);
 /* harmony import */ var path_to_regexp__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(path_to_regexp__WEBPACK_IMPORTED_MODULE_8__);
 /* harmony import */ var react_is__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(15);
 /* harmony import */ var react_is__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(react_is__WEBPACK_IMPORTED_MODULE_9__);
@@ -33402,7 +33373,7 @@ if (true) {
 
 
 /***/ }),
-/* 57 */
+/* 56 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -33415,7 +33386,7 @@ function _inheritsLoose(subClass, superClass) {
 }
 
 /***/ }),
-/* 58 */
+/* 57 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -33428,10 +33399,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parsePath", function() { return parsePath; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createPath", function() { return createPath; });
 /* harmony import */ var _babel_runtime_helpers_esm_extends__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(22);
-/* harmony import */ var resolve_pathname__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(59);
-/* harmony import */ var value_equal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(60);
-/* harmony import */ var tiny_warning__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(61);
-/* harmony import */ var tiny_invariant__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(62);
+/* harmony import */ var resolve_pathname__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(58);
+/* harmony import */ var value_equal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(59);
+/* harmony import */ var tiny_warning__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(60);
+/* harmony import */ var tiny_invariant__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(61);
 
 
 
@@ -34354,7 +34325,7 @@ function createMemoryHistory(props) {
 
 
 /***/ }),
-/* 59 */
+/* 58 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -34437,7 +34408,7 @@ function resolvePathname(to, from) {
 
 
 /***/ }),
-/* 60 */
+/* 59 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -34481,7 +34452,7 @@ function valueEqual(a, b) {
 
 
 /***/ }),
-/* 61 */
+/* 60 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -34509,7 +34480,7 @@ function warning(condition, message) {
 
 
 /***/ }),
-/* 62 */
+/* 61 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -34530,17 +34501,17 @@ function invariant(condition, message) {
 
 
 /***/ }),
-/* 63 */
+/* 62 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_esm_inheritsLoose__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(57);
+/* harmony import */ var _babel_runtime_helpers_esm_inheritsLoose__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(56);
 /* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(14);
 /* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var tiny_warning__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(61);
+/* harmony import */ var tiny_warning__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(60);
 
 
 
@@ -34721,10 +34692,10 @@ var index = react__WEBPACK_IMPORTED_MODULE_0___default.a.createContext || create
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(31)))
 
 /***/ }),
-/* 64 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isarray = __webpack_require__(65)
+var isarray = __webpack_require__(64)
 
 /**
  * Expose `pathToRegexp`.
@@ -35153,7 +35124,7 @@ function pathToRegexp (path, keys, options) {
 
 
 /***/ }),
-/* 65 */
+/* 64 */
 /***/ (function(module, exports) {
 
 module.exports = Array.isArray || function (arr) {
@@ -35162,11 +35133,11 @@ module.exports = Array.isArray || function (arr) {
 
 
 /***/ }),
-/* 66 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var api = __webpack_require__(67);
-            var content = __webpack_require__(68);
+var api = __webpack_require__(66);
+            var content = __webpack_require__(67);
 
             content = content.__esModule ? content.default : content;
 
@@ -35186,7 +35157,7 @@ var update = api(content, options);
 module.exports = content.locals || {};
 
 /***/ }),
-/* 67 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35461,24 +35432,24 @@ module.exports = function (list, options) {
 };
 
 /***/ }),
-/* 68 */
+/* 67 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(69);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(68);
 /* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
 // Imports
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(false);
 // Module
-___CSS_LOADER_EXPORT___.push([module.i, "body {\r\n  font-family: 'Lato', sans-serif;\r\n  color: darkslategray;\r\n  overflow-x: hidden;\r\n  position: relative\r\n}\r\n\r\nhtml {\r\n  --scrollbarBG: gainsboro;\r\n  --thumbBG: whitesmoke;\r\n  overflow-x: hidden;\r\n}\r\n\r\n.topnav {\r\n  background-color: whitesmoke;\r\n  box-shadow: 0 4px 2px -2px grey;\r\n  width: 100%;\r\n  position: fixed;\r\n  top: 0;\r\n  left: 0;\r\n  text-align: center;\r\n  z-index: 999;\r\n}\r\n\r\n.topnav span {\r\n  display: inline-block;\r\n  padding: 14px 20px;\r\n}\r\n\r\na {\r\n  text-decoration: none;\r\n}\r\n\r\n@media (hover) {\r\n.topnav a:hover {\r\n  background-color: #ddd;\r\n  color: black;\r\n  height: 100%;\r\n}\r\n}\r\n\r\n.topnav a.active {\r\n  background-color: #eee1c8;\r\n  color: white;\r\n}\r\n\r\n.gameboard-page-container {\r\n  display: flex;\r\n  flex-direction: column;\r\n  padding: 60px 20px;\r\n  align-items: center;\r\n}\r\n\r\n.board-and-word-list {\r\n  display: flex;\r\n  flex-direction: row;\r\n}\r\n\r\n.selectedLetter {\r\n  border-color: rgba(71, 71, 71, 0.9);\r\n  /*border-color: whitesmoke;*/\r\n  animation-name: pulse;\r\n  animation-duration: 0.3s;\r\n}\r\n\r\n@keyframes pulse {\r\n  0% {\r\n    transform: scale(1);\r\n  }\r\n\r\n  80% {\r\n    transform: scale(1.1);\r\n  }\r\n\r\n  100% {\r\n    transform: scale(1);\r\n  }\r\n}\r\n\r\ntable {\r\n  table-layout: fixed;\r\n  margin: 0 11px;\r\n}\r\n\r\ntd {\r\n  border-style: solid;\r\n  border-color: lightslategray;\r\n  border-width: 2px;\r\n  border-radius: 3%;\r\n  background-color: white;\r\n  height: 23px;\r\n  width: 20px;\r\n  margin: 0;\r\n  padding: 0;\r\n  text-align: center;\r\n  box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);\r\n}\r\n\r\n.gameboard {\r\n  background-color: whitesmoke;\r\n  padding: 6px;\r\n  /*border-radius: 6%;*/\r\n  margin-right: 20px;\r\n  padding-top: 16px;\r\n  box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);\r\n}\r\n\r\n.gameboard-header {\r\n  text-align: center;\r\n  padding-bottom: 8px;\r\n}\r\n\r\n.gameboard-button-div {\r\n  display: flex;\r\n  flex-direction: row;\r\n  justify-content: space-evenly;\r\n}\r\n\r\n.gameboard-button {\r\n  margin: 5px;\r\n\r\n}\r\n\r\n.fa {\r\n  color: darkslategray;\r\n}\r\n\r\n.gameboard-button .helptext {\r\n  visibility: hidden;\r\n  width: 120px;\r\n  background-color: #ededed;\r\n  color: lightslategray;\r\n  text-align: center;\r\n  padding: 2px 0;\r\n  /*border-radius: 6%;*/\r\n  position: absolute;\r\n  z-index: 1;\r\n}\r\n\r\n@media (hover) {\r\n.gameboard-button:hover .helptext {\r\n  visibility: visible;\r\n}\r\n}\r\n\r\n.wordListContainer {\r\n  box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);\r\n  /*border-radius: 6%;*/\r\n  overflow: auto;\r\n  background-color:whitesmoke;\r\n}\r\n\r\n.wordListHeader {\r\n  display: flex;\r\n  flex-direction: row;\r\n  justify-content: space-between;\r\n  background-color: whitesmoke;\r\n  padding: 11px 7px;\r\n  margin-top: auto;\r\n}\r\n\r\n.wordlist-and-info-container {\r\n  display:flex;\r\n  flex-direction:column;\r\n  width: 200px;\r\n}\r\n\r\n.wordListWords {\r\n  display: flex;\r\n  flex-direction: column;\r\n  border: solid 5px whitesmoke;\r\n  border-top:none;\r\n  overflow-y: scroll;\r\n  height: 200px;\r\n  padding-bottom: 6px;\r\n  padding-left: 6px;\r\n  border-bottom-left-radius: 6%;\r\n  border-bottom-right-radius: 6%;\r\n  background-color: white;\r\n}\r\n\r\n.wordListWords::-webkit-scrollbar {\r\n  width: 11px;\r\n}\r\n\r\n.wordListWords {\r\n  scrollbar-width: thin;\r\n  scrollbar-color: var(--thumbBG) var(--scrollbarBG);\r\n}\r\n\r\n.wordListWords::-webkit-scrollbar-track {\r\n  background: var(--scrollbarBG);\r\n}\r\n\r\n.wordListWords::-webkit-scrollbar-thumb {\r\n  background-color: var(--thumbBG);\r\n  /*border-radius: 6%;*/\r\n  border: 3px solid var(--scrollbarBG);\r\n}\r\n\r\n.dog-container {\r\n  /*background-color: whitesmoke;*/\r\n  height: 160px;\r\n  /*border-radius: 6%;*/\r\n  margin-top: 10px;\r\n  /*box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);*/\r\n}\r\n\r\n.dog-image {\r\n  max-height: 100%;\r\n  width: auto;\r\n  display: block;\r\n  margin-left: auto;\r\n  margin-right: auto;\r\n}\r\n\r\n.balanceBar {\r\n  height: 22px;\r\n  width: 100%;\r\n  background-color: khaki;\r\n  position: relative;\r\n}\r\n\r\n.playerLabel {\r\n  color: white;\r\n  position: absolute;\r\n  left: 4px;\r\n}\r\n\r\n.comLabel {\r\n  color: white;\r\n  position: absolute;\r\n  right: 4px;\r\n}\r\n\r\n.spin {\r\n  animation: 3s rotate linear infinite;\r\n}\r\n\r\n@keyframes rotate {\r\n  from {\r\n    transform: rotateY(0deg);\r\n  }\r\n\r\n  to {\r\n    transform: rotateY(360deg);\r\n  }\r\n}\r\n\r\n.modal {\r\n  display: flex;\r\n  flex-direction: column;\r\n  position: fixed;\r\n  top: 35%;\r\n  left: 50%;\r\n  transform: translate(-50%, -50%);\r\n  height: 200px;\r\n  text-align: center;\r\n  background-color: #ededed;\r\n  color: darkslategray;\r\n  border-radius: 2%;\r\n  box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);\r\n  z-index: 888;\r\n}\r\n\r\n.modalButtons {\r\n  display: flex;\r\n  flex-direction: row;\r\n  justify-content: space-evenly;\r\n  padding-top: 40px;\r\n  cursor: pointer;\r\n}\r\n\r\n.modalText {\r\n  text-align: center;\r\n  padding: 40px;\r\n}\r\n\r\n.about-page-container {\r\n  display: flex;\r\n  flex-direction: column;\r\n  padding: 60px 20px;\r\n  align-items: center;\r\n\r\n}\r\n\r\n.about-paragraph {\r\n  text-align: justify;\r\n  width: 420px;\r\n  border-bottom: 1px solid grey;\r\n}\r\n\r\n.about-tail {\r\n  font-style: italic;\r\n}\r\n\r\n.howto-page-container {\r\n  display: flex;\r\n  flex-direction: column;\r\n  padding: 60px 20px;\r\n  align-items: center;\r\n\r\n}\r\n\r\n.howto-paragraph {\r\n  text-align: justify;\r\n  width: 420px;\r\n  border-bottom: 1px solid grey;\r\n}\r\n\r\n@media only screen and (max-width: 768px) and (min-width:600px) {\r\n\r\n\r\n  .wordListWords {\r\n      height: 200px;\r\n  }\r\n\r\n  .wordListContainer {\r\n    height: auto;\r\n  }\r\n\r\n.dog-container {\r\n  height: 20vw;\r\n}\r\n\r\n.modalButtons {\r\n  padding: auto;\r\n  }\r\n\r\n}\r\n\r\n@media only screen and (max-width: 599px) and (min-width:551px) {\r\n\r\n  .wordListWords {\r\n      height: 180px;\r\n  }\r\n\r\n  .wordListContainer {\r\n    height: auto;\r\n}\r\n\r\n.dog-container {\r\n  height: 25vw;\r\n}\r\n\r\n.modalButtons {\r\n  padding: auto;\r\n  }\r\n\r\n}\r\n\r\n@media only screen and (max-width: 550px) and (min-width: 331px) {\r\n  .board-and-word-list {\r\n    display: flex;\r\n    flex-direction: column;\r\n  }\r\n\r\n  .fa {\r\n    font-size: 24px;\r\n  }\r\n\r\n  .gameboard-button-div {\r\n    padding: 10px;\r\n  }\r\n\r\n\r\n  .wordListWords {\r\n    width: auto;\r\n    /*border-radius: 0%;*/\r\n    height: 50vw;\r\n  }\r\n\r\n  .gameboard {\r\n    width: 100vw;\r\n    margin-left: 3%;\r\n     /*border-radius: 0%;*/\r\n  }\r\n\r\n  table {\r\n    margin-left: 5.5%;\r\n  }\r\n\r\n  td {\r\n    height: 30px;\r\n    width: 30px;\r\n    font-size: large;\r\n  }\r\n\r\n  .gameboard-header {\r\n    padding-top: 7px;\r\n    padding-bottom: 9px;\r\n    font-size: large\r\n  }\r\n\r\n  .wordlist-and-info-container {\r\n    flex-direction:row;\r\n    width: 100%;\r\n  }\r\n\r\n  .wordListContainer {\r\n    margin-top: 10px;\r\n    width: 90%;\r\n    margin-right: 5%;\r\n    /* border-radius: 0%; */\r\n    margin-left: 5%;\r\n  }\r\n\r\n  .dog-container {\r\n    display: none;\r\n  }\r\n\r\n  .gameboard-button-div {\r\n    padding-bottom: 10px;\r\n  }\r\n\r\n  .howto-paragraph {\r\n    text-align: justify;\r\n    width: 330px;\r\n  }\r\n\r\n  .about-paragraph {\r\n    text-align: justify;\r\n    width: 330px;\r\n  }\r\n\r\n  .modalButtons {\r\n    padding: auto;\r\n    }\r\n}\r\n\r\n@media only screen and (max-width: 330px) {\r\n\r\n  .board-and-word-list {\r\n    display: flex;\r\n    flex-direction: column;\r\n  }\r\n\r\n  .gameboard {\r\n    width: 100vw;\r\n     /*border-radius: 0%;*/\r\n    margin-right: 0;\r\n  }\r\n\r\n  .fa {\r\n    font-size: 24px;\r\n  }\r\n\r\n  td {\r\n    height: 28px;\r\n    width: 28px;\r\n    font-size: large;\r\n  }\r\n\r\n  table {\r\n    margin: 2%;\r\n  }\r\n\r\n\r\n  .gameboard-header {\r\n    padding: 10px;\r\n    font-size: large\r\n  }\r\n\r\n  .gameboard-page-container {\r\n    padding: 50px 10px;\r\n  }\r\n\r\n  .wordlist-and-info-container {\r\n    flex-direction:row;\r\n    width: 100%;\r\n  }\r\n\r\n  .dog-container {\r\n    display: none;\r\n  }\r\n\r\n  .wordListContainer {\r\n    margin-top: 10px;\r\n    width: 90vw;\r\n    /* border-radius: 0%; */\r\n    margin-left: 5%;\r\n  }\r\n\r\n  .wordListWords {\r\n    width: auto;\r\n     /*border-radius: 0%;*/\r\n    height: 30vw;\r\n  }\r\n\r\n  .gameboard-button-div {\r\n    padding-bottom: 12px;\r\n  }\r\n\r\n  .howto-paragraph {\r\n    text-align: justify;\r\n    width: 310px;\r\n  }\r\n\r\n  .about-paragraph {\r\n    text-align: justify;\r\n    width: 310px;\r\n  }\r\n\r\n  .modalButtons {\r\n    padding: auto;\r\n    }\r\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.i, "body {\r\n  font-family: 'Lato', sans-serif;\r\n  color: darkslategray;\r\n  overflow-x: hidden;\r\n  position: relative\r\n}\r\n\r\nhtml {\r\n  --scrollbarBG: gainsboro;\r\n  --thumbBG: whitesmoke;\r\n  overflow-x: hidden;\r\n}\r\n\r\n.topnav {\r\n  background-color: whitesmoke;\r\n  box-shadow: 0 4px 2px -2px grey;\r\n  width: 100%;\r\n  position: fixed;\r\n  top: 0;\r\n  left: 0;\r\n  text-align: center;\r\n  z-index: 999;\r\n}\r\n\r\n.topnav span {\r\n  display: inline-block;\r\n  padding: 14px 20px;\r\n}\r\n\r\na {\r\n  text-decoration: none;\r\n}\r\n\r\n@media (hover) {\r\n.topnav a:hover {\r\n  background-color: #ddd;\r\n  color: black;\r\n  height: 100%;\r\n}\r\n}\r\n\r\n.topnav a.active {\r\n  background-color: #eee1c8;\r\n  color: white;\r\n}\r\n\r\n.gameboard-page-container {\r\n  display: flex;\r\n  flex-direction: column;\r\n  padding: 60px 20px;\r\n  align-items: center;\r\n}\r\n\r\n.board-and-word-list {\r\n  display: flex;\r\n  flex-direction: row;\r\n}\r\n\r\n.selectedLetter {\r\n  border-color: rgba(71, 71, 71, 0.9);\r\n  /*border-color: whitesmoke;*/\r\n  animation-name: pulse;\r\n  animation-duration: 0.3s;\r\n}\r\n\r\n@keyframes pulse {\r\n  0% {\r\n    transform: scale(1);\r\n  }\r\n\r\n  80% {\r\n    transform: scale(1.1);\r\n  }\r\n\r\n  100% {\r\n    transform: scale(1);\r\n  }\r\n}\r\n\r\ntable {\r\n  table-layout: fixed;\r\n  margin: 0 11px;\r\n}\r\n\r\ntd {\r\n  border-style: solid;\r\n  border-color: lightslategray;\r\n  border-width: 2px;\r\n  border-radius: 3%;\r\n  background-color: white;\r\n  height: 23px;\r\n  width: 20px;\r\n  margin: 0;\r\n  padding: 0;\r\n  text-align: center;\r\n  box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);\r\n}\r\n\r\n.gameboard {\r\n  background-color: whitesmoke;\r\n  padding: 6px;\r\n  /*border-radius: 6%;*/\r\n  margin-right: 20px;\r\n  padding-top: 16px;\r\n  box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);\r\n}\r\n\r\n.gameboard-header {\r\n  text-align: center;\r\n  padding-bottom: 8px;\r\n}\r\n\r\n.gameboard-button-div {\r\n  display: flex;\r\n  flex-direction: row;\r\n  justify-content: space-around;\r\n}\r\n\r\n.gameboard-button {\r\n  margin: 5px;\r\n\r\n}\r\n\r\n.fa {\r\n  color: darkslategray;\r\n}\r\n\r\n.gameboard-button .helptext {\r\n  visibility: hidden;\r\n  width: 120px;\r\n  background-color: #ededed;\r\n  color: lightslategray;\r\n  text-align: center;\r\n  padding: 2px 0;\r\n  /*border-radius: 6%;*/\r\n  position: absolute;\r\n  z-index: 1;\r\n}\r\n\r\n@media (hover) {\r\n.gameboard-button:hover .helptext {\r\n  visibility: visible;\r\n}\r\n}\r\n\r\n.wordListContainer {\r\n  box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);\r\n  /*border-radius: 6%;*/\r\n  overflow: auto;\r\n  background-color:whitesmoke;\r\n}\r\n\r\n.wordListHeader {\r\n  display: flex;\r\n  flex-direction: row;\r\n  justify-content: space-around;\r\n  background-color: whitesmoke;\r\n  padding: 11px 7px;\r\n  margin-top: auto;\r\n}\r\n\r\n.wordlist-and-info-container {\r\n  display:flex;\r\n  flex-direction:column;\r\n  width: 200px;\r\n}\r\n\r\n.wordListWords {\r\n  display: flex;\r\n  flex-direction: column;\r\n  border: solid 5px whitesmoke;\r\n  border-top:none;\r\n  overflow-y: scroll;\r\n  height: 200px;\r\n  padding-bottom: 6px;\r\n  padding-left: 6px;\r\n  border-bottom-left-radius: 6%;\r\n  border-bottom-right-radius: 6%;\r\n  background-color: white;\r\n}\r\n\r\n.wordListWords::-webkit-scrollbar {\r\n  width: 11px;\r\n}\r\n\r\n.wordListWords {\r\n  scrollbar-width: thin;\r\n  scrollbar-color: var(--thumbBG) var(--scrollbarBG);\r\n}\r\n\r\n.wordListWords::-webkit-scrollbar-track {\r\n  background: var(--scrollbarBG);\r\n}\r\n\r\n.wordListWords::-webkit-scrollbar-thumb {\r\n  background-color: var(--thumbBG);\r\n  /*border-radius: 6%;*/\r\n  border: 3px solid var(--scrollbarBG);\r\n}\r\n\r\n.dog-container {\r\n  /*background-color: whitesmoke;*/\r\n  height: 160px;\r\n  /*border-radius: 6%;*/\r\n  margin-top: 10px;\r\n  /*box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);*/\r\n}\r\n\r\n.dog-image {\r\n  max-height: 100%;\r\n  width: auto;\r\n  display: block;\r\n  margin-left: auto;\r\n  margin-right: auto;\r\n}\r\n\r\n.balanceBar {\r\n  height: 22px;\r\n  width: 100%;\r\n  background-color: khaki;\r\n  position: relative;\r\n}\r\n\r\n.playerLabel {\r\n  color: white;\r\n  position: absolute;\r\n  left: 4px;\r\n}\r\n\r\n.comLabel {\r\n  color: white;\r\n  position: absolute;\r\n  right: 4px;\r\n}\r\n\r\n.spin {\r\n  animation: 3s rotate linear infinite;\r\n}\r\n\r\n@keyframes rotate {\r\n  from {\r\n    transform: rotateY(0deg);\r\n  }\r\n\r\n  to {\r\n    transform: rotateY(360deg);\r\n  }\r\n}\r\n\r\n.modal {\r\n  display: flex;\r\n  flex-direction: column;\r\n  position: fixed;\r\n  top: 35%;\r\n  left: 50%;\r\n  transform: translate(-50%, -50%);\r\n  height: 200px;\r\n  text-align: center;\r\n  background-color: #ededed;\r\n  color: darkslategray;\r\n  border-radius: 2%;\r\n  box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);\r\n  z-index: 888;\r\n}\r\n\r\n.modalButtons {\r\n  display: flex;\r\n  flex-direction: row;\r\n  justify-content: space-around;\r\n  padding-top: 40px;\r\n  cursor: pointer;\r\n}\r\n\r\n.modalText {\r\n  text-align: center;\r\n  padding: 40px;\r\n}\r\n\r\n.about-page-container {\r\n  display: flex;\r\n  flex-direction: column;\r\n  padding: 60px 20px;\r\n  align-items: center;\r\n\r\n}\r\n\r\n.about-paragraph {\r\n  text-align: justify;\r\n  width: 420px;\r\n  border-bottom: 1px solid grey;\r\n}\r\n\r\n.about-tail {\r\n  font-style: italic;\r\n}\r\n\r\n.howto-page-container {\r\n  display: flex;\r\n  flex-direction: column;\r\n  padding: 60px 20px;\r\n  align-items: center;\r\n\r\n}\r\n\r\n.howto-paragraph {\r\n  text-align: justify;\r\n  width: 420px;\r\n  border-bottom: 1px solid grey;\r\n}\r\n\r\n@media only screen and (max-width: 768px) and (min-width:600px) {\r\n\r\n\r\n  .wordListWords {\r\n      height: 200px;\r\n  }\r\n\r\n  .wordListContainer {\r\n    height: auto;\r\n  }\r\n\r\n.dog-container {\r\n  height: 20vw;\r\n}\r\n\r\n.modalButtons {\r\n  padding: 0;\r\n  }\r\n\r\n}\r\n\r\n@media only screen and (max-width: 599px) and (min-width:551px) {\r\n\r\n  .wordListWords {\r\n      height: 180px;\r\n  }\r\n\r\n  .wordListContainer {\r\n    height: auto;\r\n}\r\n\r\n.dog-container {\r\n  height: 25vw;\r\n}\r\n\r\n.modalButtons {\r\n  padding: 0;\r\n  }\r\n\r\n}\r\n\r\n@media only screen and (max-width: 550px) and (min-width: 331px) {\r\n  .board-and-word-list {\r\n    display: flex;\r\n    flex-direction: column;\r\n  }\r\n\r\n  .fa {\r\n    font-size: 24px;\r\n  }\r\n\r\n  .gameboard-button-div {\r\n    padding: 10px;\r\n  }\r\n\r\n\r\n  .wordListWords {\r\n    width: auto;\r\n    /*border-radius: 0%;*/\r\n    height: 50vw;\r\n  }\r\n\r\n  .gameboard {\r\n    width: 100vw;\r\n    margin-left: 3%;\r\n     /*border-radius: 0%;*/\r\n  }\r\n\r\n  table {\r\n    margin-left: 5.5%;\r\n  }\r\n\r\n  td {\r\n    height: 30px;\r\n    width: 30px;\r\n    font-size: large;\r\n  }\r\n\r\n  .gameboard-header {\r\n    padding-top: 7px;\r\n    padding-bottom: 9px;\r\n    font-size: large\r\n  }\r\n\r\n  .wordlist-and-info-container {\r\n    flex-direction:row;\r\n    width: 100%;\r\n  }\r\n\r\n  .wordListContainer {\r\n    margin-top: 10px;\r\n    width: 90%;\r\n    margin-right: 5%;\r\n    /* border-radius: 0%; */\r\n    margin-left: 5%;\r\n  }\r\n\r\n  .dog-container {\r\n    display: none;\r\n  }\r\n\r\n  .gameboard-button-div {\r\n    padding-bottom: 10px;\r\n  }\r\n\r\n  .howto-paragraph {\r\n    text-align: justify;\r\n    width: 330px;\r\n  }\r\n\r\n  .about-paragraph {\r\n    text-align: justify;\r\n    width: 330px;\r\n  }\r\n\r\n  .modalButtons {\r\n    padding: 0;\r\n    }\r\n}\r\n\r\n@media only screen and (max-width: 330px) {\r\n\r\n  .board-and-word-list {\r\n    display: flex;\r\n    flex-direction: column;\r\n  }\r\n\r\n  .gameboard {\r\n    width: 100vw;\r\n     /*border-radius: 0%;*/\r\n    margin-right: 0;\r\n  }\r\n\r\n  .fa {\r\n    font-size: 24px;\r\n  }\r\n\r\n  td {\r\n    height: 28px;\r\n    width: 28px;\r\n    font-size: large;\r\n  }\r\n\r\n  table {\r\n    margin: 2%;\r\n  }\r\n\r\n\r\n  .gameboard-header {\r\n    padding: 10px;\r\n    font-size: large\r\n  }\r\n\r\n  .gameboard-page-container {\r\n    padding: 50px 10px;\r\n  }\r\n\r\n  .wordlist-and-info-container {\r\n    flex-direction:row;\r\n    width: 100%;\r\n  }\r\n\r\n  .dog-container {\r\n    display: none;\r\n  }\r\n\r\n  .wordListContainer {\r\n    margin-top: 10px;\r\n    width: 90vw;\r\n    /* border-radius: 0%; */\r\n    margin-left: 5%;\r\n  }\r\n\r\n  .wordListWords {\r\n    width: auto;\r\n     /*border-radius: 0%;*/\r\n    height: 30vw;\r\n  }\r\n\r\n  .gameboard-button-div {\r\n    padding-bottom: 12px;\r\n  }\r\n\r\n  .howto-paragraph {\r\n    text-align: justify;\r\n    width: 310px;\r\n  }\r\n\r\n  .about-paragraph {\r\n    text-align: justify;\r\n    width: 310px;\r\n  }\r\n\r\n  .modalButtons {\r\n    padding: 0;\r\n    }\r\n}", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
 
 /***/ }),
-/* 69 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35578,7 +35549,7 @@ function toComment(sourceMap) {
 }
 
 /***/ }),
-/* 70 */
+/* 69 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -35586,17 +35557,17 @@ __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(__webpack__worker__0) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GameBoardPage", function() { return GameBoardPage; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _services_game__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(72);
-/* harmony import */ var _services_words__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(73);
-/* harmony import */ var _components_Board__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(74);
-/* harmony import */ var _components_GameBoardButtons__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(75);
-/* harmony import */ var _components_GameBoardHeader__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(76);
-/* harmony import */ var _components_PlayedWordList__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(77);
-/* harmony import */ var _components_LoadingTable__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(80);
-/* harmony import */ var _components_LogoContainer__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(81);
-/* harmony import */ var _components_Message__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(83);
+/* harmony import */ var _services_game__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(71);
+/* harmony import */ var _services_words__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(72);
+/* harmony import */ var _components_Board__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(73);
+/* harmony import */ var _components_GameBoardButtons__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(74);
+/* harmony import */ var _components_GameBoardHeader__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(75);
+/* harmony import */ var _components_PlayedWordList__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(76);
+/* harmony import */ var _components_LoadingTable__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(79);
+/* harmony import */ var _components_LogoContainer__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(80);
+/* harmony import */ var _components_Message__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(82);
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(12);
-/* harmony import */ var _actions_allActions__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(84);
+/* harmony import */ var _actions_allActions__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(83);
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35871,16 +35842,16 @@ var GameBoardPage = function () {
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Message__WEBPACK_IMPORTED_MODULE_9__["Message"], { resetGame: resetGame, clearMessage: clearMessage, startNewGame: startNewGame }))));
 };
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(71)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(70)))
 
 /***/ }),
-/* 71 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__.p + "0.worker.js"
 
 /***/ }),
-/* 72 */
+/* 71 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -36145,7 +36116,7 @@ var getNeighborsData = function (node, board) {
 
 
 /***/ }),
-/* 73 */
+/* 72 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -36192,7 +36163,7 @@ var fetchAll = function () { return __awaiter(void 0, void 0, void 0, function (
     var response, data;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, fetch(baseUrl)];
+            case 0: return [4 /*yield*/, fetch(devUrl)];
             case 1:
                 response = _a.sent();
                 return [4 /*yield*/, response.json()];
@@ -36208,7 +36179,7 @@ var fetchMatch = function (word) { return __awaiter(void 0, void 0, void 0, func
         switch (_a.label) {
             case 0:
                 if (!(word !== '')) return [3 /*break*/, 3];
-                return [4 /*yield*/, fetch(baseUrl)];
+                return [4 /*yield*/, fetch(devUrl)];
             case 1:
                 response = _a.sent();
                 return [4 /*yield*/, response.json()];
@@ -36227,7 +36198,7 @@ var fetchMatch = function (word) { return __awaiter(void 0, void 0, void 0, func
 
 
 /***/ }),
-/* 74 */
+/* 73 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -36265,7 +36236,7 @@ var Board = function (props) {
 
 
 /***/ }),
-/* 75 */
+/* 74 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -36309,7 +36280,7 @@ var GameBoardButtons = function (props) {
 
 
 /***/ }),
-/* 76 */
+/* 75 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -36330,7 +36301,7 @@ var GameBoardHeader = function () {
 
 
 /***/ }),
-/* 77 */
+/* 76 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -36338,9 +36309,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlayedWordList", function() { return PlayedWordList; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _BalanceOfPower__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(78);
+/* harmony import */ var _BalanceOfPower__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(77);
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(12);
-/* harmony import */ var _hooks_windowSize__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(79);
+/* harmony import */ var _hooks_windowSize__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(78);
 
 
 
@@ -36378,7 +36349,7 @@ var PlayedWordList = function (props) {
 
 
 /***/ }),
-/* 78 */
+/* 77 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -36402,7 +36373,7 @@ var BalanceOfPower = function (props) {
 
 
 /***/ }),
-/* 79 */
+/* 78 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -36445,7 +36416,7 @@ var useWindowSize = function () {
 
 
 /***/ }),
-/* 80 */
+/* 79 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -36478,7 +36449,7 @@ var LoadingTable = function () {
 
 
 /***/ }),
-/* 81 */
+/* 80 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -36486,7 +36457,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LogoContainer", function() { return LogoContainer; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _media_doggiedoo_png__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(82);
+/* harmony import */ var _media_doggiedoo_png__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(81);
 
 
 var LogoContainer = function () {
@@ -36497,7 +36468,7 @@ var LogoContainer = function () {
 
 
 /***/ }),
-/* 82 */
+/* 81 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -36505,7 +36476,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = (__webpack_require__.p + "images/75b58a02f14895ea6e558d375ab607e4-doggiedoo.png");
 
 /***/ }),
-/* 83 */
+/* 82 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -36543,14 +36514,14 @@ var Message = function (props) {
 
 
 /***/ }),
-/* 84 */
+/* 83 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _boardActions__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(49);
-/* harmony import */ var _baseActions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(85);
-/* harmony import */ var _messageActions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(86);
+/* harmony import */ var _baseActions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(84);
+/* harmony import */ var _messageActions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(85);
 
 
 
@@ -36563,7 +36534,7 @@ var allActions = {
 
 
 /***/ }),
-/* 85 */
+/* 84 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -36733,7 +36704,7 @@ var createHistory = function (base, selection, turn) {
 
 
 /***/ }),
-/* 86 */
+/* 85 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -36764,7 +36735,7 @@ var resolveMessage = function (resolution) {
 
 
 /***/ }),
-/* 87 */
+/* 86 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -36798,7 +36769,7 @@ var Howto = function () {
 
 
 /***/ }),
-/* 88 */
+/* 87 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

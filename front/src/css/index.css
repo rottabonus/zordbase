@@ -113,7 +113,7 @@ td {
 .gameboard-button-div {
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: space-around;
 }
 
 .gameboard-button {
@@ -153,7 +153,7 @@ td {
 .wordListHeader {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-around;
   background-color: whitesmoke;
   padding: 11px 7px;
   margin-top: auto;
@@ -266,7 +266,7 @@ td {
 .modalButtons {
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: space-around;
   padding-top: 40px;
   cursor: pointer;
 }
@@ -324,7 +324,7 @@ td {
 }
 
 .modalButtons {
-  padding: auto;
+  padding: 0;
   }
 
 }
@@ -344,7 +344,7 @@ td {
 }
 
 .modalButtons {
-  padding: auto;
+  padding: 0;
   }
 
 }
@@ -424,7 +424,7 @@ td {
   }
 
   .modalButtons {
-    padding: auto;
+    padding: 0;
     }
 }
 
@@ -502,6 +502,6 @@ td {
   }
 
   .modalButtons {
-    padding: auto;
+    padding: 0;
     }
 }
