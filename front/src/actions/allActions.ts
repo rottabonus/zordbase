@@ -1,11 +1,12 @@
-import boardActions from './boardActions'
-import baseActions from './baseActions'
-import messageActions from './messageActions'
+import boardActions from "./boardActions";
+import baseActions from "./baseActions";
+import messageActions from "./messageActions";
 
 const allActions = {
-    boardActions,
-    baseActions,
-    messageActions
-}
+  boardActions,
+  baseActions,
+  messageActions,
+};
 
-export default allActions
+export default allActions;
+
