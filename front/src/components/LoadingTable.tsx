@@ -1,7 +1,7 @@
 import React from "react";
 
 export const LoadingTable: React.FC = () => {
-  const loadingBoard: string[][] = [
+  const loadingBoard = [
     ["L", "O", "A", "D", "I", "N", "G", ".", ".", "."],
     ["C", "R", "E", "A", "T", "I", "N", "G", ".", "."],
     ["C", "A", "L", "C", "U", "L", "A", "T", "I", "N"],

@@ -27,8 +27,8 @@ export const GameBoardButtons: React.FC<BoardButtonProps> = (props) => {
       : { visibility: "visible", cursor: "pointer" };
   };
 
-  const buttonStyles: ButtonVisibility = getButtonStyle();
-  const buttonStylesLoading: ButtonVisibility = getButtonStyleLoading();
+  const buttonStyles = getButtonStyle();
+  const buttonStylesLoading = getButtonStyleLoading();
 
   return (
     <div className="gameboard-button-div">

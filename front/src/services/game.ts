@@ -26,7 +26,7 @@ const removeIsolatedNodes = (
   );
   const movements = generateMovements(board);
   const attachedNodes: letterObject[] = [];
-  const searched: { [key: string]: letterObject } = {};
+  const searched: Record<string, letterObject> = {};
   const nodesToCheck = baseFilteredFromNone
     .filter((m) => m.owner !== turn)
     .sort((a, b) => {
@@ -82,9 +82,9 @@ const updateBaseWithPossibleWordTable = (
   base: letterObject[]
 ) => {
   const word = selectedLetters.map((obj) => obj.letter).join("");
-  const newBase: letterObject[] = [...base];
+  const newBase = [...base];
   if (word in possibleWordTable) {
-    const changed: letterObject[] = newBase.map((o) => {
+    const changed = newBase.map((o) => {
       if (checkIfPositionMatches(possibleWordTable[word], o)) {
         o = {
           ...o,
@@ -158,14 +158,14 @@ const getChangeInHeight = (word: letterObject[], turn: string) => {
 };
 
 const getCommonElements = (base: letterObject[], word: letterObject[]) => {
-  let commonElements: { [key: string]: boolean } = {};
+  let commonElements: Record<string, boolean> = {};
   let commonIterator = 0;
-  for (const [i, obj] of base.entries()) {
+  for (const [_i, obj] of base.entries()) {
     if (!commonElements[`${obj.row},${obj.column}`]) {
       commonElements[`${obj.row},${obj.column}`] = true;
     }
   }
-  for (const [j, obj] of word.entries()) {
+  for (const [_j, obj] of word.entries()) {
     if (commonElements[`${obj.row},${obj.column}`]) {
       commonIterator++;
     }
@@ -179,7 +179,7 @@ const checkIfLetterSelectionIsallowed = (
   selected: letterObject[],
   turn: string
 ) => {
-  const selectedAgainIndex: number = selected.findIndex(
+  const selectedAgainIndex = selected.findIndex(
     (l) => l.row == letter.row && l.column == letter.column
   );
   if (!selected.length) {
@@ -209,9 +209,9 @@ const checkIfLetterSelectionIsallowed = (
 };
 
 const generateMovements = (board: string[][]) => {
-  const moves: { [key: string]: letterObject[] } = {};
+  const moves: Record<string, letterObject[]> = {};
   board.forEach((row, r) => {
-    row.forEach((column, c) => {
+    row.forEach((_column, c) => {
       moves[`${r},${c}`] = getNeighborsData(
         { letter: board[r][c], row: r, column: c, owner: "none" },
         board
@@ -223,12 +223,10 @@ const generateMovements = (board: string[][]) => {
 
 const getNeighborsData = (node: letterObject, board: string[][]) => {
   const possibleMoves: letterObject[] = [];
-  const possibleXpositions: number[] = [
-    node.row,
-    node.row + 1,
-    node.row - 1,
-  ].filter((x) => x >= 0 && x < board.length);
-  const possibleYpositions: number[] = [
+  const possibleXpositions = [node.row, node.row + 1, node.row - 1].filter(
+    (x) => x >= 0 && x < board.length
+  );
+  const possibleYpositions = [
     node.column,
     node.column + 1,
     node.column - 1,

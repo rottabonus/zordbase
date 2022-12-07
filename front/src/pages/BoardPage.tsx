@@ -65,9 +65,8 @@ export const GameBoardPage: React.FC = () => {
   };
 
   const initializeBase = async () => {
-    const words: string[] = await wordService.fetchAll();
+    const words = await wordService.fetchAll();
     const objToSend = { board, playerName, words };
-    console.log("hello hello");
     webWorker.postMessage(objToSend);
     dispatch(allActions.boardActions.isLoading(true));
     webWorker.onmessage = (event) => {
@@ -237,10 +236,8 @@ export const GameBoardPage: React.FC = () => {
   };
 
   const computerSelect = (selection: letterObject[]) => {
-    for (const [i, s] of selection.entries()) {
-      const selectionArray: letterObject[] = selection.filter(
-        (s: letterObject, j: number) => j <= i
-      );
+    for (const [i, _s] of selection.entries()) {
+      const selectionArray = selection.filter((_s, j) => j <= i);
       setTimeout(() => {
         dispatch(allActions.baseActions.updateSelection(selectionArray));
       }, (i + 1) * 500);

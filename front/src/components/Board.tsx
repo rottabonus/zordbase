@@ -16,7 +16,7 @@ export const Board: React.FC<BoardProps> = (props) => {
     const found = selected.filter((a) => a.row === r && a.column === c);
     const isSelected = found.length === 0 ? "none" : "selectedLetter";
     const cursorStyle = turn === "computer" ? "progress" : "pointer";
-    const selectedWithOwner: letterObject[] = selected.map((s) => ({
+    const selectedWithOwner = selected.map((s) => ({
       row: s.row,
       column: s.column,
       letter: s.letter,
