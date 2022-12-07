@@ -2,8 +2,8 @@
     "compilerOptions": {
       "typeRoots" : ["node_modules/@types", "src/types"],
       "outDir": "./dist",
-      "target": "es5",
-      "module": "es6",
+      "target": "esnext",
+      "module": "esnext",
       "allowJs": true,
       "jsx": "react",
       "noImplicitAny": true,
