@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../reducers/combineReducer";
+import { selectMessage } from "../reducers/messageReducer";
 
 interface MessageProps {
   resetGame: () => void;
@@ -9,15 +9,15 @@ interface MessageProps {
 }
 
 export const Message: React.FC<MessageProps> = (props) => {
-  const messageState = useSelector((state: RootState) => state.message);
+  const { type: messageType, message, show } = useSelector(selectMessage);
 
-  return messageState.show ? (
+  return show ? (
     <div className="modal">
       <div className="modalText">
-        <span>{messageState.message}</span>
+        <span>{message}</span>
       </div>
 
-      {messageState.type === "reset" ? (
+      {messageType === "reset" ? (
         <div className="modalButtons">
           <div>
             <span onClick={props.resetGame}>Confirm</span>
@@ -26,7 +26,7 @@ export const Message: React.FC<MessageProps> = (props) => {
             <span onClick={props.clearMessage}>Cancel</span>
           </div>
         </div>
-      ) : messageState.type === "start" ? (
+      ) : messageType === "start" ? (
         <div className="modalButtons">
           <div>
             <span onClick={props.startNewGame}>Confirm</span>

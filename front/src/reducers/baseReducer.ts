@@ -1,4 +1,5 @@
-import { BaseState } from "../types/types";
+import { BaseState, letterObject, playedWord, Turn } from "../types/types";
+import { RootState } from "./combineReducer";
 
 const initialState: BaseState = {
   base: [],
@@ -15,10 +16,53 @@ const initialState: BaseState = {
   ],
 };
 
-const baseReducer = (
-  state = initialState,
-  action: { type: string; payload: any }
-) => {
+type Action =
+  | {
+      type: "CREATEBASE";
+      payload: {
+        base: letterObject[];
+        possibleWordPositions: Record<string, string[]>;
+      };
+    }
+  | {
+      type: "UPDATEBASE";
+      payload: letterObject[];
+    }
+  | {
+      type: "UPDATESELECTION";
+      payload: letterObject[];
+    }
+  | { type: "REMOVEFROMSELECTION"; payload: number }
+  | { type: "UPDATEPLAYEDWORDS"; payload: playedWord[] }
+  | {
+      type: "CONFIRMSELECTION";
+      payload: {
+        selection: letterObject[];
+        base: letterObject[];
+        played: playedWord[];
+      };
+    }
+  | { type: "CHANGEPLAYERNAME"; payload: string }
+  | {
+      type: "RESETGAME";
+      payload: {
+        base: letterObject[];
+        selection: letterObject[];
+        played: playedWord[];
+        history: Turn;
+      };
+    }
+  | {
+      type: "REMOVESELECTIONANDPLAYED";
+      payload: {
+        selection: letterObject[];
+        played: playedWord[];
+        history: Turn;
+      };
+    }
+  | { type: "CREATEHISTORY"; payload: Turn };
+
+const baseReducer = (state = initialState, action: Action) => {
   switch (action.type) {
     case "CREATEBASE":
       return {
@@ -91,5 +135,6 @@ const baseReducer = (
   }
 };
 
-export default baseReducer;
+export const selectBase = ({ base }: RootState) => base;
 
+export default baseReducer;

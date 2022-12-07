@@ -1,5 +1,6 @@
 import { GameBoardState } from "../types/types";
 import boardActions from "../actions/boardActions";
+import { RootState } from "./combineReducer";
 
 const initialState: GameBoardState = {
   board: boardActions.createGameBoard(12, 10),
@@ -8,10 +9,16 @@ const initialState: GameBoardState = {
   isLoading: false,
 };
 
-const boardReducer = (
-  state = initialState,
-  action: { type: string; payload: any }
-) => {
+type Action =
+  | {
+      type: "NEWGAME";
+      payload: GameBoardState;
+    }
+  | { type: "CREATEBOARD"; payload: string[][] }
+  | { type: "CHANGETURN"; payload: string }
+  | { type: "ISLOADING" | "GAMESTART"; payload: boolean };
+
+const boardReducer = (state = initialState, action: Action) => {
   switch (action.type) {
     case "CREATEBOARD":
       return {
@@ -47,5 +54,6 @@ const boardReducer = (
   }
 };
 
-export default boardReducer;
+export const selectBoard = ({ board }: RootState) => board;
 
+export default boardReducer;

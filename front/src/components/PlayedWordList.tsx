@@ -1,27 +1,18 @@
 import React, { useRef, useEffect } from "react";
-import { playedWord, PlayerWordStyle, letterObject } from "../types/types";
+import { PlayerWordStyle } from "../types/types";
 import { BalanceOfPower } from "./BalanceOfPower";
 import { useSelector } from "react-redux";
-import { RootState } from "../reducers/combineReducer";
 import { useWindowSize } from "../hooks/windowSize";
+import { selectBoard } from "../reducers/boardReducer";
+import { selectBase } from "../reducers/baseReducer";
 
 interface PlayedWordProps {
   timeTravel: (turn: number) => void;
 }
 
 export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
-  const played: playedWord[] = useSelector(
-    (state: RootState) => state.base.playedWords
-  );
-  const playerName: string = useSelector(
-    (state: RootState) => state.base.playerName
-  );
-  const base: letterObject[] = useSelector(
-    (state: RootState) => state.base.base
-  );
-  const isLoading: boolean = useSelector(
-    (state: RootState) => state.board.isLoading
-  );
+  const { base, playerName, playedWords: played } = useSelector(selectBase);
+  const { isLoading } = useSelector(selectBoard);
   const playerNodes = base.filter((f) => f.owner === playerName).length;
   const comNodes = base.filter((f) => f.owner === "computer").length;
   const percentageDifference = isLoading

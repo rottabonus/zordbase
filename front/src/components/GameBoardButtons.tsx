@@ -1,7 +1,8 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../reducers/combineReducer";
-import { ButtonVisibility, letterObject } from "../types/types";
+import { selectBase } from "../reducers/baseReducer";
+import { selectBoard } from "../reducers/boardReducer";
+import { ButtonVisibility } from "../types/types";
 
 interface BoardButtonProps {
   confirmSelection: () => void;
@@ -11,15 +12,8 @@ interface BoardButtonProps {
 }
 
 export const GameBoardButtons: React.FC<BoardButtonProps> = (props) => {
-  const board: string[][] = useSelector(
-    (state: RootState) => state.board.board
-  );
-  const selected: letterObject[] = useSelector(
-    (state: RootState) => state.base.selection
-  );
-  const isLoading: boolean = useSelector(
-    (state: RootState) => state.board.isLoading
-  );
+  const { board, isLoading } = useSelector(selectBoard);
+  const { selection: selected } = useSelector(selectBase);
 
   const getButtonStyle = (): ButtonVisibility => {
     return selected.length

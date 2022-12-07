@@ -1,16 +1,11 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../reducers/combineReducer";
-import { letterObject } from "../types/types";
+import { selectBase } from "../reducers/baseReducer";
+import { selectBoard } from "../reducers/boardReducer";
 
 export const GameBoardHeader: React.FC = () => {
-  const turn: string = useSelector((state: RootState) => state.board.turn);
-  const isLoading: boolean = useSelector(
-    (state: RootState) => state.board.isLoading
-  );
-  const selected: letterObject[] = useSelector(
-    (state: RootState) => state.base.selection
-  );
+  const { turn, isLoading } = useSelector(selectBoard);
+  const { selection: selected } = useSelector(selectBase);
 
   const headerMessage = turn.endsWith("s") ? `${turn}'s turn` : `${turn}s turn`;
 

@@ -8,41 +8,24 @@ import { PlayedWordList } from "../components/PlayedWordList";
 import { LoadingTable } from "../components/LoadingTable";
 import { LogoContainer } from "../components/LogoContainer";
 import { Message } from "../components/Message";
-import { letterObject, selectionObject, playedWord } from "../types/types";
+import { letterObject, selectionObject } from "../types/types";
 import { useSelector, useDispatch } from "react-redux";
 import allActions from "../actions/allActions";
-import { RootState } from "../reducers/combineReducer";
+import { selectBoard } from "../reducers/boardReducer";
+import { selectBase } from "../reducers/baseReducer";
+import { selectMessage } from "../reducers/messageReducer";
 
 export const GameBoardPage: React.FC = () => {
-  const board: string[][] = useSelector(
-    (state: RootState) => state.board.board
-  );
-  const turn: string = useSelector((state: RootState) => state.board.turn);
-  const newGame: boolean = useSelector(
-    (state: RootState) => state.board.newGame
-  );
-  const base: letterObject[] = useSelector(
-    (state: RootState) => state.base.base
-  );
-  const selected: letterObject[] = useSelector(
-    (state: RootState) => state.base.selection
-  );
-  const playedWords: playedWord[] = useSelector(
-    (state: RootState) => state.base.playedWords
-  );
-  const playerName: string = useSelector(
-    (state: RootState) => state.base.playerName
-  );
-  const isLoading: boolean = useSelector(
-    (state: RootState) => state.board.isLoading
-  );
-  const possibleWordPositions: { [key: string]: string[] } = useSelector(
-    (state: RootState) => state.base.possibleWordPositions
-  );
-  const stateHistory = useSelector(
-    (state: RootState) => state.base.stateHistory
-  );
-  const messageState = useSelector((state: RootState) => state.message);
+  const { board, turn, newGame, isLoading } = useSelector(selectBoard);
+  const {
+    base,
+    selection: selected,
+    playedWords,
+    playerName,
+    possibleWordPositions,
+    stateHistory,
+  } = useSelector(selectBase);
+  const { type: messageType } = useSelector(selectMessage);
   const webWorker = new Worker(
     new URL("../worker/worker.js", import.meta.url),
     { type: "module" }
@@ -61,7 +44,7 @@ export const GameBoardPage: React.FC = () => {
   const startNewGame = () => {
     dispatch(allActions.baseActions.removeSelectionAndPlayedWords([], []));
     dispatch(allActions.boardActions.newGame(true, playerName, true));
-    if (messageState.type === "start") {
+    if (messageType === "start") {
       dispatch(allActions.messageActions.clearMessage());
     }
   };

@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../reducers/combineReducer";
+import { selectBase } from "../reducers/baseReducer";
+import { selectBoard } from "../reducers/boardReducer";
 import { LetterStyle, letterObject } from "../types/types";
 
 interface BoardProps {
@@ -8,19 +9,8 @@ interface BoardProps {
 }
 
 export const Board: React.FC<BoardProps> = (props) => {
-  const board: string[][] = useSelector(
-    (state: RootState) => state.board.board
-  );
-  const playerName: string = useSelector(
-    (state: RootState) => state.base.playerName
-  );
-  const selected: letterObject[] = useSelector(
-    (state: RootState) => state.base.selection
-  );
-  const turn: string = useSelector((state: RootState) => state.board.turn);
-  const base: letterObject[] = useSelector(
-    (state: RootState) => state.base.base
-  );
+  const { board, turn } = useSelector(selectBoard);
+  const { base, selection: selected, playerName } = useSelector(selectBase);
 
   const getLetterStyle = (r: number, c: number): LetterStyle => {
     const found = selected.filter((a) => a.row === r && a.column === c);

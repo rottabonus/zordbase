@@ -1,4 +1,5 @@
 import { MessageState } from "../types/types";
+import { RootState } from "./combineReducer";
 
 const initialState: MessageState = {
   message: "",
@@ -7,10 +8,14 @@ const initialState: MessageState = {
   resolution: false,
 };
 
-const messageReducer = (
-  state = initialState,
-  action: { type: string; payload: any }
-) => {
+type Action =
+  | {
+      type: "SETMESSAGE" | "CLEARMESSAGE";
+      payload: Omit<MessageState, "resolution">;
+    }
+  | { type: "RESOLVEMESSAGE"; payload: Omit<MessageState, "type"> };
+
+const messageReducer = (state = initialState, action: Action) => {
   switch (action.type) {
     case "SETMESSAGE":
       return {
@@ -39,5 +44,6 @@ const messageReducer = (
   }
 };
 
-export default messageReducer;
+export const selectMessage = ({ message }: RootState) => message;
 
+export default messageReducer;
