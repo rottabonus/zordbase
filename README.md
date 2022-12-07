@@ -30,3 +30,13 @@ $ npm run dev
 ```
 
 Then you can access the game in localhost:3000
+
+### frontend-development
+start backend and run frontend with
+```
+$ cd zordbase
+$ cd front
+$ npm install
+$ npm start
+```
+
