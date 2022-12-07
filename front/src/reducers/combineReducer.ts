@@ -1,14 +1,15 @@
-import boardReducer from './boardReducer'
-import baseReducer from './baseReducer'
-import messageReducer from './messageReducer'
+import boardReducer from "./boardReducer";
+import baseReducer from "./baseReducer";
+import messageReducer from "./messageReducer";
 
-import { combineReducers } from 'redux'
+import { combineReducers } from "redux";
 
 const rootReducer = combineReducers({
-    board: boardReducer,
-    base: baseReducer,
-    message: messageReducer
-})
+  board: boardReducer,
+  base: baseReducer,
+  message: messageReducer,
+});
 
 export type RootState = ReturnType<typeof rootReducer>;
 export default rootReducer;
+
