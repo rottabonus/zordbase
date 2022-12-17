@@ -27,14 +27,14 @@ const messageReducer = (state = initialState, action: Action) => {
     case "CLEARMESSAGE":
       return {
         ...state,
-        message: action.payload,
+        message: action.payload.message,
         type: "",
         show: false,
       };
     case "RESOLVEMESSAGE":
       return {
         ...state,
-        resolution: action.payload,
+        resolution: action.payload.resolution,
         message: "",
         show: false,
       };

@@ -1,23 +1,23 @@
-var setMessage = function (message, type) {
+const setMessage = (message, type) => {
     return {
         type: "SETMESSAGE",
-        payload: { message: message, type: type }
+        payload: { message, type },
     };
 };
-var clearMessage = function () {
+const clearMessage = () => {
     return {
         type: "CLEARMESSAGE",
-        payload: ''
+        payload: "",
     };
 };
-var resolveMessage = function (resolution) {
+const resolveMessage = (resolution) => {
     return {
         type: "RESOLVEMESSAGE",
-        payload: resolution
+        payload: resolution,
     };
 };
 export default {
-    setMessage: setMessage,
-    clearMessage: clearMessage,
-    resolveMessage: resolveMessage
+    setMessage,
+    clearMessage,
+    resolveMessage,
 };

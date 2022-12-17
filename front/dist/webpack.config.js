@@ -1,10 +1,15 @@
-var path = require("path");
-var HtmlWebpackPlugin = require("html-webpack-plugin");
-var WorkerPlugin = require("worker-plugin");
+const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const DEV_API = process.env.DEV_API
+    ? process.env.DEV_API
+    : "http://localhost:3000";
 module.exports = {
     mode: "development",
     devServer: {
-        port: 3000,
+        port: 6540,
+        proxy: {
+            "/api": DEV_API,
+        },
     },
     entry: {
         app: path.join(__dirname, "src", "index.tsx"),
@@ -56,6 +61,5 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: path.join(__dirname, "src", "index.html"),
         }),
-        new WorkerPlugin(),
     ],
 };
