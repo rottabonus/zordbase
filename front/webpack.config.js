@@ -12,6 +12,7 @@ module.exports = {
     proxy: {
       "/api": DEV_API,
     },
+    historyApiFallback: true,
   },
   entry: {
     app: path.join(__dirname, "src", "index.tsx"),
@@ -58,6 +59,7 @@ module.exports = {
   output: {
     filename: "[name].js",
     path: path.resolve(__dirname, "dist"),
+    publicPath: "/",
   },
   plugins: [
     new HtmlWebpackPlugin({
