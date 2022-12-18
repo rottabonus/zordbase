@@ -260,7 +260,7 @@ export const GameBoardPage: React.FC = () => {
   }, [turn, newGame, possibleWordPositions]);
 
   return (
-    <div className="gameboard-page-container">
+    <div className="page-container">
       <div className="board-and-word-list">
         <div className="gameboard">
           <GameBoardHeader />

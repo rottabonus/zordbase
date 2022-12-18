@@ -2,11 +2,11 @@ import React from "react";
 
 export const Howto: React.FC = () => {
   return (
-    <div className="howto-page-container">
-      <div className="howto-header">
+    <div className="page-container">
+      <div className="header">
         <h2>How to play</h2>
       </div>
-      <div className="howto-paragraph">
+      <div className="paragraph">
         <p>The goal is to reach the opponents base by playing words.</p>
         <p>Words are created by selecting letters one by one.</p>
         <p>

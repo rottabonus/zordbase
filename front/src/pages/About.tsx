@@ -2,11 +2,11 @@ import React from "react";
 
 export const About: React.FC = () => {
   return (
-    <div className="about-page-container">
-      <div className="about-header">
+    <div className="page-container">
+      <div className="header">
         <h2>ZordBase</h2>
       </div>
-      <div className="about-paragraph">
+      <div className="paragraph">
         <p>
           I have created this game inspired by{" "}
           <a

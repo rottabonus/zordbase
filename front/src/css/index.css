@@ -44,13 +44,6 @@ a {
   color: white;
 }
 
-.gameboard-page-container {
-  display: flex;
-  flex-direction: column;
-  padding: 60px 20px;
-  align-items: center;
-}
-
 .board-and-word-list {
   display: flex;
   flex-direction: row;
@@ -58,7 +51,6 @@ a {
 
 .selectedLetter {
   border-color: rgba(71, 71, 71, 0.9);
-  /*border-color: whitesmoke;*/
   animation-name: pulse;
   animation-duration: 0.3s;
 }
@@ -99,7 +91,6 @@ td {
 .gameboard {
   background-color: whitesmoke;
   padding: 6px;
-  /*border-radius: 6%;*/
   margin-right: 20px;
   padding-top: 16px;
   box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);
@@ -132,7 +123,6 @@ td {
   color: lightslategray;
   text-align: center;
   padding: 2px 0;
-  /*border-radius: 6%;*/
   position: absolute;
   z-index: 1;
 }
@@ -145,7 +135,6 @@ td {
 
 .wordListContainer {
   box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);
-  /*border-radius: 6%;*/
   overflow: auto;
   background-color:whitesmoke;
 }
@@ -194,16 +183,12 @@ td {
 
 .wordListWords::-webkit-scrollbar-thumb {
   background-color: var(--thumbBG);
-  /*border-radius: 6%;*/
   border: 3px solid var(--scrollbarBG);
 }
 
 .dog-container {
-  /*background-color: whitesmoke;*/
   height: 160px;
-  /*border-radius: 6%;*/
   margin-top: 10px;
-  /*box-shadow: 0.5px 1px rgba(68, 68, 68, 0.6);*/
 }
 
 .dog-image {
@@ -276,25 +261,11 @@ td {
   padding: 40px;
 }
 
-.about-page-container {
-  display: flex;
-  flex-direction: column;
-  padding: 60px 20px;
-  align-items: center;
-
-}
-
-.about-paragraph {
-  text-align: justify;
-  width: 420px;
-  border-bottom: 1px solid grey;
-}
-
 .about-tail {
   font-style: italic;
 }
 
-.howto-page-container {
+.page-container {
   display: flex;
   flex-direction: column;
   padding: 60px 20px;
@@ -302,7 +273,7 @@ td {
 
 }
 
-.howto-paragraph {
+.paragraph {
   text-align: justify;
   width: 420px;
   border-bottom: 1px solid grey;
@@ -413,12 +384,7 @@ td {
     padding-bottom: 10px;
   }
 
-  .howto-paragraph {
-    text-align: justify;
-    width: 330px;
-  }
-
-  .about-paragraph {
+  .paragraph {
     text-align: justify;
     width: 330px;
   }
@@ -437,7 +403,6 @@ td {
 
   .gameboard {
     width: 100vw;
-     /*border-radius: 0%;*/
     margin-right: 0;
   }
 
@@ -477,13 +442,11 @@ td {
   .wordListContainer {
     margin-top: 10px;
     width: 90vw;
-    /* border-radius: 0%; */
     margin-left: 5%;
   }
 
   .wordListWords {
     width: auto;
-     /*border-radius: 0%;*/
     height: 30vw;
   }
 
@@ -491,12 +454,7 @@ td {
     padding-bottom: 12px;
   }
 
-  .howto-paragraph {
-    text-align: justify;
-    width: 310px;
-  }
-
-  .about-paragraph {
+  .paragraph {
     text-align: justify;
     width: 310px;
   }

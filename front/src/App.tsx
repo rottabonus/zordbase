@@ -5,6 +5,7 @@ import "./css/index.css";
 import { GameBoardPage } from "./pages/BoardPage";
 import { Howto } from "./pages/Howto";
 import { About } from "./pages/About";
+import { Multiplayer } from "./pages/Multiplayer";
 
 export const App: React.FC = () => {
   return (
@@ -12,6 +13,9 @@ export const App: React.FC = () => {
       <div className="topnav">
         <Link to={"/"}>
           <span>Play</span>
+        </Link>
+        <Link to={"/multiplayer"}>
+          <span>Multiplayer</span>
         </Link>
         <Link to={"/howto"}>
           <span>How to</span>
@@ -25,6 +29,7 @@ export const App: React.FC = () => {
           <Route path="/*" element={<GameBoardPage />} />
           <Route path="/howto" element={<Howto />} />
           <Route path="/about" element={<About />} />
+          <Route path="/multiplayer" element={<Multiplayer />} />
         </Routes>
       </div>
     </Router>
