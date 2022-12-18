@@ -1,5 +1,5 @@
 import * as React from "react";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import "./css/index.css";
 
 import { GameBoardPage } from "./pages/BoardPage";
@@ -21,9 +21,11 @@ export const App: React.FC = () => {
         </Link>
       </div>
       <div>
-        <Route exact path="/" render={() => <GameBoardPage />} />
-        <Route path="/howto" render={() => <Howto />} />
-        <Route path="/about" render={() => <About />} />
+        <Routes>
+          <Route path="/*" element={<GameBoardPage />} />
+          <Route path="/howto" element={<Howto />} />
+          <Route path="/about" element={<About />} />
+        </Routes>
       </div>
     </Router>
   );

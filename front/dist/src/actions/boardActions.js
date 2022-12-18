@@ -1,57 +1,57 @@
-var createBoard = function () {
+const createBoard = () => {
     return {
         type: "CREATEBOARD",
-        payload: createGameBoard(12, 10)
+        payload: createGameBoard(12, 10),
     };
 };
-var newGame = function (newGame, turn, isLoading) {
+const newGame = (newGame, turn, isLoading) => {
     return {
         type: "NEWGAME",
-        payload: { newGame: newGame, board: createGameBoard(12, 10), turn: turn, isLoading: isLoading }
+        payload: { newGame, board: createGameBoard(12, 10), turn, isLoading },
     };
 };
-var gameStart = function () {
+const gameStart = () => {
     return {
         type: "GAMESTART",
-        payload: false
+        payload: false,
     };
 };
-var isLoading = function (loading) {
+const isLoading = (loading) => {
     return {
         type: "ISLOADING",
-        payload: loading
+        payload: loading,
     };
 };
-var changeTurn = function (turn) {
+const changeTurn = (turn) => {
     return {
         type: "CHANGETURN",
-        payload: turn
+        payload: turn,
     };
 };
-var createGameBoard = function (rows, columns) {
-    var letters = 'aaaaaaaaaaaaiiiiiiiiiiittttttttttnnnnnnnnneeeeeeeesssssssslllllloooookkkkkuuuuuääääämmmmvvrrjjhhyyppdö';
-    var letterArr = letters.split('');
-    var board = [];
-    var rowArray = [];
-    for (var i = 0; i <= rows; i++) {
+const createGameBoard = (rows, columns) => {
+    const letters = "aaaaaaaaaaaaiiiiiiiiiiittttttttttnnnnnnnnneeeeeeeesssssssslllllloooookkkkkuuuuuääääämmmmvvrrjjhhyyppdö";
+    const letterArr = letters.split("");
+    const board = [];
+    let rowArray = [];
+    for (let i = 0; i <= rows; i++) {
         if (i !== 0) {
             board.push(rowArray);
         }
         rowArray = [];
-        for (var j = 0; j < columns; j++) {
+        for (let j = 0; j < columns; j++) {
             rowArray.push(letterArr[getRandomInt(letterArr.length)].toUpperCase());
         }
     }
     return board;
 };
-var getRandomInt = function (max) {
+const getRandomInt = (max) => {
     return Math.floor(Math.random() * Math.floor(max));
 };
 export default {
-    createBoard: createBoard,
-    newGame: newGame,
-    changeTurn: changeTurn,
-    createGameBoard: createGameBoard,
-    gameStart: gameStart,
-    isLoading: isLoading
+    createBoard,
+    newGame,
+    changeTurn,
+    createGameBoard,
+    gameStart,
+    isLoading,
 };
