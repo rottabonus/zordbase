@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { selectBase } from "../reducers/baseReducer";
 import { selectBoard } from "../reducers/boardReducer";
-import { LetterStyle, letterObject } from "../types/types";
+import { LetterStyle } from "../types/types";
 
 interface BoardProps {
   selectLetter: (L: string, row: number, column: number, owner: string) => void;

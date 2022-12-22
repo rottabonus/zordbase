@@ -1,3 +1,8 @@
+export const LETTERS =
+  "aaaaaaaaaaaaiiiiiiiiiiittttttttttnnnnnnnnneeeeeeeesssssssslllllloooookkkkkuuuuuääääämmmmvvrrjjhhyyppdö".split(
+    ""
+  );
+
 const createBoard = () => {
   return {
     type: "CREATEBOARD",
@@ -33,23 +38,15 @@ const changeTurn = (turn: string) => {
   };
 };
 
+const toArray = (num: number) => Array.from(Array(num).keys());
+
 const createGameBoard = (rows: number, columns: number) => {
-  const letters =
-    "aaaaaaaaaaaaiiiiiiiiiiittttttttttnnnnnnnnneeeeeeeesssssssslllllloooookkkkkuuuuuääääämmmmvvrrjjhhyyppdö";
-  const letterArr = letters.split("");
-  const board: string[][] = [];
-  let rowArray: string[] = [];
-  for (let i = 0; i <= rows; i++) {
-    if (i !== 0) {
-      board.push(rowArray);
-    }
-    rowArray = [];
-    for (let j = 0; j < columns; j++) {
-      rowArray.push(letterArr[getRandomInt(letterArr.length)].toUpperCase());
-    }
-  }
-  return board;
+  return toArray(rows).map((_row) =>
+    toArray(columns).map((_column) => getRandomFrom(LETTERS).toUpperCase())
+  );
 };
+
+const getRandomFrom = (arr: Array<string>) => arr[getRandomInt(arr.length)];
 
 const getRandomInt = (max: number) => {
   return Math.floor(Math.random() * Math.floor(max));
@@ -63,4 +60,3 @@ export default {
   gameStart,
   isLoading,
 };
-
