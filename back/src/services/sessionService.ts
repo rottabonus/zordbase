@@ -1,12 +1,10 @@
 import { SocketData } from "../types";
-type Session = SocketData & {
-  connected: boolean;
-};
-
+type Session = Omit<SocketData, "sessionID">;
 abstract class SessionStore {
   abstract findSession(id: string): Session | undefined;
   abstract saveSession(id: string, session: Session): void;
   abstract findAllSessions(): Array<Session>;
+  abstract findAllBut(id: string): Array<Session>;
 }
 
 class InMemorySessionStore extends SessionStore {
@@ -26,6 +24,12 @@ class InMemorySessionStore extends SessionStore {
 
   findAllSessions() {
     return [...this.sessions.values()];
+  }
+
+  findAllBut(id: string) {
+    return [...this.sessions.entries()]
+      .filter(([sessionId]) => sessionId !== id)
+      .map(([, session]) => session);
   }
 }
 
