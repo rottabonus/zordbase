@@ -14,7 +14,7 @@ const service = (io: SocketServer) => {
       if (session) {
         socket.data.sessionID = sessionID;
         socket.data.userID = session.userID;
-        socket.data.username = username ?? session.username;
+        socket.data.username = session.username;
         return next();
       }
     }
@@ -46,8 +46,12 @@ const service = (io: SocketServer) => {
       });
     }
 
+    if (socket.data.userID) {
+      socket.join(socket.data.userID);
+    }
+
     // emit session details
-    socket.emit("session", {
+    socket.emit("session:set", {
       sessionID: socket.data.sessionID,
       userID: socket.data.userID,
     });
@@ -58,11 +62,11 @@ const service = (io: SocketServer) => {
       username: session.username,
       connected: session.connected,
     }));
-    socket.emit("users", users);
+    socket.emit("users:list", users);
 
     // notify existing users
-    socket.broadcast.emit("userconnected", {
-      userID: socket.id,
+    socket.broadcast.emit("user:connected", {
+      userID: socket.data.userID ?? "",
       username: socket.data.username ?? "",
     });
 
@@ -72,7 +76,7 @@ const service = (io: SocketServer) => {
         const isDisconnected = matchingSockets.length === 0;
         if (isDisconnected) {
           // notify other users
-          socket.broadcast.emit("userdisconnected", socket.data.userID);
+          socket.broadcast.emit("user:disconnected", socket.data.userID);
           // update the connection status of the session
           sessionStore.saveSession(socket.data.sessionID, {
             userID: socket.data.userID,

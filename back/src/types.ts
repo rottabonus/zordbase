@@ -10,15 +10,23 @@ export type SocketServer = Server<
   SocketData
 >;
 export type User = { username: string; userID: string };
+
+type Challenge = { from: string; to: string };
 export interface ServerToClientEvents {
-  users: (users: Array<User>) => void;
-  userconnected: (data: User) => void;
-  userdisconnected: (id: string) => void;
-  session: (data: Partial<Pick<SocketData, "userID" | "sessionID">>) => void;
+  ["users:list"]: (users: Array<User>) => void;
+  ["user:connected"]: (data: User) => void;
+  ["user:disconnected"]: (id: string) => void;
+  ["session:set"]: (
+    data: Partial<Pick<SocketData, "userID" | "sessionID">>
+  ) => void;
+  ["challenge:got"]: (challenge: Challenge) => void;
+  ["game:start"]: (challenge: Challenge) => void;
 }
 
 export interface ClientToServerEvents {
-  setusername: (username: string) => void;
+  ["username:set"]: (username: string) => void;
+  ["challenge:new"]: (challenged: string) => void;
+  ["challenge:accept"]: (challenger: string) => void;
 }
 
 export interface InterServerEvents {
