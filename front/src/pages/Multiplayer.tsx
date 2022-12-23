@@ -3,17 +3,22 @@ import { io, Socket } from "socket.io-client";
 import { storageService } from "../services/storageService";
 
 type User = { username?: string; userID: string; connected: boolean };
+type Challenge = { from: string; to: string };
 interface ServerToClientEvents {
-  users: (users: Array<User>) => void;
-  userconnected: (data: User) => void;
-  userdisconnected: (id: string) => void;
-  session: (data: Session) => void;
+  ["users:list"]: (users: Array<User>) => void;
+  ["user:connected"]: (data: User) => void;
+  ["user:disconnected"]: (id: string) => void;
+  ["session:set"]: (data: Session) => void;
+
+  ["challenge:got"]: (challenge: Challenge) => void;
+  ["game:start"]: (challenge: Challenge) => void;
 }
 
 type Session = { userID: string; sessionID: string };
 
 interface ClientToServerEvents {
-  setusername: (username: string) => void;
+  ["challenge:new"]: (challenged: string) => void;
+  ["challenge:accept"]: (challenger: string) => void;
 }
 
 const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
@@ -34,28 +39,28 @@ export const Multiplayer = () => {
     if (session) {
       const parsed = JSON.parse(session);
       console.log("found session!", parsed);
-      handleConnect(parsed.session.sessionID);
+      handleConnect(parsed.sessionID);
     }
   }, []);
 
   React.useEffect(() => {
-    socket.on("session", (session) => {
+    socket.on("session:set", (session) => {
       setSession(session);
-      storageService.setItem("session", JSON.stringify({ session }));
+      storageService.setItem("session", JSON.stringify(session));
       setIsConnected(true);
     });
 
-    socket.on("users", (users) => {
+    socket.on("users:list", (users) => {
       console.log("initial users", users);
       setUsers(users.filter((user) => user.connected));
     });
 
-    socket.on("userconnected", (user) => {
+    socket.on("user:connected", (user) => {
       console.log("userconnected", user);
       setUsers((prevUsers) => [...prevUsers, user]);
     });
 
-    socket.on("userdisconnected", (id) => {
+    socket.on("user:disconnected", (id) => {
       console.log("disconnected", id);
       setUsers((prevUsers) =>
         prevUsers.filter((user) => user.userID !== id && user.connected)
@@ -66,12 +71,34 @@ export const Multiplayer = () => {
       setError(err.message);
     });
 
+    socket.on("challenge:got", (challenge) => {
+      console.log("you got challenged", challenge);
+      const result = window.confirm(
+        `you got challenged from  ${challenge.from}`
+      );
+      if (result) {
+        console.log("challenge accepted");
+        handleChallengeAccept(challenge.from);
+      }
+    });
+
+    socket.on("game:start", (challenge) => {
+      console.log(
+        "challenge was accepted, game should start with players",
+        challenge.from,
+        "and",
+        challenge.to
+      );
+    });
+
     return () => {
-      socket.off("users");
-      socket.off("session");
-      socket.off("userconnected");
-      socket.off("userdisconnected");
+      socket.off("users:list");
+      socket.off("session:set");
+      socket.off("user:connected");
+      socket.off("user:disconnected");
       socket.off("connect_error");
+      socket.off("challenge:got");
+      socket.off("game:start");
     };
   }, []);
 
@@ -86,12 +113,23 @@ export const Multiplayer = () => {
     socket.disconnect();
   };
 
+  const handleChallenge = (id: string) => {
+    console.log("challenge sent to ", id);
+    socket.emit("challenge:new", id);
+  };
+
+  const handleChallengeAccept = (id: string) => {
+    socket.emit("challenge:accept", id);
+  };
+
   return (
     <div className="page-container">
       <div>
         {!isConnected ? (
           <>
-            <input value={name} onChange={(e) => setName(e.target.value)} />
+            {!session && (
+              <input value={name} onChange={(e) => setName(e.target.value)} />
+            )}
             <button onClick={() => handleConnect(session?.sessionID)}>
               connect
             </button>
@@ -101,12 +139,13 @@ export const Multiplayer = () => {
             <button onClick={handleDisconnect}>disconnect</button>
             <h2>Users:</h2>
             {users.map((user) => (
-              <div style={{ display: "flex", gap: "2px" }} key={user.userID}>
+              <div style={{ display: "flex", gap: "4px" }} key={user.userID}>
                 <div>{user.username}</div>
+                <div>{user.userID}</div>
                 {session.userID === user.userID ? (
                   <div>(me)</div>
                 ) : (
-                  <button onClick={() => console.log("challenge user")}>
+                  <button onClick={() => handleChallenge(user.userID)}>
                     challenge
                   </button>
                 )}

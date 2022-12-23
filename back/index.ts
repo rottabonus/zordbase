@@ -3,6 +3,7 @@ import http from "http";
 import wordRouter from "./src/routes/words";
 import cors from "cors";
 import connection from "./src/services/connectionService";
+import game from "./src/services/gameService";
 import { Server } from "socket.io";
 import { SocketServer } from "./src/types";
 
@@ -19,6 +20,7 @@ const io = new Server<SocketServer>(server, {
 });
 
 connection.service(io);
+game.service(io);
 
 const PORT = process.env.PORT ? process.env.PORT : 3000;
 server.listen(PORT, () => {
