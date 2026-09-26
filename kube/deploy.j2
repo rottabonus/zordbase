@@ -33,7 +33,7 @@ spec:
     app: "{{ zordbase_app_name }}"
   ports:
   - port: {{ zordbase_service_port | default(80) }}
-    targetPort: {{ zordbase_container_port | default(80) }}
+    targetPort: {{ zordbase_container_port | default(3000) }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -42,6 +42,7 @@ metadata:
   namespace: "{{ zordbase_app_namespace | default('default') }}"
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    traefik.ingress.kubernetes.io/redirect-scheme: "https"
 spec:
   tls:
   - hosts:
