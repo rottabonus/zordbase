@@ -1,3 +1,3 @@
 export interface Words {
-    words: String[]
+	words: string[];
 }

@@ -1,0 +1,27 @@
+services:
+
+  back:
+    image: zordbase-backend
+    build:
+      context: ./back
+      dockerfile: Dockerfile.dev
+    container_name: backend
+    volumes:
+      - ./back/src:/app/src
+      - ./words:/words
+    ports:
+      - 3000:3000
+
+  front:
+    image: zordbase-frontend
+    build:
+      context: ./front
+      dockerfile: Dockerfile.dev
+    container_name: frontend
+    command: npm run dev -- --host 0.0.0.0
+    environment:
+      - DEV_API=http://backend:3000
+    volumes:
+      - ./front/src:/app/src
+    ports:
+      - 6540:6540

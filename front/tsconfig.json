@@ -1,16 +1,17 @@
 {
-    "compilerOptions": {
-      "typeRoots" : ["node_modules/@types", "src/types"],
-      "outDir": "./dist",
-      "target": "esnext",
-      "module": "esnext",
-      "allowJs": true,
-      "jsx": "react",
-      "noImplicitAny": true,
-      "isolatedModules": true,
-      "allowSyntheticDefaultImports": true,
-      "downlevelIteration": true,
-      "moduleResolution": "node",
-      "esModuleInterop": true
-    }
-  }
+	"compilerOptions": {
+		"target": "esnext",
+		"module": "esnext",
+		"lib": ["DOM", "DOM.Iterable", "ESNext"],
+		"allowJs": true,
+		"jsx": "react-jsx",
+		"noImplicitAny": true,
+		"isolatedModules": true,
+		"allowSyntheticDefaultImports": true,
+		"moduleResolution": "bundler",
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"noEmit": true
+	},
+	"include": ["src"]
+}

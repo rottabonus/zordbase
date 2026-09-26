@@ -1,11 +1,11 @@
-import express from 'express';
-import wordService from '../services/wordService'
+import express from "express";
+import wordService from "../services/wordService.ts";
 
 const router = express.Router();
 
-router.get('/', (_req, res) => {
-  console.log('someone pinged word-service')
-  res.send(wordService.getEntries());
-})
+router.get("/", (_req, res) => {
+	console.log("someone pinged word-service");
+	res.send(wordService.getEntries());
+});
 
 export default router;
