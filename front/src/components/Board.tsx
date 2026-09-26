@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { selectBase } from "../reducers/baseReducer";
 import { selectBoard } from "../reducers/boardReducer";
-import { LetterStyle, letterObject } from "../types/types";
+import { LetterStyle } from "../types/types";
 
 interface BoardProps {
   selectLetter: (L: string, row: number, column: number, owner: string) => void;
@@ -26,7 +26,7 @@ export const Board: React.FC<BoardProps> = (props) => {
     const ownerArr = allSelected.filter((a) => a.row === r && a.column === c);
     const owner = ownerArr.length === 0 ? "none" : ownerArr[0].owner;
     const backgroundColor =
-      owner === "computer" ? "khaki" : owner === playerName ? "#87b6b8" : null;
+      owner === "computer" ? "khaki" : owner === playerName ? "#87b6b8" : "transparent";
     return {
       class: isSelected,
       backgroundColor: backgroundColor,

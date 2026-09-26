@@ -51,7 +51,7 @@ export const GameBoardPage: React.FC = () => {
 
   const checkBoard = async () => {
     const positionsWithPossibleWords = base.filter(
-      (w) => w.possibleWords.length > 0
+      (w) => w.possibleWords && w.possibleWords.length > 0
     );
     const possibleWordsPercentage =
       (100 * positionsWithPossibleWords.length) / base.length;

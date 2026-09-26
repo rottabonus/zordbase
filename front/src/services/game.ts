@@ -20,7 +20,7 @@ const removeIsolatedNodes = (
   board: string[][],
   turn: string
 ) => {
-  const queue = [];
+  const queue: letterObject[] = [];
   const baseFilteredFromNone = confirmedSelections.filter(
     (s) => s.owner !== "none"
   );
@@ -34,9 +34,12 @@ const removeIsolatedNodes = (
         ? a.row - b.row || a.column - b.column
         : b.row - a.row || a.column - b.column;
     });
-  queue.push(nodesToCheck[0]);
-  do {
+  if (nodesToCheck.length > 0) {
+    queue.push(nodesToCheck[0]);
+  }
+  while (queue.length > 0) {
     const toCheck = queue.shift();
+    if (!toCheck) continue;
     const neighbors = movements[`${toCheck.row},${toCheck.column}`];
     neighbors.forEach((node) => {
       if (!(`${node.row},${node.column}` in searched)) {
@@ -50,7 +53,7 @@ const removeIsolatedNodes = (
         }
       }
     });
-  } while (queue.length);
+  }
   const neutralNodes = confirmedSelections.filter((s) => s.owner === "none");
   const turnNodes = confirmedSelections.filter((obj) => obj.owner === turn);
   const IsolatedWithAttachedNodes = getIsolatedNodes(
@@ -88,7 +91,7 @@ const updateBaseWithPossibleWordTable = (
       if (checkIfPositionMatches(possibleWordTable[word], o)) {
         o = {
           ...o,
-          possibleWords: o.possibleWords.filter(
+          possibleWords: o.possibleWords?.filter(
             (wordArr) =>
               wordArr.map((word) => word.letter).join("") !==
               word.substring(1, word.length)
@@ -99,6 +102,7 @@ const updateBaseWithPossibleWordTable = (
     });
     return changed;
   }
+  return newBase;
 };
 
 const checkIfPositionMatches = (posArr: string[], obj: letterObject) => {
@@ -128,8 +132,8 @@ const getBestWord = (base: letterObject[], turn: string, max: number) => {
   let greatestWordValue = 0;
   let selection: letterObject[] = [];
   for (const [i, letter] of computerBase.entries()) {
-    if (letter.hasOwnProperty("possibleWords") && letter.possibleWords.length) {
-      for (const [j, possibleWord] of computerBase[i].possibleWords.entries()) {
+    if (letter.possibleWords && letter.possibleWords.length > 0) {
+      for (const [j, possibleWord] of letter.possibleWords.entries()) {
         letterValueArray[0] = possibleWord.length; //word length
         letterValueArray[1] =
           getCommonElements(opponentBase, possibleWord) * 2.5; //letters touching opp base
@@ -140,7 +144,10 @@ const getBestWord = (base: letterObject[], turn: string, max: number) => {
         let wordValue = letterValueArray.reduce((acc, curr) => acc + curr);
         if (wordValue > greatestWordValue) {
           greatestWordValue = wordValue;
-          selection = [computerBase[i], ...computerBase[i].possibleWords[j]];
+          const possibleWordArr = letter.possibleWords[j];
+          if (possibleWordArr) {
+            selection = [letter, ...possibleWordArr];
+          }
         }
       }
     }

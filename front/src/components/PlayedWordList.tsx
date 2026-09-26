@@ -18,7 +18,7 @@ export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
   const percentageDifference = isLoading
     ? 50
     : ((playerNodes - comNodes) / (playerNodes + comNodes / 2)) * 100 + 50;
-  const messagesEndRef = useRef(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const size = useWindowSize();
 
   const getWordStyle = (owner: string): PlayerWordStyle => {
@@ -28,7 +28,7 @@ export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
   };
 
   const scrollToBottom = () => {
-    if (size.width > 550) {
+    if (size.width > 550 && messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };

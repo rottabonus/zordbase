@@ -10,12 +10,14 @@ const updateBase = (base: letterObject[]) => {
 const createBase = (base: letterObject[]) => {
   const possibleWordsTable: { [key: string]: string[] } = {};
   for (const [i, letter] of base.entries()) {
-    for (const [j, possibility] of letter.possibleWords.entries()) {
-      const word = letter.letter + possibility.map((o) => o.letter).join("");
-      if (!(word in possibleWordsTable)) {
-        possibleWordsTable[word] = [`${letter.row},${letter.column}`];
-      } else {
-        possibleWordsTable[word].push(`${letter.row},${letter.column}`);
+    if (letter.possibleWords) {
+      for (const [j, possibility] of letter.possibleWords.entries()) {
+        const word = letter.letter + possibility.map((o) => o.letter).join("");
+        if (!(word in possibleWordsTable)) {
+          possibleWordsTable[word] = [`${letter.row},${letter.column}`];
+        } else {
+          possibleWordsTable[word].push(`${letter.row},${letter.column}`);
+        }
       }
     }
   }
