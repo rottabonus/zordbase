@@ -1,13 +1,13 @@
-import wordData from '../../../words/words.json';
+import wordData from "../../../words/words.json";
 
-import { Words } from '../types';
+import type { Words } from "../types";
 
 const words: Words = wordData;
 
 const getEntries = (): Words => {
-  return words;
+	return words;
 };
 
 export default {
-  getEntries
+	getEntries,
 };

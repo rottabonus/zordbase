@@ -1,21 +1,20 @@
-import express from 'express';
-import wordRouter from './src/routes/words';
-import cors from 'cors'
+import cors from "cors";
+import express from "express";
+import wordRouter from "./src/routes/words";
 
 const app = express();
 app.use(express.json());
 app.use(cors());
-app.use(express.static('dist'))
+app.use(express.static("dist"));
 
-app.get('/ping', (_req, res) => {
-  console.log('someone pinged here');
-  res.send('pong');
+app.get("/ping", (_req, res) => {
+	console.log("someone pinged here");
+	res.send("pong");
 });
 
-app.use('/api/words', wordRouter)
+app.use("/api/words", wordRouter);
 
-
-const PORT = process.env.PORT ? process.env.PORT : 3000
+const PORT = process.env.PORT ? process.env.PORT : 3000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-})
+	console.log(`Server running on port ${PORT}`);
+});
