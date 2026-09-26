@@ -40,7 +40,13 @@ kind: Ingress
 metadata:
   name: "{{ zordbase_app_name }}-ingress"
   namespace: "{{ zordbase_app_namespace | default('default') }}"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
+  tls:
+  - hosts:
+    - "{{ zordbase_app_host }}"
+    secretName: "{{ zordbase_app_name }}-tls"
   rules:
   - host: "{{ zordbase_app_host }}"
     http:
