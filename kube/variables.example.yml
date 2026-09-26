@@ -1,0 +1,6 @@
+app_name: web-app
+app_namespace: default
+app_image: web-app:latest  # The locally built image on your k3s server
+app_host: zordbase.rottabonus.com
+container_port: 80
+service_port: 80
