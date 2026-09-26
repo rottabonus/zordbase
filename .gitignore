@@ -2,3 +2,4 @@
 back/build/
 back/dist/
 front/dist/
+.vscode/
