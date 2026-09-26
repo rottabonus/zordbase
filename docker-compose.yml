@@ -1,0 +1,25 @@
+services:
+
+  back:
+    image: zordbase-backend
+    build:
+      context: ./back
+      dockerfile: Dockerfile.dev
+    container_name: backend
+    env_file:
+      - ./back/.env
+    volumes:
+      - ./back/src:/app/src
+    ports:
+      - 3000:3000
+
+  front:
+    image: zordbase-frontend
+    build:
+      context: ./front
+      dockerfile: Dockerfile.dev
+    container_name: frontend
+    volumes:
+      - ./front/src:/app/src
+    ports:
+      - 6540:3001
