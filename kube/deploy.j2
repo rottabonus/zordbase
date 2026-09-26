@@ -51,4 +51,4 @@ spec:
           service:
             name: "{{ zordbase_app_name }}-svc"
             port:
-              number: "{{ zordbase_service_port | default(80) }}"
+              number: {{ zordbase_service_port | default(80) }}
