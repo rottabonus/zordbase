@@ -1,6 +1,6 @@
-import wordData from "../../../words/words.json";
+import wordData from "../../../words/words.json" with { type: "json" };
 
-import type { Words } from "../types";
+import type { Words } from "../types.ts";
 
 const words: Words = wordData;
 

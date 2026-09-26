@@ -1,6 +1,6 @@
 import cors from "cors";
 import express from "express";
-import wordRouter from "./src/routes/words";
+import wordRouter from "./src/routes/words.ts";
 
 const app = express();
 app.use(express.json());

@@ -1,5 +1,5 @@
 import express from "express";
-import wordService from "../services/wordService";
+import wordService from "../services/wordService.ts";
 
 const router = express.Router();
 

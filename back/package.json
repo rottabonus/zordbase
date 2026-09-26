@@ -2,13 +2,14 @@
 	"name": "back",
 	"version": "2.0.0",
 	"description": "",
-	"main": "index.js",
+	"main": "index.ts",
+	"type": "module",
 	"engines": {
 		"node": "24.x"
 	},
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"dev": "ts-node-dev index.ts",
+		"dev": "node --experimental-strip-types index.ts",
 		"lint": "biome lint .",
 		"format": "biome format --write .",
 		"check": "biome check --write .",
@@ -19,6 +20,7 @@
 	"license": "ISC",
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
+		"@types/cors": "^2.8.19",
 		"@types/express": "^5.0.0",
 		"typescript": "^5.7.3"
 	},
