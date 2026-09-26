@@ -101,25 +101,3 @@ docker run --rm -p 3000:3000 --name zordbase-lol zordbase
 
 You can deploy easily by using the deployment template from `kube` folder
 
-```bash
-# for example using an ansible task with k3s target
-- name: Build local container image
-  community.docker.docker_image:
-    name: "{{ app_image.split(':')[0] }}"
-    tag: "{{ app_image.split(':')[1] | default('latest') }}"
-    source: build
-    build:
-      path: "{{ playbook_dir }}"
-    state: present
-
-- name: Export and import image into k3s containerd
-  ansible.builtin.shell: |
-    docker save {{ app_image }} | sudo k3s ctr images import -
-  changed_when: true
-
-- name: Deploy application to k3s
-  kubernetes.core.k8s:
-    state: present
-    src: kube/variables.j2
-```
-
