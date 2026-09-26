@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ app_name }}"
+  namespace: "{{ app_namespace | default('default') }}"
+  labels:
+    app: "{{ app_name }}"
+spec:
+  replicas: "{{ app_replicas | default(1) }}"
+  selector:
+    matchLabels:
+      app: "{{ app_name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ app_name }}"
+    spec:
+      containers:
+      - name: "{{ app_name }}"
+        image: "{{ app_image }}"
+        imagePullPolicy: Never
+        ports:
+        - containerPort: "{{ container_port | default(80) }}"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ app_name }}-svc"
+  namespace: "{{ app_namespace | default('default') }}"
+spec:
+  type: ClusterIP
+  selector:
+    app: "{{ app_name }}"
+  ports:
+  - port: "{{ service_port | default(80) }}"
+    targetPort: "{{ container_port | default(80) }}"
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: "{{ app_name }}-ingress"
+  namespace: "{{ app_namespace | default('default') }}"
+spec:
+  rules:
+  - host: "{{ app_host }}"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: "{{ app_name }}-svc"
+            port:
+              number: "{{ service_port | default(80) }}"

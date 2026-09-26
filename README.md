@@ -12,8 +12,6 @@ For now, you can play against a computer in Finnish.
 
 The [Finnish wordlist](http://kaino.kotus.fi/sanat/nykysuomi/) is from the [Institute for the languages of Finland](https://www.kotus.fi/en)
 
-First demo-version hosted in [Heroku](http://ancient-sierra-67919.herokuapp.com/)
-
 ## Running the Application
 
 ### Prerequisites
@@ -50,24 +48,6 @@ To stop:
 ```bash
 docker-compose down
 ```
-
-### Production (Backend serves Frontend)
-```bash
-# Clone repo
-git clone https://github.com/rottabonus/zordbase
-cd zordbase
-
-# Install and build frontend
-cd front
-npm install
-npm run build
-
-# Install and run backend (serves frontend from dist/)
-cd ../back
-npm install
-npm run dev
-```
-Then access the game at http://localhost:3000
 
 ### Development (Frontend + Backend separately - without Docker)
 
@@ -115,5 +95,31 @@ We can deploy the app with the Dockerfile
 ```
 docker build . -t zordbase
 docker run --rm -p 3000:3000 --name zordbase-lol zordbase
+```
+
+## Deployment
+
+You can deploy easily by using the deployment template from `kube` folder
+
+```bash
+# for example using an ansible task with k3s target
+- name: Build local container image
+  community.docker.docker_image:
+    name: "{{ app_image.split(':')[0] }}"
+    tag: "{{ app_image.split(':')[1] | default('latest') }}"
+    source: build
+    build:
+      path: "{{ playbook_dir }}"
+    state: present
+
+- name: Export and import image into k3s containerd
+  ansible.builtin.shell: |
+    docker save {{ app_image }} | sudo k3s ctr images import -
+  changed_when: true
+
+- name: Deploy application to k3s
+  kubernetes.core.k8s:
+    state: present
+    src: kube/variables.j2
 ```
 
