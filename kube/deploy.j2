@@ -36,36 +36,35 @@ spec:
     targetPort: {{ zordbase_container_port | default(3000) }}
 ---
 apiVersion: traefik.io/v1alpha1
-kind: Middleware
-metadata:
-  name: "{{ zordbase_app_name }}-https-redirect"
-  namespace: "{{ zordbase_app_namespace | default('default') }}"
-spec:
-  redirectScheme:
-    scheme: https
-    permanent: true
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+kind: IngressRoute
 metadata:
   name: "{{ zordbase_app_name }}-ingress"
   namespace: "{{ zordbase_app_namespace | default('default') }}"
-  annotations:
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    traefik.ingress.kubernetes.io/redirect-scheme: "https"
 spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`{{ zordbase_app_host }}`)
+      kind: Rule
+      services:
+        - name: "{{ zordbase_app_name }}-svc"
+          port: {{ zordbase_service_port | default(80) | int }}
   tls:
-  - hosts:
-    - "{{ zordbase_app_host }}"
     secretName: "{{ zordbase_app_name }}-tls"
-  rules:
-  - host: "{{ zordbase_app_host }}"
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: "{{ zordbase_app_name }}-svc"
-            port:
-              number: {{ zordbase_service_port | default(80) }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: "{{ zordbase_app_name }}-ingress-http"
+  namespace: "{{ zordbase_app_namespace | default('default') }}"
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`{{ zordbase_app_host }}`)
+      kind: Rule
+      middlewares:
+        - name: "{{ zordbase_app_name }}-https-redirect"
+      services:
+        - name: "{{ zordbase_app_name }}-svc"
+          port: {{ zordbase_service_port | default(80) | int }}
