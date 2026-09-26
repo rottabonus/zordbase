@@ -108,19 +108,12 @@ npm run format   # Format with Biome
 npm run check    # Lint and auto-fix with Biome
 ```
 
-## Technology Stack
+## Packaging
 
-### Frontend
-- React 19
-- React Router 7
-- Redux 5 / React Redux 9
-- Vite 8
-- TypeScript 7
-- Biome 2 (linting/formatting)
+We can deploy the app with the Dockerfile
 
-### Backend
-- Express 5
-- TypeScript 7
-- Biome 2 (linting/formatting)
-- Node.js 24 with `--experimental-strip-types`
+```
+docker build . -t zordbase
+docker run --rm -p 3000:3000 --name zordbase-lol zordbase
+```
 

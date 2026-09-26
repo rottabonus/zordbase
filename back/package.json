@@ -13,7 +13,7 @@
 		"lint": "biome lint .",
 		"format": "biome format --write .",
 		"check": "biome check --write .",
-		"start": "node build/back/index.js",
+		"start": "node index.ts",
 		"build": "tsc"
 	},
 	"author": "",
