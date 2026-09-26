@@ -1,42 +1,42 @@
 {
-  "name": "front",
-  "version": "2.0.0",
-  "description": "Zordbase Frontend",
-  "engines": {
-    "node": "24.x"
-  },
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "lint": "biome lint .",
-    "format": "biome format --write .",
-    "check": "biome check --write ."
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@types/react": "^18.0.26",
-    "@types/react-dom": "^18.0.9",
-    "@vitejs/plugin-react": "^6.1.1",
-    "biome": "^0.3.3",
-    "css-loader": "^6.7.3",
-    "file-loader": "^6.2.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-hooks-worker": "^1.0.0",
-    "react-redux": "^8.0.5",
-    "react-router-dom": "^6.5.0",
-    "redux": "^4.2.0",
-    "style-loader": "^3.3.1",
-    "url-loader": "^4.1.1",
-    "vite": "^8.3.1"
-  },
-  "devDependencies": {
-    "html-webpack-plugin": "^5.3.1",
-    "typescript": "^7.0.2",
-    "worker-plugin": "^5.0.0"
-  }
+	"name": "front",
+	"version": "2.0.0",
+	"description": "Zordbase Frontend",
+	"engines": {
+		"node": "24.x"
+	},
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc && vite build",
+		"preview": "vite preview",
+		"lint": "biome lint .",
+		"format": "biome format --write .",
+		"check": "biome check --write ."
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"@types/react": "^19.3.0",
+		"@types/react-dom": "^19.3.0",
+		"@vitejs/plugin-react": "^6.1.1",
+		"@biomejs/biome": "^2.5.14",
+		"css-loader": "^7.1.5",
+		"file-loader": "^6.2.0",
+		"react": "^19.3.0",
+		"react-dom": "^19.3.0",
+		"react-hooks-worker": "^1.0.0",
+		"react-redux": "^9.3.0",
+		"react-router-dom": "^7.18.4",
+		"redux": "^5.0.1",
+		"style-loader": "^4.0.0",
+		"url-loader": "^4.1.1",
+		"vite": "^8.3.1"
+	},
+	"devDependencies": {
+		"html-webpack-plugin": "^5.6.8",
+		"typescript": "^7.0.2",
+		"worker-plugin": "^5.0.0"
+	}
 }
