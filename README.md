@@ -90,7 +90,7 @@ npm run check    # Lint and auto-fix with Biome
 
 ## Packaging
 
-We can deploy the app with the Dockerfile
+We can build the app with the Dockerfile
 
 ```
 docker build . -t zordbase
