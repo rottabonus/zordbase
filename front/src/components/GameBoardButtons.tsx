@@ -9,19 +9,27 @@ interface BoardButtonProps {
 	removeSelection: () => void;
 	newGame: () => void;
 	resetGame: (board: string[][]) => void;
+	disabled?: boolean;
 }
 
 export const GameBoardButtons: React.FC<BoardButtonProps> = (props) => {
 	const { board, isLoading } = useSelector(selectBoard);
 	const { selection: selected } = useSelector(selectBase);
+	const { disabled } = props;
 
 	const getButtonStyle = (): ButtonVisibility => {
+		if (disabled) {
+			return { visibility: "hidden", cursor: "auto" };
+		}
 		return selected.length
 			? { visibility: "visible", cursor: "pointer" }
 			: { visibility: "hidden", cursor: "auto" };
 	};
 
 	const getButtonStyleLoading = (): ButtonVisibility => {
+		if (disabled) {
+			return { visibility: "hidden", cursor: "auto" };
+		}
 		return isLoading
 			? { visibility: "hidden", cursor: "auto" }
 			: { visibility: "visible", cursor: "pointer" };

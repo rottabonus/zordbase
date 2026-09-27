@@ -9,13 +9,19 @@ import { BalanceOfPower } from "./BalanceOfPower";
 
 interface PlayedWordProps {
 	timeTravel: (turn: number) => void;
+	opponentName?: string;
+	isMultiplayer?: boolean;
 }
 
 export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
 	const { base, playerName, playedWords: played } = useSelector(selectBase);
 	const { isLoading } = useSelector(selectBoard);
+	const { opponentName, isMultiplayer } = props;
+	
+	// For multiplayer, opponent is the other player; for single player, it's "computer"
+	const opponentIdentifier = isMultiplayer && opponentName ? opponentName : "computer";
 	const playerNodes = base.filter((f) => f.owner === playerName).length;
-	const comNodes = base.filter((f) => f.owner === "computer").length;
+	const comNodes = base.filter((f) => f.owner === opponentIdentifier).length;
 	const percentageDifference = isLoading
 		? 50
 		: ((playerNodes - comNodes) / (playerNodes + comNodes / 2)) * 100 + 50;
@@ -23,7 +29,7 @@ export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
 	const size = useWindowSize();
 
 	const getWordStyle = (owner: string): PlayerWordStyle => {
-		return owner === "computer"
+		return owner === opponentIdentifier
 			? { color: "khaki", textAlign: "right" }
 			: { color: "#87b6b8", textAlign: "left" };
 	};
@@ -43,6 +49,7 @@ export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
 			<BalanceOfPower
 				playerPercentage={percentageDifference}
 				playerName={playerName}
+				opponentName={opponentIdentifier}
 			/>
 			<div className="wordListWords">
 				{played.map((w, i) => {

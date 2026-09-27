@@ -52,7 +52,7 @@ export const GameBoardPage: React.FC = () => {
 
 	const checkBoard = async () => {
 		const positionsWithPossibleWords = base.filter(
-			(w) => w.possibleWords.length > 0,
+			(w) => w.possibleWords && w.possibleWords.length > 0,
 		);
 		const possibleWordsPercentage =
 			(100 * positionsWithPossibleWords.length) / base.length;
@@ -287,7 +287,7 @@ export const GameBoardPage: React.FC = () => {
 					/>
 				</div>
 				<div className="wordlist-and-info-container">
-					<PlayedWordList timeTravel={timeTravel} />
+					<PlayedWordList timeTravel={timeTravel} opponentName="computer" isMultiplayer={false} />
 					<LogoContainer />
 				</div>
 				<div>

@@ -6,6 +6,7 @@ import { About } from "./pages/About";
 import { GameBoardPage } from "./pages/BoardPage";
 import { Howto } from "./pages/Howto";
 import { Multiplayer } from "./pages/Multiplayer";
+import { MultiplayerGameBoardPage } from "./pages/MultiplayerGameBoardPage";
 
 export const App: React.FC = () => {
 	return (
@@ -26,10 +27,11 @@ export const App: React.FC = () => {
 			</div>
 			<div>
 				<Routes>
-					<Route path="/*" element={<GameBoardPage />} />
+					<Route path="/" element={<GameBoardPage />} />
 					<Route path="/howto" element={<Howto />} />
 					<Route path="/about" element={<About />} />
 					<Route path="/multiplayer" element={<Multiplayer />} />
+					<Route path="/game/:gameId" element={<MultiplayerGameBoardPage />} />
 				</Routes>
 			</div>
 		</Router>

@@ -1,9 +1,19 @@
 import * as React from "react";
 import { io, type Socket } from "socket.io-client";
 import { storageService } from "../services/storageService";
+import { useNavigate } from "react-router-dom";
 
 type User = { username?: string; userID: string; connected: boolean };
 type Challenge = { from: string; to: string };
+
+interface GameStartData {
+	gameId: string;
+	players: [string, string];
+	player1: string;
+	player2: string;
+	board: string[][];
+}
+
 interface ServerToClientEvents {
 	["users:list"]: (users: Array<User>) => void;
 	["user:connected"]: (data: User) => void;
@@ -11,7 +21,7 @@ interface ServerToClientEvents {
 	["session:set"]: (data: Session) => void;
 
 	["challenge:got"]: (challenge: Challenge) => void;
-	["game:start"]: (challenge: Challenge) => void;
+	["game:start"]: (data: GameStartData) => void;
 }
 
 type Session = { userID: string; sessionID: string };
@@ -26,6 +36,7 @@ const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
 	{ autoConnect: false },
 );
 export const Multiplayer = () => {
+	const navigate = useNavigate();
 	const [session, setSession] = React.useState<Session | null>(null);
 	const [isConnected, setIsConnected] = React.useState(false);
 	const [users, setUsers] = React.useState<Array<User>>([]);
@@ -82,13 +93,9 @@ export const Multiplayer = () => {
 			}
 		});
 
-		socket.on("game:start", (challenge) => {
-			console.log(
-				"challenge was accepted, game should start with players",
-				challenge.from,
-				"and",
-				challenge.to,
-			);
+		socket.on("game:start", (data) => {
+			console.log("game starting", data);
+			navigate(`/game/${data.gameId}`);
 		});
 
 		return () => {
@@ -100,7 +107,7 @@ export const Multiplayer = () => {
 			socket.off("challenge:got");
 			socket.off("game:start");
 		};
-	}, []);
+	}, [navigate]);
 
 	const handleConnect = (sessionID?: string) => {
 		setError(null);
@@ -142,7 +149,7 @@ export const Multiplayer = () => {
 							<div style={{ display: "flex", gap: "4px" }} key={user.userID}>
 								<div>{user.username}</div>
 								<div>{user.userID}</div>
-								{session.userID === user.userID ? (
+								{session?.userID === user.userID ? (
 									<div>(me)</div>
 								) : (
 									<button onClick={() => handleChallenge(user.userID)}>

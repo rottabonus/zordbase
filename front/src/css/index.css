@@ -231,6 +231,15 @@ td {
 	}
 }
 
+.error-message {
+	color: red;
+	padding: 8px;
+	background-color: #ffe6e6;
+	border-radius: 4px;
+	margin: 8px 0;
+	text-align: center;
+}
+
 .modal {
 	display: flex;
 	flex-direction: column;
