@@ -1,7 +1,7 @@
 export const LETTERS =
-  "aaaaaaaaaaaaiiiiiiiiiiittttttttttnnnnnnnnneeeeeeeesssssssslllllloooookkkkkuuuuuääääämmmmvvrrjjhhyyppdö".split(
-    ""
-  );
+	"aaaaaaaaaaaaiiiiiiiiiiittttttttttnnnnnnnnneeeeeeeesssssssslllllloooookkkkkuuuuuääääämmmmvvrrjjhhyyppdö".split(
+		"",
+	);
 
 const createBoard = () => {
 	return {
@@ -41,9 +41,9 @@ const changeTurn = (turn: string) => {
 const toArray = (num: number) => Array.from(Array(num).keys());
 
 const createGameBoard = (rows: number, columns: number) => {
-  return toArray(rows).map((_row) =>
-    toArray(columns).map((_column) => getRandomFrom(LETTERS).toUpperCase())
-  );
+	return toArray(rows).map((_row) =>
+		toArray(columns).map((_column) => getRandomFrom(LETTERS).toUpperCase()),
+	);
 };
 
 const getRandomFrom = (arr: Array<string>) => arr[getRandomInt(arr.length)];
