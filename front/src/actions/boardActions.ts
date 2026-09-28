@@ -3,10 +3,10 @@ export const LETTERS =
 		"",
 	);
 
-const createBoard = () => {
+const createBoard = (board?: string[][]) => {
 	return {
 		type: "CREATEBOARD",
-		payload: createGameBoard(12, 10),
+		payload: board || createGameBoard(12, 10),
 	};
 };
 

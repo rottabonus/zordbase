@@ -29,7 +29,7 @@ const boardReducer = (state = initialState, action: Action) => {
 			return {
 				...state,
 				newGame: action.payload.newGame,
-				board: action.payload.board,
+				board: action.payload.newGame ? action.payload.board : state.board,
 				turn: action.payload.turn,
 				isLoading: action.payload.isLoading,
 			};

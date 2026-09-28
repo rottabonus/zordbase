@@ -142,6 +142,7 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 			}
 
 			// Initialize board and base from server state
+			dispatch(allActions.boardActions.createBoard(state.board));
 			dispatch(
 				allActions.boardActions.newGame(
 					false,
@@ -277,6 +278,10 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 		const isPlayer1 = myUserId === player1Id;
 		const myPlayerLabel = isPlayer1 ? "Player 1" : "Player 2";
 
+		// Use server's board for new game
+		if (gameStateRef.current) {
+			dispatch(allActions.boardActions.createBoard(gameStateRef.current.board));
+		}
 		dispatch(allActions.boardActions.newGame(true, myPlayerLabel, true));
 		if (messageType === "start") {
 			dispatch(allActions.messageActions.clearMessage());
@@ -306,6 +311,9 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 		if (gameStateRef.current) {
 			const initialBase = gameStateRef.current.base;
 			dispatch(allActions.baseActions.resetBase(initialBase));
+			
+			// Use server's board
+			dispatch(allActions.boardActions.createBoard(gameStateRef.current.board));
 
 			// Determine player labels
 			const player1Id =
@@ -366,7 +374,7 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 
 			// Send move to server
 			socket.emit("game:move", {
-				gameId: gameId,
+				gameId: gameId!,
 				selection: selected,
 				word: newWord,
 			});
@@ -411,12 +419,14 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 	) => {
 		if (!isMyTurn || gameStatus !== "playing") return;
 
-		// Get actual owner from base (in case passed owner is wrong)
+		// Get actual owner from base for validation
 		const baseCell = base.find((b) => b.row === row && b.column === column);
 		const actualOwner = baseCell?.owner || "none";
 
-		const obj = { letter: letter, row: row, column: column, owner };
-		console.log(`selecting ${letter} on (${row},${column}), owner: ${owner}`);
+		// For validation, use actualOwner; for display in selection, use myUserId
+		const validationObj = { letter: letter, row: row, column: column, owner: actualOwner };
+		const displayObj = { letter: letter, row: row, column: column, owner: myUserId };
+		
 		const selectionOnBase = base.filter(
 			(s) => s.owner === actualOwner && s.column === column && s.row === row,
 		);
@@ -424,14 +434,14 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 		if (selectionOnBase.length || selected.length) {
 			const result: selectionObject =
 				gameService.checkIfLetterSelectionIsallowed(
-					obj,
+					validationObj,
 					board,
 					selected,
 					myUserId,
 				);
 			if (result.possibleSelection) {
 				result.selectedBeforeIndex === -1
-					? dispatch(allActions.baseActions.updateSelection([...selected, obj]))
+					? dispatch(allActions.baseActions.updateSelection([...selected, displayObj]))
 					: dispatch(
 							allActions.baseActions.removeFromSelection(
 								result.selectedBeforeIndex,
