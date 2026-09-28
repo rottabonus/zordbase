@@ -67,7 +67,13 @@ export const GameBoardPage: React.FC = () => {
 
 	const initializeBase = async () => {
 		const words = await wordService.fetchAll();
-		const objToSend = { board, playerName, words };
+		const objToSend = {
+			board,
+			player1Id: playerName,
+			player2Id: "computer",
+			isMultiplayer: false,
+			words,
+		};
 		webWorker.postMessage(objToSend);
 		dispatch(allActions.boardActions.isLoading(true));
 		webWorker.onmessage = (event) => {
@@ -278,7 +284,15 @@ export const GameBoardPage: React.FC = () => {
 			<div className="board-and-word-list">
 				<div className="gameboard">
 					<GameBoardHeader />
-					{isLoading ? <LoadingTable /> : <Board selectLetter={selectLetter} />}
+					{isLoading ? (
+						<LoadingTable />
+					) : (
+						<Board
+							selectLetter={selectLetter}
+							myUserId={playerName}
+							opponentId="computer"
+						/>
+					)}
 					<GameBoardButtons
 						newGame={showStartModal}
 						resetGame={showResetModal}
@@ -287,7 +301,13 @@ export const GameBoardPage: React.FC = () => {
 					/>
 				</div>
 				<div className="wordlist-and-info-container">
-					<PlayedWordList timeTravel={timeTravel} opponentName="computer" isMultiplayer={false} />
+					<PlayedWordList
+						timeTravel={timeTravel}
+						opponentName="computer"
+						isMultiplayer={false}
+						myUserId={playerName}
+						opponentId="computer"
+					/>
 					<LogoContainer />
 				</div>
 				<div>

@@ -112,7 +112,7 @@ const updateOwnersAndRemoveIsolated = (
 	const opponentNodes = updated.filter(o => o.owner === opponentId);
 	
 	// Find opponent nodes connected to their starting edge
-	const opponentStartRow = opponentId === player1Id ? board.length - 1 : 0;
+	const opponentStartRow = opponentId === player1Id ? 0 : board.length - 1; // player1Id starts at row 0, player2Id starts at row board.length - 1;
 	const connectedOpponent = new Set<string>();
 	const queue: LetterData[] = [];
 	
@@ -191,6 +191,8 @@ const service = (io: SocketServer) => {
 			// Create game room
 			const gameId = generateGameId();
 			const board = createGameBoard(12, 10);
+			// challenge.from = challenged player (acceptor), challenge.to = challenger
+			// Challenger starts at row 11 (bottom), challenged at row 0 (top)
 			const base = createInitialBase(board, challenge.from, challenge.to);
 			
 			// Get player names
@@ -206,18 +208,19 @@ const service = (io: SocketServer) => {
 				},
 				board,
 				base,
-				turn: challenge.from, // Challenger starts
+				turn: challenge.to, // Challenger starts (challenge.to is the challenger)
 				playedWords: [],
 				status: "playing",
 				turnCount: 0,
-				player1Id: challenge.from,
+				player1Id: challenge.from, // Player 1 is at row 0 (challenged)
 			};
 			
 			gameRooms.set(gameId, gameRoom);
 			
 			// Join both players to game room
 			socket.join(gameId);
-			io.sockets.sockets.get(challenge.to)?.join(gameId);
+			// Use io.in(userID).socketsJoin(room) to make the other player's socket join the game room
+			io.in(challenge.to).socketsJoin(gameId);
 			
 			// Notify both players
 			const startData: GameStartData = {
@@ -235,11 +238,12 @@ const service = (io: SocketServer) => {
 				gameId,
 				board,
 				base,
-				turn: challenge.from,
+				turn: challenge.to, // Challenger starts (challenge.to is the challenger)
 				playedWords: [],
 				players: [challenge.from, challenge.to],
 				playerNames: gameRoom.playerNames,
 				status: "playing",
+				player1Id: challenge.from, // Player 1 is at row 0 (challenged)
 			};
 			io.to(gameId).emit("game:state", gameState);
 		});
@@ -258,6 +262,7 @@ const service = (io: SocketServer) => {
 					playerNames: gameRoom.playerNames,
 					status: gameRoom.status,
 					winner: gameRoom.winner,
+					player1Id: gameRoom.player1Id,
 				};
 				socket.emit("game:state", gameState);
 			} else {

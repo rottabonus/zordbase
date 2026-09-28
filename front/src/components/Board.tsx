@@ -5,12 +5,19 @@ import { selectBoard } from "../reducers/boardReducer";
 import type { LetterStyle } from "../types/types";
 
 interface BoardProps {
-	selectLetter: (L: string, row: number, column: number, owner: string) => void;
+	selectLetter: (
+		letter: string,
+		row: number,
+		column: number,
+		owner: string,
+	) => void;
+	myUserId: string;
+	opponentId?: string;
 }
 
 export const Board: React.FC<BoardProps> = (props) => {
 	const { board, turn } = useSelector(selectBoard);
-	const { base, selection: selected, playerName } = useSelector(selectBase);
+	const { base, selection: selected } = useSelector(selectBase);
 
 	const getLetterStyle = (r: number, c: number): LetterStyle => {
 		const found = selected.filter((a) => a.row === r && a.column === c);
@@ -27,12 +34,14 @@ export const Board: React.FC<BoardProps> = (props) => {
 		const allSelected = selectedWithOwner.concat(base);
 		const ownerArr = allSelected.filter((a) => a.row === r && a.column === c);
 		const owner = ownerArr.length === 0 ? "none" : ownerArr[0].owner;
-		const backgroundColor =
-			owner === "computer"
-				? "khaki"
-				: owner === playerName
-					? "#87b6b8"
-					: "transparent";
+		let backgroundColor = "transparent";
+		if (owner === "computer") {
+			backgroundColor = "khaki";
+		} else if (owner === props.myUserId) {
+			backgroundColor = "#87b6b8"; // Current player - blue
+		} else if (owner === props.opponentId) {
+			backgroundColor = "#f4a261"; // Opponent - orange/sand
+		}
 		return {
 			class: isSelected,
 			backgroundColor: backgroundColor,
@@ -48,6 +57,11 @@ export const Board: React.FC<BoardProps> = (props) => {
 						<tr key={i}>
 							{row.map((cellId, j) => {
 								const styleValues = getLetterStyle(i, j);
+								// Find actual owner from base
+								const baseCell = base.find(
+									(b) => b.row === i && b.column === j,
+								);
+								const actualOwner = baseCell?.owner || "none";
 								return (
 									<td
 										className={styleValues.class}
@@ -56,7 +70,7 @@ export const Board: React.FC<BoardProps> = (props) => {
 											cursor: styleValues.cursor,
 										}}
 										key={j}
-										onClick={() => props.selectLetter(cellId, i, j, playerName)}
+										onClick={() => props.selectLetter(cellId, i, j, turn)}
 									>
 										{cellId}
 									</td>

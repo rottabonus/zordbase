@@ -37,7 +37,7 @@ export const GameBoardHeader: React.FC<GameBoardHeaderProps> = (props) => {
 	if (opponentName && playerName) {
 		const currentPlayer = isMyTurn ? playerName : opponentName;
 		const turnMessage = `${currentPlayer}'s turn`;
-		
+
 		return (
 			<div className="gameboard-header">
 				{isLoading ? (

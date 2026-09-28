@@ -11,16 +11,20 @@ interface PlayedWordProps {
 	timeTravel: (turn: number) => void;
 	opponentName?: string;
 	isMultiplayer?: boolean;
+	myUserId?: string;
+	opponentId?: string;
 }
 
 export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
 	const { base, playerName, playedWords: played } = useSelector(selectBase);
 	const { isLoading } = useSelector(selectBoard);
-	const { opponentName, isMultiplayer } = props;
-	
-	// For multiplayer, opponent is the other player; for single player, it's "computer"
-	const opponentIdentifier = isMultiplayer && opponentName ? opponentName : "computer";
-	const playerNodes = base.filter((f) => f.owner === playerName).length;
+	const { opponentName, isMultiplayer, myUserId, opponentId } = props;
+
+	// For multiplayer, use userIDs for comparison; for single player, use "computer"
+	const myIdentifier = isMultiplayer && myUserId ? myUserId : "player";
+	const opponentIdentifier =
+		isMultiplayer && opponentId ? opponentId : "computer";
+	const playerNodes = base.filter((f) => f.owner === myIdentifier).length;
 	const comNodes = base.filter((f) => f.owner === opponentIdentifier).length;
 	const percentageDifference = isLoading
 		? 50
@@ -30,8 +34,8 @@ export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
 
 	const getWordStyle = (owner: string): PlayerWordStyle => {
 		return owner === opponentIdentifier
-			? { color: "khaki", textAlign: "right" }
-			: { color: "#87b6b8", textAlign: "left" };
+			? { color: "#f4a261", textAlign: "right" } // Opponent color (orange)
+			: { color: "#87b6b8", textAlign: "left" }; // My color (blue)
 	};
 
 	const scrollToBottom = () => {

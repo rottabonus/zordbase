@@ -125,7 +125,12 @@ const checkIfWin = (selections: letterObject[], turn: string, max: number) => {
 	return win.length > 0;
 };
 
-const checkIfWinMultiplayer = (selections: letterObject[], playerId: string, max: number, player1Id: string) => {
+const checkIfWinMultiplayer = (
+	selections: letterObject[],
+	playerId: string,
+	max: number,
+	player1Id: string,
+) => {
 	// player1 starts at row 0, wins at row max-1
 	// player2 starts at row max-1, wins at row 0
 	const targetRow = playerId === player1Id ? max - 1 : 0;

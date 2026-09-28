@@ -66,6 +66,7 @@ export interface GameState {
 	playerNames: Record<string, string>;
 	status: "waiting" | "playing" | "finished";
 	winner?: string;
+	player1Id: string; // userID of player at row 0
 }
 
 export interface LetterData {

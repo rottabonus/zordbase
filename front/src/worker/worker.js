@@ -2,17 +2,29 @@ addEventListener("message", (event) => {
 	//console.log('postmessage event')
 	const wholeBoard = calculateValues(
 		event.data.board,
-		event.data.playerName,
+		event.data.player1Id,
+		event.data.player2Id,
+		event.data.isMultiplayer,
 		event.data.words,
 	);
 	postMessage(wholeBoard);
 });
 
-const calculateValues = (board, playerName, allWords) => {
+const calculateValues = (
+	board,
+	player1Id,
+	player2Id,
+	isMultiplayer,
+	allWords,
+) => {
 	const base = [];
 	for (const [j, boardRow] of board.entries()) {
-		const owner =
-			j === 0 ? playerName : j === board.length - 1 ? "computer" : "none";
+		let owner = "none";
+		if (j === 0) {
+			owner = player1Id; // Player 1 at top (row 0)
+		} else if (j === board.length - 1) {
+			owner = isMultiplayer ? player2Id : "computer"; // Player 2 or computer at bottom (row 11)
+		}
 		const row = boardRow.map((letter, column) => ({
 			letter: letter,
 			row: j,

@@ -1,7 +1,7 @@
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { io, type Socket } from "socket.io-client";
 import allActions from "../actions/allActions";
 import { Board } from "../components/Board";
@@ -15,29 +15,14 @@ import { selectBase } from "../reducers/baseReducer";
 import { selectBoard } from "../reducers/boardReducer";
 import { selectMessage } from "../reducers/messageReducer";
 import gameService from "../services/game";
-import wordService from "../services/words";
-import type { letterObject, selectionObject, playedWord } from "../types/types";
 import { storageService } from "../services/storageService";
-
-interface GameStartData {
-	gameId: string;
-	players: [string, string];
-	player1: string;
-	player2: string;
-	board: string[][];
-}
-
-interface GameState {
-	gameId: string;
-	board: string[][];
-	base: letterObject[];
-	turn: string;
-	playedWords: playedWord[];
-	players: [string, string];
-	playerNames: Record<string, string>;
-	status: "waiting" | "playing" | "finished";
-	winner?: string;
-}
+import wordService from "../services/words";
+import type {
+	GameState,
+	letterObject,
+	playedWord,
+	selectionObject,
+} from "../types/types";
 
 interface GameMove {
 	gameId: string;
@@ -66,7 +51,11 @@ interface ServerToClientEvents {
 
 interface ClientToServerEvents {
 	"game:join": (gameId: string) => void;
-	"game:move": (move: { gameId: string; selection: letterObject[]; word: string }) => void;
+	"game:move": (move: {
+		gameId: string;
+		selection: letterObject[];
+		word: string;
+	}) => void;
 }
 
 const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
@@ -76,26 +65,25 @@ const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
 
 export const MultiplayerGameBoardPage: React.FC = () => {
 	const { gameId } = useParams<{ gameId: string }>();
-	const navigate = useNavigate();
 	const dispatch = useDispatch();
-	
-	const { board, turn, newGame, isLoading } = useSelector(selectBoard);
+
+	const { board, newGame, isLoading } = useSelector(selectBoard);
 	const {
 		base,
 		selection: selected,
 		playedWords,
 		playerName,
-		possibleWordPositions,
 		stateHistory,
 	} = useSelector(selectBase);
 	const { type: messageType } = useSelector(selectMessage);
-	
-	const webWorker = useRef<Worker | null>(null);
+
 	const [myUserId, setMyUserId] = useState<string>("");
-	const [myUsername, setMyUsername] = useState<string>("");
+	const [_myUsername, setMyUsername] = useState<string>("");
 	const [opponentId, setOpponentId] = useState<string>("");
 	const [opponentName, setOpponentName] = useState<string>("");
-	const [gameStatus, setGameStatus] = useState<"waiting" | "playing" | "finished">("waiting");
+	const [gameStatus, setGameStatus] = useState<
+		"waiting" | "playing" | "finished"
+	>("waiting");
 	const [error, setError] = useState<string | null>(null);
 	const [isMyTurn, setIsMyTurn] = useState(false);
 	const gameStateRef = useRef<GameState | null>(null);
@@ -125,36 +113,58 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 		socket.on("game:state", (state: GameState) => {
 			console.log("Received game state", state);
 			gameStateRef.current = state;
-			setOpponentId(state.players.find(p => p !== myUserId) || "");
-			setOpponentName(state.playerNames[state.players.find(p => p !== myUserId) || ""] || "Opponent");
+			const opponentIdFound = state.players.find((p) => p !== myUserId) || "";
+			setOpponentId(opponentIdFound);
+			setOpponentName(state.playerNames[opponentIdFound] || "Opponent");
 			setGameStatus(state.status);
-			
+
 			const isMyTurnNow = state.turn === myUserId;
 			setIsMyTurn(isMyTurnNow);
-			
-			// Set player name in Redux store
-			dispatch(allActions.baseActions.changePlayerName(myUsername));
-			
+
+			// Determine player labels: Player 1 is at row 0 (player1Id), Player 2 is at row 11
+			const player1Id = state.player1Id || state.players[0];
+			const isPlayer1 = myUserId === player1Id;
+			const myPlayerLabel = isPlayer1 ? "Player 1" : "Player 2";
+			const opponentPlayerLabel = isPlayer1 ? "Player 2" : "Player 1";
+
+			// Set player name in Redux store for display
+			dispatch(allActions.baseActions.changePlayerName(myPlayerLabel));
+
 			if (state.status === "finished" && state.winner) {
-				const winnerName = state.winner === myUserId ? "You" : opponentName;
-				dispatch(allActions.messageActions.setMessage(
-					`Game over! ${winnerName} won!`, 
-					"message"
-				));
+				const winnerName =
+					state.winner === myUserId ? "You" : opponentPlayerLabel;
+				dispatch(
+					allActions.messageActions.setMessage(
+						`Game over! ${winnerName} won!`,
+						"message",
+					),
+				);
 			}
 
 			// Initialize board and base from server state
-			dispatch(allActions.boardActions.newGame(false, state.turn === myUserId ? myUsername : opponentName, false));
+			dispatch(
+				allActions.boardActions.newGame(
+					false,
+					isMyTurnNow ? myPlayerLabel : opponentPlayerLabel,
+					false,
+				),
+			);
 			dispatch(allActions.boardActions.gameStart());
-			
+
 			// Initialize stateHistory with initial game state
 			const initialHistory = {
 				base: state.base,
 				selection: [],
-				turn: state.turn === myUserId ? myUsername : opponentName,
+				turn: isMyTurnNow ? myPlayerLabel : opponentPlayerLabel,
 			};
-			dispatch(allActions.baseActions.createHistory(initialHistory.base, [], initialHistory.turn));
-			
+			dispatch(
+				allActions.baseActions.createHistory(
+					initialHistory.base,
+					[],
+					initialHistory.turn,
+				),
+			);
+
 			// Convert base to include possibleWords from worker
 			// For now, just use the base as-is and let worker calculate possibleWords
 			initializeBaseFromServer(state.base, state.board);
@@ -162,35 +172,70 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 
 		socket.on("game:move", (move: GameMove) => {
 			console.log("Received game move", move);
-			gameStateRef.current = { ...gameStateRef.current!, ...move, base: move.newBase, playedWords: move.playedWords, turn: move.nextTurn };
-			
+			// Preserve player1Id from previous state
+			const previousPlayer1Id: string =
+				gameStateRef.current?.player1Id ||
+				gameStateRef.current?.players[0] ||
+				"";
+			gameStateRef.current = {
+				...gameStateRef.current!,
+				...move,
+				base: move.newBase,
+				playedWords: move.playedWords,
+				turn: move.nextTurn,
+				player1Id: previousPlayer1Id, // Preserve player1Id
+			};
+
 			const isMyMove = move.playerId === myUserId;
 			const nextIsMyTurn = move.nextTurn === myUserId;
 			setIsMyTurn(nextIsMyTurn);
-			
+
+			// Determine player labels
+			const player1Id =
+				gameStateRef.current?.player1Id || gameStateRef.current?.players[0];
+			const isPlayer1 = myUserId === player1Id;
+			const myPlayerLabel = isPlayer1 ? "Player 1" : "Player 2";
+			const opponentPlayerLabel = isPlayer1 ? "Player 2" : "Player 1";
+
 			if (move.winner) {
 				setGameStatus("finished");
-				const winnerName = move.winner === myUserId ? "You" : opponentName;
-				dispatch(allActions.messageActions.setMessage(
-					`Game over! ${winnerName} won with "${move.word}"!`, 
-					"message"
-				));
+				const winnerName =
+					move.winner === myUserId ? "You" : opponentPlayerLabel;
+				dispatch(
+					allActions.messageActions.setMessage(
+						`Game over! ${winnerName} won with "${move.word}"!`,
+						"message",
+					),
+				);
 				return;
 			}
-			
+
 			// Update board state
-			dispatch(allActions.baseActions.confirmSelection(
-				move.newBase,
-				move.playedWords,
-				[] // clear selection
-			));
-			dispatch(allActions.boardActions.changeTurn(nextIsMyTurn ? playerName : opponentName));
+			dispatch(
+				allActions.baseActions.confirmSelection(
+					move.newBase,
+					move.playedWords,
+					[], // clear selection
+				),
+			);
+			dispatch(
+				allActions.boardActions.changeTurn(
+					nextIsMyTurn ? myPlayerLabel : opponentPlayerLabel,
+				),
+			);
 		});
 
 		socket.on("game:end", (data: GameEndData) => {
 			console.log("Game ended", data);
 			setGameStatus("finished");
-			const winnerName = data.winner === myUserId ? "You" : opponentName;
+
+			// Determine player labels
+			const player1Id =
+				gameStateRef.current?.player1Id || gameStateRef.current?.players[0];
+			const isPlayer1 = myUserId === player1Id;
+			const opponentPlayerLabel = isPlayer1 ? "Player 2" : "Player 1";
+
+			const winnerName = data.winner === myUserId ? "You" : opponentPlayerLabel;
 			let message = `Game over! ${winnerName} won!`;
 			if (data.reason === "disconnect") {
 				message = `Game over! ${winnerName} won by forfeit (opponent disconnected).`;
@@ -212,66 +257,48 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 		};
 	}, [myUserId, opponentName, dispatch, playerName]);
 
-	const initializeBaseFromServer = async (serverBase: letterObject[], serverBoard: string[][]) => {
-		// We need to calculate possibleWords for each letter using the worker
-		const words = await wordService.fetchAll();
-		const objToSend = { board: serverBoard, playerName: myUserId, words };
-		
-		if (webWorker.current) {
-			webWorker.current.terminate();
-		}
-		webWorker.current = new Worker(new URL("../worker/worker.js", import.meta.url), { type: "module" });
-		
-		webWorker.current.postMessage(objToSend);
-		dispatch(allActions.boardActions.isLoading(true));
-		
-		webWorker.current.onmessage = (event) => {
-			// Merge server base ownership with worker-calculated possibleWords
-			const workerBase = event.data;
-			const mergedBase = serverBase.map(serverLetter => {
-				const workerLetter = workerBase.find((w: letterObject) => w.row === serverLetter.row && w.column === serverLetter.column);
-				return workerLetter ? { ...workerLetter, owner: serverLetter.owner } : serverLetter;
-			});
-			dispatch(allActions.baseActions.createBase(mergedBase));
-			dispatch(allActions.boardActions.isLoading(false));
-		};
-	};
-
-	const gameChange = () => {
-		// In multiplayer, game end is handled by server via game:end event
-		// This is kept for single-player compatibility
-		setTimeout(() => {
-			startNewGame();
-		}, 1500);
+	const initializeBaseFromServer = async (
+		serverBase: letterObject[],
+		_serverBoard: string[][],
+	) => {
+		// For multiplayer, we don't need the worker (which calculates possibleWords for AI).
+		// Human players only need adjacency validation, which is done by checkIfLetterSelectionIsallowed.
+		// Just use the server's base directly which has correct ownership.
+		dispatch(allActions.baseActions.createBase(serverBase));
+		dispatch(allActions.boardActions.isLoading(false));
 	};
 
 	const startNewGame = () => {
 		dispatch(allActions.baseActions.removeSelectionAndPlayedWords([], []));
-		dispatch(allActions.boardActions.newGame(true, myUsername, true));
+
+		// Determine player labels
+		const player1Id =
+			gameStateRef.current?.player1Id || gameStateRef.current?.players[0];
+		const isPlayer1 = myUserId === player1Id;
+		const myPlayerLabel = isPlayer1 ? "Player 1" : "Player 2";
+
+		dispatch(allActions.boardActions.newGame(true, myPlayerLabel, true));
 		if (messageType === "start") {
 			dispatch(allActions.messageActions.clearMessage());
-		}
-		// TODO: Send new game request to server
-	};
-
-	const checkBoard = async () => {
-		const positionsWithPossibleWords = base.filter((w) => w.possibleWords && w.possibleWords.length > 0);
-		const possibleWordsPercentage = (100 * positionsWithPossibleWords.length) / base.length;
-		if (!Number.isNaN(possibleWordsPercentage)) {
-			if (possibleWordsPercentage < 74) {
-				initializeBaseFromServer(base, board);
-			} else {
-				dispatch(allActions.boardActions.isLoading(false));
-			}
 		}
 	};
 
 	const showResetModal = () => {
-		dispatch(allActions.messageActions.setMessage("are you sure you want to reset the game?", "reset"));
+		dispatch(
+			allActions.messageActions.setMessage(
+				"are you sure you want to reset the game?",
+				"reset",
+			),
+		);
 	};
 
 	const showStartModal = () => {
-		dispatch(allActions.messageActions.setMessage("are you sure you want to start new game?", "start"));
+		dispatch(
+			allActions.messageActions.setMessage(
+				"are you sure you want to start new game?",
+				"start",
+			),
+		);
 	};
 
 	const resetGame = () => {
@@ -279,6 +306,18 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 		if (gameStateRef.current) {
 			const initialBase = gameStateRef.current.base;
 			dispatch(allActions.baseActions.resetBase(initialBase));
+
+			// Determine player labels
+			const player1Id =
+				gameStateRef.current.player1Id || gameStateRef.current.players[0];
+			const isPlayer1 = myUserId === player1Id;
+			const myPlayerLabel = isPlayer1 ? "Player 1" : "Player 2";
+			const opponentPlayerLabel = isPlayer1 ? "Player 2" : "Player 1";
+
+			// Reset turn to player 1 (who starts at row 0)
+			const firstTurnLabel = isPlayer1 ? myPlayerLabel : opponentPlayerLabel;
+			dispatch(allActions.baseActions.changePlayerName(myPlayerLabel));
+			dispatch(allActions.boardActions.newGame(false, firstTurnLabel, false));
 		} else {
 			dispatch(allActions.baseActions.resetBase(stateHistory[1]?.base || []));
 		}
@@ -291,41 +330,70 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 
 	const confirmSelection = async () => {
 		if (!isMyTurn || gameStatus !== "playing") return;
-		
+
 		const newWord = selected.map((s) => s.letter).join("");
 		const wordExist = await wordService.fetchMatch(newWord);
-		const playedAgain = playedWords.filter((word) => word.owner === myUserId).filter((word) => word.word === newWord);
-		
+		const playedAgain = playedWords
+			.filter((word) => word.owner === myUserId)
+			.filter((word) => word.word === newWord);
+
 		if (wordExist && !playedAgain.length) {
 			const history = [...base];
-			dispatch(allActions.baseActions.createHistory(history, selected, myUserId));
-			
-			const confirmedAndFiltered = gameService.updateOwnersAndRemoveIsolatedNodes(selected, base, board, myUserId);
-			const checkGame = gameService.checkIfWinMultiplayer(selected, myUserId, board.length, gameStateRef.current?.players[0] || myUserId);
-			
+
+			// Determine player labels for history
+			const player1Id =
+				gameStateRef.current?.player1Id || gameStateRef.current?.players[0];
+			const isPlayer1 = myUserId === player1Id;
+			const myPlayerLabel = isPlayer1 ? "Player 1" : "Player 2";
+
+			dispatch(
+				allActions.baseActions.createHistory(history, selected, myPlayerLabel),
+			);
+
+			const confirmedAndFiltered =
+				gameService.updateOwnersAndRemoveIsolatedNodes(
+					selected,
+					base,
+					board,
+					myUserId,
+				);
+			const checkGame = gameService.checkIfWinMultiplayer(
+				selected,
+				myUserId,
+				board.length,
+				gameStateRef.current?.players[0] || myUserId,
+			);
+
 			// Send move to server
 			socket.emit("game:move", {
-				gameId: gameId!,
+				gameId: gameId,
 				selection: selected,
 				word: newWord,
 			});
-			
+
 			// Optimistic update - always change turn, server will confirm or end game
-			dispatch(allActions.baseActions.confirmSelection(
-				confirmedAndFiltered,
-				[...playedWords, { word: newWord, owner: myUserId, turn: stateHistory.length }],
-				[]
-			));
-			
+			dispatch(
+				allActions.baseActions.confirmSelection(
+					confirmedAndFiltered,
+					[
+						...playedWords,
+						{ word: newWord, owner: myUserId, turn: stateHistory.length },
+					],
+					[],
+				),
+			);
+
 			// Optimistically change turn; server will send game:move with correct state or game:end
+			const opponentPlayerLabel = isPlayer1 ? "Player 2" : "Player 1";
 			if (!checkGame) {
-				dispatch(allActions.boardActions.changeTurn(opponentName));
+				dispatch(allActions.boardActions.changeTurn(opponentPlayerLabel));
 			}
 			// If checkGame is true, we optimistically show win but wait for server confirmation
 		} else {
-			const message = playedAgain.length > 0 
-				? `cant play same word twice, ${newWord} already played`
-				: `word ${newWord}, does not exist`;
+			const message =
+				playedAgain.length > 0
+					? `cant play same word twice, ${newWord} already played`
+					: `word ${newWord}, does not exist`;
 			dispatch(allActions.messageActions.setMessage(message, "message"));
 			removeSelection();
 		}
@@ -335,18 +403,40 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 		dispatch(allActions.baseActions.removeFromSelection(0));
 	};
 
-	const selectLetter = async (letter: string, row: number, column: number, owner: string) => {
+	const selectLetter = async (
+		letter: string,
+		row: number,
+		column: number,
+		owner: string,
+	) => {
 		if (!isMyTurn || gameStatus !== "playing") return;
-		
-		const obj = { letter: letter, row: row, column: column, owner: owner };
-		const selectionOnBase = base.filter((s) => s.owner === obj.owner && s.column === obj.column && s.row === obj.row);
-		
+
+		// Get actual owner from base (in case passed owner is wrong)
+		const baseCell = base.find((b) => b.row === row && b.column === column);
+		const actualOwner = baseCell?.owner || "none";
+
+		const obj = { letter: letter, row: row, column: column, owner };
+		console.log(`selecting ${letter} on (${row},${column}), owner: ${owner}`);
+		const selectionOnBase = base.filter(
+			(s) => s.owner === actualOwner && s.column === column && s.row === row,
+		);
+
 		if (selectionOnBase.length || selected.length) {
-			const result: selectionObject = gameService.checkIfLetterSelectionIsallowed(obj, board, selected, myUserId);
+			const result: selectionObject =
+				gameService.checkIfLetterSelectionIsallowed(
+					obj,
+					board,
+					selected,
+					myUserId,
+				);
 			if (result.possibleSelection) {
 				result.selectedBeforeIndex === -1
 					? dispatch(allActions.baseActions.updateSelection([...selected, obj]))
-					: dispatch(allActions.baseActions.removeFromSelection(result.selectedBeforeIndex));
+					: dispatch(
+							allActions.baseActions.removeFromSelection(
+								result.selectedBeforeIndex,
+							),
+						);
 			}
 		}
 	};
@@ -356,18 +446,24 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 		const timeOutCounter = stateHistory[turn].selection.length;
 		dispatch(allActions.baseActions.updateBase(stateHistory[turn].base));
 		// Visual replay
-		setTimeout(() => {
-			backToPresent(currentBase);
-			removeSelection();
-		}, timeOutCounter * 500 + 700);
+		setTimeout(
+			() => {
+				backToPresent(currentBase);
+				removeSelection();
+			},
+			timeOutCounter * 500 + 700,
+		);
 	};
 
 	const computerSelect = (selection: letterObject[]) => {
 		for (const [i, _s] of selection.entries()) {
 			const selectionArray = selection.filter((_s, j) => j <= i);
-			setTimeout(() => {
-				dispatch(allActions.baseActions.updateSelection(selectionArray));
-			}, (i + 1) * 500);
+			setTimeout(
+				() => {
+					dispatch(allActions.baseActions.updateSelection(selectionArray));
+				},
+				(i + 1) * 500,
+			);
 		}
 	};
 
@@ -377,24 +473,33 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 
 	useEffect(() => {
 		if (newGame && gameStateRef.current) {
-			initializeBaseFromServer(gameStateRef.current.base, gameStateRef.current.board);
-		} else if (isLoading) {
-			checkBoard();
+			initializeBaseFromServer(
+				gameStateRef.current.base,
+				gameStateRef.current.board,
+			);
 		}
 		// No automatic computer turn - wait for server move events
-	}, [newGame, isLoading, possibleWordPositions]);
+	}, [newGame]);
 
 	return (
 		<div className="page-container">
 			<div className="board-and-word-list">
 				<div className="gameboard">
-					<GameBoardHeader 
-						playerName={playerName} 
+					<GameBoardHeader
+						playerName={playerName}
 						opponentName={opponentName}
 						isMyTurn={isMyTurn}
 						gameStatus={gameStatus}
 					/>
-					{isLoading ? <LoadingTable /> : <Board selectLetter={selectLetter} />}
+					{isLoading ? (
+						<LoadingTable />
+					) : (
+						<Board
+							selectLetter={selectLetter}
+							myUserId={myUserId}
+							opponentId={opponentId}
+						/>
+					)}
 					<GameBoardButtons
 						newGame={showStartModal}
 						resetGame={showResetModal}
@@ -405,7 +510,13 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 					{error && <div className="error-message">{error}</div>}
 				</div>
 				<div className="wordlist-and-info-container">
-					<PlayedWordList timeTravel={timeTravel} opponentName={opponentName} isMultiplayer={true} />
+					<PlayedWordList
+						timeTravel={timeTravel}
+						opponentName={opponentName}
+						isMultiplayer={true}
+						myUserId={myUserId}
+						opponentId={opponentId}
+					/>
 					<LogoContainer />
 				</div>
 				<div>

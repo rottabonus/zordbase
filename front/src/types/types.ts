@@ -65,3 +65,16 @@ export type ButtonVisibility = {
 	visibility: "visible" | "hidden" | "collapse";
 	cursor: "pointer" | "auto";
 };
+
+export interface GameState {
+	gameId: string;
+	board: string[][];
+	base: letterObject[];
+	turn: string;
+	playedWords: playedWord[];
+	players: [string, string];
+	playerNames: Record<string, string>;
+	status: "waiting" | "playing" | "finished";
+	winner?: string;
+	player1Id: string;
+}
