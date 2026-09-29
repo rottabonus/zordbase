@@ -1,11 +1,11 @@
 import type {
-	SocketServer,
+	ClientGameMove,
+	GameMove,
 	GameStartData,
 	GameState,
-	GameMove,
-	ClientGameMove,
 	LetterData,
 	PlayedWordData,
+	SocketServer,
 } from "../types.ts";
 import { InMemorySessionStore } from "./sessionService.ts";
 
@@ -154,7 +154,8 @@ const updateOwnersAndRemoveIsolated = (
 	});
 
 	while (queue.length > 0) {
-		const node = queue.shift()!;
+		const node = queue.shift();
+		if (!node) continue;
 		const neighbors = movements[`${node.row},${node.column}`] || [];
 		neighbors.forEach((neighbor) => {
 			const key = `${neighbor.row},${neighbor.column}`;
@@ -222,14 +223,20 @@ const getNeighborsData = (node: LetterData, board: string[][]) => {
 
 const service = (io: SocketServer) => {
 	io.on("connection", (socket) => {
+		const getUserId = () => socket.data.userID ?? "";
+
 		socket.on("challenge:new", (challengedID) => {
-			const challenge = { from: socket.data.userID!, to: challengedID };
+			const userId = getUserId();
+			if (!userId) return;
+			const challenge = { from: userId, to: challengedID };
 			console.log("new challenge", challenge);
 			socket.to(challenge.to).emit("challenge:got", challenge);
 		});
 
 		socket.on("challenge:accept", (challengerID) => {
-			const challenge = { from: socket.data.userID!, to: challengerID };
+			const userId = getUserId();
+			if (!userId) return;
+			const challenge = { from: userId, to: challengerID };
 			console.log("game was accepted, now start with", challenge);
 
 			// Create game room
@@ -324,7 +331,9 @@ const service = (io: SocketServer) => {
 			}
 
 			// Validate it's the player's turn
-			if (gameRoom.turn !== socket.data.userID) {
+			const userId = getUserId();
+			if (!userId) return;
+			if (gameRoom.turn !== userId) {
 				socket.emit("game:error", "Not your turn");
 				return;
 			}
@@ -342,7 +351,7 @@ const service = (io: SocketServer) => {
 			}
 
 			// Validate ownership
-			if (!isValidOwnership(move.selection, socket.data.userID!)) {
+			if (!isValidOwnership(move.selection, userId)) {
 				socket.emit(
 					"game:error",
 					"Can only select your own or neutral letters",
@@ -359,7 +368,7 @@ const service = (io: SocketServer) => {
 
 			// Check if word already played by this player
 			const alreadyPlayed = gameRoom.playedWords.some(
-				(pw) => pw.word === move.word && pw.owner === socket.data.userID,
+				(pw) => pw.word === move.word && pw.owner === userId,
 			);
 			if (alreadyPlayed) {
 				socket.emit("game:error", "Word already played");
@@ -371,14 +380,14 @@ const service = (io: SocketServer) => {
 				move.selection,
 				gameRoom.base,
 				gameRoom.board,
-				socket.data.userID!,
+				userId,
 				gameRoom.player1Id,
 			);
 			const newPlayedWords = [
 				...gameRoom.playedWords,
 				{
 					word: move.word,
-					owner: socket.data.userID!,
+					owner: userId,
 					turn: gameRoom.turnCount,
 				},
 			];
@@ -386,17 +395,17 @@ const service = (io: SocketServer) => {
 			// Check win
 			const winner = checkWin(
 				newBase,
-				socket.data.userID!,
+				userId,
 				gameRoom.board.length,
 				gameRoom.player1Id,
 			)
-				? socket.data.userID
+				? userId
 				: undefined;
 
 			// Determine next turn
 			const nextTurn = winner
 				? ""
-				: gameRoom.players.find((p) => p !== socket.data.userID)!;
+				: (gameRoom.players.find((p) => p !== userId) ?? "");
 
 			// Update game room
 			gameRoom.base = newBase;
@@ -411,7 +420,7 @@ const service = (io: SocketServer) => {
 			// Broadcast move to both players
 			const gameMove: GameMove = {
 				gameId: move.gameId,
-				playerId: socket.data.userID!,
+				playerId: userId,
 				selection: move.selection,
 				word: move.word,
 				newBase,
@@ -434,15 +443,15 @@ const service = (io: SocketServer) => {
 
 		// Handle disconnect during game
 		socket.on("disconnect", async () => {
+			const userId = getUserId();
+			if (!userId) return;
 			// Check if player was in an active game
 			for (const [gameId, gameRoom] of gameRooms.entries()) {
 				if (
-					gameRoom.players.includes(socket.data.userID!) &&
+					gameRoom.players.includes(userId) &&
 					gameRoom.status === "playing"
 				) {
-					const otherPlayer = gameRoom.players.find(
-						(p) => p !== socket.data.userID,
-					);
+					const otherPlayer = gameRoom.players.find((p) => p !== userId);
 					if (otherPlayer) {
 						gameRoom.status = "finished";
 						gameRoom.winner = otherPlayer;
