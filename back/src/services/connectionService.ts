@@ -1,8 +1,6 @@
 import crypto from "node:crypto";
 import type { SocketServer } from "../types.ts";
-import { InMemorySessionStore } from "./sessionService.ts";
-
-const sessionStore = new InMemorySessionStore();
+import { sessionStore } from "./sessionService.ts";
 
 const randomId = () => crypto.randomBytes(8).toString("hex");
 

@@ -3,6 +3,7 @@ import type { SocketData } from "../types.ts";
 type Session = Omit<SocketData, "sessionID">;
 abstract class SessionStore {
 	abstract findSession(id: string): Session | undefined;
+	abstract findSessionByUserId(userId: string): Session | undefined;
 	abstract saveSession(id: string, session: Session): void;
 	abstract findAllSessions(): Array<Session>;
 	abstract findAllBut(id: string): Array<Session>;
@@ -17,6 +18,15 @@ class InMemorySessionStore extends SessionStore {
 
 	findSession(id: string) {
 		return this.sessions.get(id);
+	}
+
+	findSessionByUserId(userId: string) {
+		for (const session of this.sessions.values()) {
+			if (session.userID === userId) {
+				return session;
+			}
+		}
+		return undefined;
 	}
 
 	saveSession(id: string, session: Session) {
@@ -34,4 +44,6 @@ class InMemorySessionStore extends SessionStore {
 	}
 }
 
-export { InMemorySessionStore };
+const sessionStore = new InMemorySessionStore();
+
+export { InMemorySessionStore, sessionStore };

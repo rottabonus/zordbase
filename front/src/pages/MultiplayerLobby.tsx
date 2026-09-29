@@ -101,11 +101,11 @@ export const MultiplayerLobby = () => {
 
 	const handleChallenge = (id: string) => {
 		console.log("challenge sent to ", id);
-		socket.emit("challenge:new", id);
+		socket.emit("challenge:new", id, name);
 	};
 
 	const handleChallengeAccept = (id: string) => {
-		socket.emit("challenge:accept", id);
+		socket.emit("challenge:accept", id, name);
 		setIncomingChallenge(null);
 	};
 

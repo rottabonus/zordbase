@@ -132,18 +132,17 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 			const isMyTurnNow = state.turn === myUserId;
 			setIsMyTurn(isMyTurnNow);
 
-			// Determine player labels: Player 1 is at row 0 (player1Id), Player 2 is at row 11
-			const player1Id = state.player1Id || state.players[0];
-			const isPlayer1 = myUserId === player1Id;
-			const myPlayerLabel = isPlayer1 ? "Player 1" : "Player 2";
-			const opponentPlayerLabel = isPlayer1 ? "Player 2" : "Player 1";
+			// Use actual usernames from server
+			const myUsername = state.playerNames[myUserId] || "You";
+			const opponentIdFound2 = state.players.find((p) => p !== myUserId) || "";
+			const opponentUsername =
+				state.playerNames[opponentIdFound2] || "Opponent";
 
 			// Set player name in Redux store for display
-			dispatch(allActions.baseActions.changePlayerName(myPlayerLabel));
+			dispatch(allActions.baseActions.changePlayerName(myUsername));
 
 			if (state.status === "finished" && state.winner) {
-				const winnerName =
-					state.winner === myUserId ? "You" : opponentPlayerLabel;
+				const winnerName = state.winner === myUserId ? "You" : opponentUsername;
 				dispatch(
 					allActions.messageActions.setMessage(
 						`Game over! ${winnerName} won!`,
@@ -157,7 +156,7 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 			dispatch(
 				allActions.boardActions.newGame(
 					false,
-					isMyTurnNow ? myPlayerLabel : opponentPlayerLabel,
+					isMyTurnNow ? myUsername : opponentUsername,
 					false,
 				),
 			);
@@ -167,7 +166,7 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 			const initialHistory = {
 				base: state.base,
 				selection: [],
-				turn: isMyTurnNow ? myPlayerLabel : opponentPlayerLabel,
+				turn: isMyTurnNow ? myUsername : opponentUsername,
 			} as const;
 			dispatch(
 				allActions.baseActions.createHistory(
@@ -219,17 +218,15 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 			const nextIsMyTurn = move.nextTurn === myUserId;
 			setIsMyTurn(nextIsMyTurn);
 
-			// Determine player labels
-			const player1Id =
-				gameStateRef.current?.player1Id || gameStateRef.current?.players[0];
-			const isPlayer1 = myUserId === player1Id;
-			const myPlayerLabel = isPlayer1 ? "Player 1" : "Player 2";
-			const opponentPlayerLabel = isPlayer1 ? "Player 2" : "Player 1";
+			// Use actual usernames from server
+			const myUsername = currentPlayerNames[myUserId] || "You";
+			const opponentIdFound = currentPlayers.find((p) => p !== myUserId) || "";
+			const opponentUsername =
+				currentPlayerNames[opponentIdFound] || "Opponent";
 
 			if (move.winner) {
 				setGameStatus("finished");
-				const winnerName =
-					move.winner === myUserId ? "You" : opponentPlayerLabel;
+				const winnerName = move.winner === myUserId ? "You" : opponentUsername;
 				dispatch(
 					allActions.messageActions.setMessage(
 						`Game over! ${winnerName} won with "${move.word}"!`,
@@ -249,7 +246,7 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 			);
 			dispatch(
 				allActions.boardActions.changeTurn(
-					nextIsMyTurn ? myPlayerLabel : opponentPlayerLabel,
+					nextIsMyTurn ? myUsername : opponentUsername,
 				),
 			);
 		});
@@ -258,13 +255,13 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 			console.log("Game ended", data);
 			setGameStatus("finished");
 
-			// Determine player labels
-			const player1Id =
-				gameStateRef.current?.player1Id || gameStateRef.current?.players[0];
-			const isPlayer1 = myUserId === player1Id;
-			const opponentPlayerLabel = isPlayer1 ? "Player 2" : "Player 1";
+			const currentPlayerNames = gameStateRef.current?.playerNames || {};
+			const opponentIdFound =
+				gameStateRef.current?.players.find((p) => p !== myUserId) || "";
+			const opponentUsername =
+				currentPlayerNames[opponentIdFound] || "Opponent";
 
-			const winnerName = data.winner === myUserId ? "You" : opponentPlayerLabel;
+			const winnerName = data.winner === myUserId ? "You" : opponentUsername;
 			let message = `Game over! ${winnerName} won!`;
 			if (data.reason === "disconnect") {
 				message = `Game over! ${winnerName} won by forfeit (opponent disconnected).`;
@@ -332,17 +329,22 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 			// Use server's board
 			dispatch(allActions.boardActions.createBoard(gameStateRef.current.board));
 
-			// Determine player labels
+			// Use actual usernames from server
+			const myUsername = gameStateRef.current.playerNames[myUserId] || "You";
+			const opponentIdFound =
+				gameStateRef.current.players.find((p) => p !== myUserId) || "";
+			const opponentUsername =
+				gameStateRef.current.playerNames[opponentIdFound] || "Opponent";
+
+			// Reset turn to player 1 (who starts at row 0)
 			const player1Id =
 				gameStateRef.current.player1Id || gameStateRef.current.players[0];
 			const isPlayer1 = myUserId === player1Id;
-			const myPlayerLabel = isPlayer1 ? "Player 1" : "Player 2";
-			const opponentPlayerLabel = isPlayer1 ? "Player 2" : "Player 1";
-
-			// Reset turn to player 1 (who starts at row 0)
-			const firstTurnLabel = isPlayer1 ? myPlayerLabel : opponentPlayerLabel;
-			dispatch(allActions.baseActions.changePlayerName(myPlayerLabel));
-			dispatch(allActions.boardActions.newGame(false, firstTurnLabel, false));
+			const firstTurnUsername = isPlayer1 ? myUsername : opponentUsername;
+			dispatch(allActions.baseActions.changePlayerName(myUsername));
+			dispatch(
+				allActions.boardActions.newGame(false, firstTurnUsername, false),
+			);
 		} else {
 			dispatch(allActions.baseActions.resetBase(stateHistory[1]?.base || []));
 		}
@@ -365,14 +367,16 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 		if (wordExist && !playedAgain.length) {
 			const history = [...base];
 
-			// Determine player labels for history
-			const player1Id =
-				gameStateRef.current?.player1Id || gameStateRef.current?.players[0];
-			const isPlayer1 = myUserId === player1Id;
-			const myPlayerLabel = isPlayer1 ? "Player 1" : "Player 2";
+			// Use actual usernames from server
+			const currentPlayerNames = gameStateRef.current?.playerNames || {};
+			const myUsername = currentPlayerNames[myUserId] || "You";
+			const opponentIdFound =
+				gameStateRef.current?.players.find((p) => p !== myUserId) || "";
+			const opponentUsername =
+				currentPlayerNames[opponentIdFound] || "Opponent";
 
 			dispatch(
-				allActions.baseActions.createHistory(history, selected, myPlayerLabel),
+				allActions.baseActions.createHistory(history, selected, myUsername),
 			);
 
 			const confirmedAndFiltered =
@@ -411,9 +415,8 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 			);
 
 			// Optimistically change turn; server will send game:move with correct state or game:end
-			const opponentPlayerLabel = isPlayer1 ? "Player 2" : "Player 1";
 			if (!checkGame) {
-				dispatch(allActions.boardActions.changeTurn(opponentPlayerLabel));
+				dispatch(allActions.boardActions.changeTurn(opponentUsername));
 			}
 			// If checkGame is true, we optimistically show win but wait for server confirmation
 		} else {

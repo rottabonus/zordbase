@@ -58,7 +58,8 @@ export const ChallengeModal = ({
 			>
 				<h3 style={{ margin: "0 0 16px 0" }}>New Challenge</h3>
 				<p style={{ margin: "0 0 24px 0" }}>
-					<strong>{challenge.from}</strong> has challenged you to a game!
+					<strong>{challenge.fromUsername}</strong> has challenged you to a
+					game!
 				</p>
 				<div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
 					<button

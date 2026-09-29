@@ -11,7 +11,7 @@ export type SocketServer = Server<
 >;
 export type User = { username: string; userID: string };
 
-type Challenge = { from: string; to: string };
+type Challenge = { from: string; to: string; fromUsername: string };
 export interface ServerToClientEvents {
 	"users:list": (users: Array<User>) => void;
 	"user:connected": (data: User) => void;
@@ -30,8 +30,8 @@ export interface ServerToClientEvents {
 
 export interface ClientToServerEvents {
 	"username:set": (username: string) => void;
-	"challenge:new": (challenged: string) => void;
-	"challenge:accept": (challenger: string) => void;
+	"challenge:new": (challenged: string, challengerUsername: string) => void;
+	"challenge:accept": (challenger: string, acceptorUsername: string) => void;
 	"game:move": (move: ClientGameMove) => void;
 	"game:join": (gameId: string) => void;
 }

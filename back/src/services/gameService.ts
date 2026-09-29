@@ -7,9 +7,7 @@ import type {
 	PlayedWordData,
 	SocketServer,
 } from "../types.ts";
-import { InMemorySessionStore } from "./sessionService.ts";
-
-const sessionStore = new InMemorySessionStore();
+import { sessionStore } from "./sessionService.ts";
 
 // In-memory game store
 interface GameRoom {
@@ -225,16 +223,21 @@ const service = (io: SocketServer) => {
 	io.on("connection", (socket) => {
 		const getUserId = () => socket.data.userID ?? "";
 
-		socket.on("challenge:new", (challengedID) => {
+		socket.on("challenge:new", (challengedID, challengerUsername) => {
 			const userId = getUserId();
 			if (!userId) return;
-			const challenge = { from: userId, to: challengedID };
+			const challenge = {
+				from: userId,
+				to: challengedID,
+				fromUsername: challengerUsername,
+			};
 			console.log("new challenge", challenge);
 			socket.to(challenge.to).emit("challenge:got", challenge);
 		});
 
-		socket.on("challenge:accept", (challengerID) => {
+		socket.on("challenge:accept", (challengerID, _acceptorUsername) => {
 			const userId = getUserId();
+			const acceptorUsername = socket.data.username ?? "";
 			if (!userId) return;
 			const challenge = { from: userId, to: challengerID };
 			console.log("game was accepted, now start with", challenge);
@@ -246,11 +249,10 @@ const service = (io: SocketServer) => {
 			// Challenger starts at row 11 (bottom), challenged at row 0 (top)
 			const base = createInitialBase(board, challenge.from, challenge.to);
 
-			// Get player names
-			const player1Name =
-				sessionStore.findSession(challenge.from)?.username || "Player 1";
-			const player2Name =
-				sessionStore.findSession(challenge.to)?.username || "Player 2";
+			// Get player names - acceptor is player1 (row 0), challenger is player2 (row 11)
+			const player1Name = acceptorUsername || "Player 1";
+			const challengerSession = sessionStore.findSessionByUserId(challengerID);
+			const player2Name = challengerSession?.username ?? "Player 2";
 
 			const gameRoom: GameRoom = {
 				id: gameId,

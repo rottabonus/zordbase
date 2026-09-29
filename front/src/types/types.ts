@@ -122,7 +122,7 @@ export interface GameStartData {
 }
 
 export type User = { username?: string; userID: string; connected: boolean };
-export type Challenge = { from: string; to: string };
+export type Challenge = { from: string; to: string; fromUsername: string };
 
 export interface LobbyServerToClientEvents {
 	"users:list": (users: Array<User>) => void;
@@ -137,6 +137,6 @@ export interface LobbyServerToClientEvents {
 export type Session = { userID: string; sessionID: string };
 
 export interface LobbyClientToServerEvents {
-	"challenge:new": (challenged: string) => void;
-	"challenge:accept": (challenger: string) => void;
+	"challenge:new": (challenged: string, challengerUsername: string) => void;
+	"challenge:accept": (challenger: string, acceptorUsername: string) => void;
 }
