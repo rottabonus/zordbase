@@ -18,15 +18,14 @@ import gameService from "../services/game";
 import { storageService } from "../services/storageService";
 import wordService from "../services/words";
 import type {
-    ClientToServerEvents,
+	ClientToServerEvents,
 	GameEndData,
 	GameMove,
 	GameState,
 	letterObject,
+	ServerToClientEvents,
 	selectionObject,
-    ServerToClientEvents,
 } from "../types/types";
-
 
 const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
 	"http://localhost:3000",
@@ -278,7 +277,7 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 		if (gameStateRef.current) {
 			const initialBase = gameStateRef.current.base;
 			dispatch(allActions.baseActions.resetBase(initialBase));
-			
+
 			// Use server's board
 			dispatch(allActions.boardActions.createBoard(gameStateRef.current.board));
 
@@ -391,9 +390,19 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 		const actualOwner = baseCell?.owner || "none";
 
 		// For validation, use actualOwner; for display in selection, use myUserId
-		const validationObj = { letter: letter, row: row, column: column, owner: actualOwner };
-		const displayObj = { letter: letter, row: row, column: column, owner: myUserId };
-		
+		const validationObj = {
+			letter: letter,
+			row: row,
+			column: column,
+			owner: actualOwner,
+		};
+		const displayObj = {
+			letter: letter,
+			row: row,
+			column: column,
+			owner: myUserId,
+		};
+
 		const selectionOnBase = base.filter(
 			(s) => s.owner === actualOwner && s.column === column && s.row === row,
 		);
@@ -408,7 +417,9 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 				);
 			if (result.possibleSelection) {
 				result.selectedBeforeIndex === -1
-					? dispatch(allActions.baseActions.updateSelection([...selected, displayObj]))
+					? dispatch(
+							allActions.baseActions.updateSelection([...selected, displayObj]),
+						)
 					: dispatch(
 							allActions.baseActions.removeFromSelection(
 								result.selectedBeforeIndex,

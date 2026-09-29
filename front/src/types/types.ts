@@ -112,5 +112,3 @@ export interface ClientToServerEvents {
 		word: string;
 	}) => void;
 }
-
-

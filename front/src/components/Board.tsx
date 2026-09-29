@@ -67,7 +67,9 @@ export const Board: React.FC<BoardProps> = (props) => {
 											cursor: styleValues.cursor,
 										}}
 										key={j}
-										onClick={() => props.selectLetter(cellId, i, j, actualOwner)}
+										onClick={() =>
+											props.selectLetter(cellId, i, j, actualOwner)
+										}
 									>
 										{cellId}
 									</td>
