@@ -11,10 +11,18 @@ export const ChallengeModal = ({
 }) => {
 	if (!challenge) return null;
 
+	const handleOverlayKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+		if (e.key === "Escape") {
+			onDecline();
+		}
+	};
+
 	return (
-		<div
+		<button
+			type="button"
 			className="modal-overlay"
 			onClick={onDecline}
+			onKeyDown={handleOverlayKeyDown}
 			style={{
 				position: "fixed",
 				top: 0,
@@ -26,11 +34,19 @@ export const ChallengeModal = ({
 				alignItems: "center",
 				justifyContent: "center",
 				zIndex: 1000,
+				border: "none",
+				padding: 0,
+				cursor: "pointer",
 			}}
 		>
 			<div
 				className="modal-content"
+				role="dialog"
+				aria-modal="true"
 				onClick={(e) => e.stopPropagation()}
+				onKeyDown={(e) => {
+					if (e.key === "Escape") onDecline();
+				}}
 				style={{
 					backgroundColor: "white",
 					padding: "24px",
@@ -46,6 +62,7 @@ export const ChallengeModal = ({
 				</p>
 				<div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
 					<button
+						type="button"
 						onClick={onDecline}
 						style={{
 							padding: "8px 24px",
@@ -59,6 +76,7 @@ export const ChallengeModal = ({
 						Decline
 					</button>
 					<button
+						type="button"
 						onClick={onAccept}
 						style={{
 							padding: "8px 24px",
@@ -73,6 +91,6 @@ export const ChallengeModal = ({
 					</button>
 				</div>
 			</div>
-		</div>
+		</button>
 	);
 };

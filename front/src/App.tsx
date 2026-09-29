@@ -5,8 +5,8 @@ import "./css/index.css";
 import { About } from "./pages/About";
 import { GameBoardPage } from "./pages/BoardPage";
 import { Howto } from "./pages/Howto";
-import { Multiplayer } from "./pages/Multiplayer";
 import { MultiplayerGameBoardPage } from "./pages/MultiplayerGameBoardPage";
+import { MultiplayerLobby } from "./pages/MultiplayerLobby";
 
 export const App: React.FC = () => {
 	return (
@@ -30,7 +30,7 @@ export const App: React.FC = () => {
 					<Route path="/" element={<GameBoardPage />} />
 					<Route path="/howto" element={<Howto />} />
 					<Route path="/about" element={<About />} />
-					<Route path="/multiplayer" element={<Multiplayer />} />
+					<Route path="/multiplayer" element={<MultiplayerLobby />} />
 					<Route path="/game/:gameId" element={<MultiplayerGameBoardPage />} />
 				</Routes>
 			</div>

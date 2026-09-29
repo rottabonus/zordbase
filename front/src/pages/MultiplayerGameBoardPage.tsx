@@ -18,16 +18,16 @@ import gameService from "../services/game";
 import { storageService } from "../services/storageService";
 import wordService from "../services/words";
 import type {
-	ClientToServerEvents,
+	GameClientToServerEvents,
 	GameEndData,
 	GameMove,
+	GameServerToClientEvents,
 	GameState,
 	letterObject,
-	ServerToClientEvents,
 	selectionObject,
 } from "../types/types";
 
-const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
+const socket: Socket<GameServerToClientEvents, GameClientToServerEvents> = io(
 	"http://localhost:3000",
 	{ autoConnect: false },
 );

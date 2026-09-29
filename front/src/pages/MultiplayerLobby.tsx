@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { io, type Socket } from "socket.io-client";
+import { ChallengeModal } from "../components/ChallengeModal";
 import { storageService } from "../services/storageService";
 import type {
 	Challenge,
@@ -9,13 +10,12 @@ import type {
 	Session,
 	User,
 } from "../types/types";
-import { ChallengeModal } from "../components/ChallengeModal";
 
 const socket: Socket<LobbyServerToClientEvents, LobbyClientToServerEvents> = io(
 	"http://localhost:3000",
 	{ autoConnect: false },
 );
-export const Multiplayer = () => {
+export const MultiplayerLobby = () => {
 	const navigate = useNavigate();
 	const [session, setSession] = React.useState<Session | null>(null);
 	const [isConnected, setIsConnected] = React.useState(false);
@@ -27,6 +27,15 @@ export const Multiplayer = () => {
 	const [incomingChallenge, setIncomingChallenge] =
 		React.useState<Challenge | null>(null);
 
+	const handleConnect = React.useCallback(
+		(sessionID?: string) => {
+			setError(null);
+			socket.auth = { username: name, ...(sessionID && { sessionID }) };
+			socket.connect();
+		},
+		[name],
+	);
+
 	React.useEffect(() => {
 		const session = storageService.getItem("session");
 		if (session) {
@@ -34,7 +43,7 @@ export const Multiplayer = () => {
 			console.log("found session!", parsed);
 			handleConnect(parsed.sessionID);
 		}
-	}, []);
+	}, [handleConnect]);
 
 	React.useEffect(() => {
 		socket.on("session:set", (session) => {
@@ -85,12 +94,6 @@ export const Multiplayer = () => {
 		};
 	}, [navigate]);
 
-	const handleConnect = (sessionID?: string) => {
-		setError(null);
-		socket.auth = { username: name, ...(sessionID && { sessionID }) };
-		socket.connect();
-	};
-
 	const handleDisconnect = () => {
 		setIsConnected(false);
 		socket.disconnect();
@@ -118,13 +121,18 @@ export const Multiplayer = () => {
 						{!session && (
 							<input value={name} onChange={(e) => setName(e.target.value)} />
 						)}
-						<button onClick={() => handleConnect(session?.sessionID)}>
+						<button
+							type="button"
+							onClick={() => handleConnect(session?.sessionID)}
+						>
 							connect
 						</button>
 					</>
 				) : (
 					<>
-						<button onClick={handleDisconnect}>disconnect</button>
+						<button type="button" onClick={handleDisconnect}>
+							disconnect
+						</button>
 						<h2>Users:</h2>
 						{users.map((user) => (
 							<div style={{ display: "flex", gap: "4px" }} key={user.userID}>
@@ -133,7 +141,10 @@ export const Multiplayer = () => {
 								{session?.userID === user.userID ? (
 									<div>(me)</div>
 								) : (
-									<button onClick={() => handleChallenge(user.userID)}>
+									<button
+										type="button"
+										onClick={() => handleChallenge(user.userID)}
+									>
 										challenge
 									</button>
 								)}
