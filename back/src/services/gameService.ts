@@ -1,4 +1,12 @@
-import type { SocketServer, GameStartData, GameState, GameMove, ClientGameMove, LetterData, PlayedWordData } from "../types.ts";
+import type {
+	SocketServer,
+	GameStartData,
+	GameState,
+	GameMove,
+	ClientGameMove,
+	LetterData,
+	PlayedWordData,
+} from "../types.ts";
 import { InMemorySessionStore } from "./sessionService.ts";
 
 const sessionStore = new InMemorySessionStore();
@@ -23,23 +31,33 @@ const gameRooms = new Map<string, GameRoom>();
 const generateGameId = () => Math.random().toString(36).slice(2, 10);
 
 const createGameBoard = (rows: number, columns: number): string[][] => {
-	const LETTERS = "aaaaaaaaaaaaiiiiiiiiiiittttttttttnnnnnnnnneeeeeeeesssssssslllllloooookkkkkuuuuuääääämmmmvvrrjjhhyyppdö".split("");
+	const LETTERS =
+		"aaaaaaaaaaaaiiiiiiiiiiittttttttttnnnnnnnnneeeeeeeesssssssslllllloooookkkkkuuuuuääääämmmmvvrrjjhhyyppdö".split(
+			"",
+		);
 	const toArray = (num: number) => Array.from(Array(num).keys());
-	const getRandomFrom = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)];
-	return toArray(rows).map(() => toArray(columns).map(() => getRandomFrom(LETTERS).toUpperCase()));
+	const getRandomFrom = (arr: string[]) =>
+		arr[Math.floor(Math.random() * arr.length)];
+	return toArray(rows).map(() =>
+		toArray(columns).map(() => getRandomFrom(LETTERS).toUpperCase()),
+	);
 };
 
-const createInitialBase = (board: string[][], player1: string, player2: string): LetterData[] => {
+const createInitialBase = (
+	board: string[][],
+	player1: string,
+	player2: string,
+): LetterData[] => {
 	const rows = board.length;
 	const cols = board[0].length;
 	const base: LetterData[] = [];
-	
+
 	for (let r = 0; r < rows; r++) {
 		for (let c = 0; c < cols; c++) {
 			let owner = "none";
 			if (r === 0) owner = player1;
 			else if (r === rows - 1) owner = player2;
-			
+
 			base.push({
 				letter: board[r][c],
 				row: r,
@@ -63,7 +81,7 @@ const validateWord = async (word: string): Promise<boolean> => {
 // Check if selection forms a valid path (adjacent letters)
 const isValidPath = (selection: LetterData[]): boolean => {
 	if (selection.length < 2) return false;
-	
+
 	for (let i = 1; i < selection.length; i++) {
 		const prev = selection[i - 1];
 		const curr = selection[i];
@@ -75,14 +93,22 @@ const isValidPath = (selection: LetterData[]): boolean => {
 };
 
 // Check if all selected letters belong to the current player or are neutral
-const isValidOwnership = (selection: LetterData[], playerId: string): boolean => {
-	return selection.every(s => s.owner === playerId || s.owner === "none");
+const isValidOwnership = (
+	selection: LetterData[],
+	playerId: string,
+): boolean => {
+	return selection.every((s) => s.owner === playerId || s.owner === "none");
 };
 
 // Check win condition - player reaches opposite side
-const checkWin = (base: LetterData[], playerId: string, boardRows: number, player1Id: string): boolean => {
+const checkWin = (
+	base: LetterData[],
+	playerId: string,
+	boardRows: number,
+	player1Id: string,
+): boolean => {
 	const targetRowForPlayer = playerId === player1Id ? boardRows - 1 : 0;
-	return base.some(b => b.owner === playerId && b.row === targetRowForPlayer);
+	return base.some((b) => b.owner === playerId && b.row === targetRowForPlayer);
 };
 
 // Update ownership and remove isolated nodes (adapted from frontend game.ts)
@@ -91,45 +117,51 @@ const updateOwnersAndRemoveIsolated = (
 	base: LetterData[],
 	board: string[][],
 	playerId: string,
-	player1Id: string
+	player1Id: string,
 ): LetterData[] => {
 	// First, update ownership of selected letters
-	const updated = base.map(o => {
-		const inSelection = newSelection.some(s => s.row === o.row && s.column === o.column);
+	const updated = base.map((o) => {
+		const inSelection = newSelection.some(
+			(s) => s.row === o.row && s.column === o.column,
+		);
 		if (inSelection) {
 			return { ...o, owner: playerId };
 		}
 		return o;
 	});
-	
+
 	// Remove isolated nodes (simplified version)
 	// Find all nodes owned by opponent that are not connected to their base
-	const opponentId = base.find(b => b.owner !== "none" && b.owner !== playerId)?.owner;
+	const opponentId = base.find(
+		(b) => b.owner !== "none" && b.owner !== playerId,
+	)?.owner;
 	if (!opponentId) return updated;
-	
+
 	// Build adjacency graph
 	const movements = generateMovements(board);
-	const opponentNodes = updated.filter(o => o.owner === opponentId);
-	
+	const opponentNodes = updated.filter((o) => o.owner === opponentId);
+
 	// Find opponent nodes connected to their starting edge
 	const opponentStartRow = opponentId === player1Id ? 0 : board.length - 1; // player1Id starts at row 0, player2Id starts at row board.length - 1;
 	const connectedOpponent = new Set<string>();
 	const queue: LetterData[] = [];
-	
-	opponentNodes.forEach(n => {
+
+	opponentNodes.forEach((n) => {
 		if (n.row === opponentStartRow) {
 			queue.push(n);
 			connectedOpponent.add(`${n.row},${n.column}`);
 		}
 	});
-	
+
 	while (queue.length > 0) {
 		const node = queue.shift()!;
 		const neighbors = movements[`${node.row},${node.column}`] || [];
-		neighbors.forEach(neighbor => {
+		neighbors.forEach((neighbor) => {
 			const key = `${neighbor.row},${neighbor.column}`;
 			if (!connectedOpponent.has(key)) {
-				const oppNode = opponentNodes.find(o => o.row === neighbor.row && o.column === neighbor.column);
+				const oppNode = opponentNodes.find(
+					(o) => o.row === neighbor.row && o.column === neighbor.column,
+				);
 				if (oppNode) {
 					connectedOpponent.add(key);
 					queue.push(oppNode);
@@ -137,10 +169,13 @@ const updateOwnersAndRemoveIsolated = (
 			}
 		});
 	}
-	
+
 	// Disconnect isolated opponent nodes
-	return updated.map(o => {
-		if (o.owner === opponentId && !connectedOpponent.has(`${o.row},${o.column}`)) {
+	return updated.map((o) => {
+		if (
+			o.owner === opponentId &&
+			!connectedOpponent.has(`${o.row},${o.column}`)
+		) {
 			return { ...o, owner: "none" };
 		}
 		return o;
@@ -151,7 +186,10 @@ const generateMovements = (board: string[][]) => {
 	const moves: Record<string, LetterData[]> = {};
 	board.forEach((row, r) => {
 		row.forEach((_, c) => {
-			moves[`${r},${c}`] = getNeighborsData({ letter: board[r][c], row: r, column: c, owner: "none" }, board);
+			moves[`${r},${c}`] = getNeighborsData(
+				{ letter: board[r][c], row: r, column: c, owner: "none" },
+				board,
+			);
 		});
 	});
 	return moves;
@@ -159,10 +197,16 @@ const generateMovements = (board: string[][]) => {
 
 const getNeighborsData = (node: LetterData, board: string[][]) => {
 	const possibleMoves: LetterData[] = [];
-	const possibleXpositions = [node.row, node.row + 1, node.row - 1].filter(x => x >= 0 && x < board.length);
-	const possibleYpositions = [node.column, node.column + 1, node.column - 1].filter(x => x >= 0 && x < board[0].length);
-	possibleXpositions.forEach(xPos => {
-		possibleYpositions.forEach(yPos => {
+	const possibleXpositions = [node.row, node.row + 1, node.row - 1].filter(
+		(x) => x >= 0 && x < board.length,
+	);
+	const possibleYpositions = [
+		node.column,
+		node.column + 1,
+		node.column - 1,
+	].filter((x) => x >= 0 && x < board[0].length);
+	possibleXpositions.forEach((xPos) => {
+		possibleYpositions.forEach((yPos) => {
 			if (!(xPos === node.row && yPos === node.column)) {
 				possibleMoves.push({
 					row: xPos,
@@ -187,18 +231,20 @@ const service = (io: SocketServer) => {
 		socket.on("challenge:accept", (challengerID) => {
 			const challenge = { from: socket.data.userID!, to: challengerID };
 			console.log("game was accepted, now start with", challenge);
-			
+
 			// Create game room
 			const gameId = generateGameId();
 			const board = createGameBoard(12, 10);
 			// challenge.from = challenged player (acceptor), challenge.to = challenger
 			// Challenger starts at row 11 (bottom), challenged at row 0 (top)
 			const base = createInitialBase(board, challenge.from, challenge.to);
-			
+
 			// Get player names
-			const player1Name = sessionStore.findSession(challenge.from)?.username || "Player 1";
-			const player2Name = sessionStore.findSession(challenge.to)?.username || "Player 2";
-			
+			const player1Name =
+				sessionStore.findSession(challenge.from)?.username || "Player 1";
+			const player2Name =
+				sessionStore.findSession(challenge.to)?.username || "Player 2";
+
 			const gameRoom: GameRoom = {
 				id: gameId,
 				players: [challenge.from, challenge.to],
@@ -214,14 +260,14 @@ const service = (io: SocketServer) => {
 				turnCount: 0,
 				player1Id: challenge.from, // Player 1 is at row 0 (challenged)
 			};
-			
+
 			gameRooms.set(gameId, gameRoom);
-			
+
 			// Join both players to game room
 			socket.join(gameId);
 			// Use io.in(userID).socketsJoin(room) to make the other player's socket join the game room
 			io.in(challenge.to).socketsJoin(gameId);
-			
+
 			// Notify both players
 			const startData: GameStartData = {
 				gameId,
@@ -230,9 +276,9 @@ const service = (io: SocketServer) => {
 				player2: challenge.to,
 				board,
 			};
-			
+
 			io.to(gameId).emit("game:start", startData);
-			
+
 			// Send initial game state
 			const gameState: GameState = {
 				gameId,
@@ -276,57 +322,82 @@ const service = (io: SocketServer) => {
 				socket.emit("game:error", "Game not found");
 				return;
 			}
-			
+
 			// Validate it's the player's turn
 			if (gameRoom.turn !== socket.data.userID) {
 				socket.emit("game:error", "Not your turn");
 				return;
 			}
-			
+
 			// Validate game is still playing
 			if (gameRoom.status !== "playing") {
 				socket.emit("game:error", "Game already finished");
 				return;
 			}
-			
+
 			// Validate selection path
 			if (!isValidPath(move.selection)) {
 				socket.emit("game:error", "Invalid path - letters must be adjacent");
 				return;
 			}
-			
+
 			// Validate ownership
 			if (!isValidOwnership(move.selection, socket.data.userID!)) {
-				socket.emit("game:error", "Can only select your own or neutral letters");
+				socket.emit(
+					"game:error",
+					"Can only select your own or neutral letters",
+				);
 				return;
 			}
-			
+
 			// Validate word
 			const wordValid = await validateWord(move.word);
 			if (!wordValid) {
 				socket.emit("game:error", "Invalid word");
 				return;
 			}
-			
+
 			// Check if word already played by this player
 			const alreadyPlayed = gameRoom.playedWords.some(
-				pw => pw.word === move.word && pw.owner === socket.data.userID
+				(pw) => pw.word === move.word && pw.owner === socket.data.userID,
 			);
 			if (alreadyPlayed) {
 				socket.emit("game:error", "Word already played");
 				return;
 			}
-			
+
 			// Apply move
-			const newBase = updateOwnersAndRemoveIsolated(move.selection, gameRoom.base, gameRoom.board, socket.data.userID!, gameRoom.player1Id);
-			const newPlayedWords = [...gameRoom.playedWords, { word: move.word, owner: socket.data.userID!, turn: gameRoom.turnCount }];
-			
+			const newBase = updateOwnersAndRemoveIsolated(
+				move.selection,
+				gameRoom.base,
+				gameRoom.board,
+				socket.data.userID!,
+				gameRoom.player1Id,
+			);
+			const newPlayedWords = [
+				...gameRoom.playedWords,
+				{
+					word: move.word,
+					owner: socket.data.userID!,
+					turn: gameRoom.turnCount,
+				},
+			];
+
 			// Check win
-			const winner = checkWin(newBase, socket.data.userID!, gameRoom.board.length, gameRoom.player1Id) ? socket.data.userID : undefined;
-			
+			const winner = checkWin(
+				newBase,
+				socket.data.userID!,
+				gameRoom.board.length,
+				gameRoom.player1Id,
+			)
+				? socket.data.userID
+				: undefined;
+
 			// Determine next turn
-			const nextTurn = winner ? "" : gameRoom.players.find(p => p !== socket.data.userID)!;
-			
+			const nextTurn = winner
+				? ""
+				: gameRoom.players.find((p) => p !== socket.data.userID)!;
+
 			// Update game room
 			gameRoom.base = newBase;
 			gameRoom.playedWords = newPlayedWords;
@@ -336,7 +407,7 @@ const service = (io: SocketServer) => {
 				gameRoom.status = "finished";
 				gameRoom.winner = winner;
 			}
-			
+
 			// Broadcast move to both players
 			const gameMove: GameMove = {
 				gameId: move.gameId,
@@ -349,7 +420,7 @@ const service = (io: SocketServer) => {
 				winner,
 			};
 			io.to(move.gameId).emit("game:move", gameMove);
-			
+
 			// If game ended, send end event
 			if (winner) {
 				const endData = {
@@ -360,13 +431,18 @@ const service = (io: SocketServer) => {
 				io.to(move.gameId).emit("game:end", endData);
 			}
 		});
-		
+
 		// Handle disconnect during game
 		socket.on("disconnect", async () => {
 			// Check if player was in an active game
 			for (const [gameId, gameRoom] of gameRooms.entries()) {
-				if (gameRoom.players.includes(socket.data.userID!) && gameRoom.status === "playing") {
-					const otherPlayer = gameRoom.players.find(p => p !== socket.data.userID);
+				if (
+					gameRoom.players.includes(socket.data.userID!) &&
+					gameRoom.status === "playing"
+				) {
+					const otherPlayer = gameRoom.players.find(
+						(p) => p !== socket.data.userID,
+					);
 					if (otherPlayer) {
 						gameRoom.status = "finished";
 						gameRoom.winner = otherPlayer;
