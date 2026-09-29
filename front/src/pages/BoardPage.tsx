@@ -249,19 +249,42 @@ export const GameBoardPage: React.FC = () => {
 		letter: string,
 		row: number,
 		column: number,
-		owner: string,
+		_owner: string,
 	) => {
-		const obj = { letter: letter, row: row, column: column, owner: owner };
+		const baseCell = base.find((b) => b.row === row && b.column === column);
+		const actualOwner = baseCell?.owner || "none";
+
+		// For validation, use actualOwner; for display in selection, use current player's turn
+		const validationObj = {
+			letter: letter,
+			row: row,
+			column: column,
+			owner: actualOwner,
+		};
+		const displayObj = {
+			letter: letter,
+			row: row,
+			column: column,
+			owner: turn, // Use current player's turn for display
+		};
+
 		const selectionOnBase = base.filter(
-			(s) =>
-				s.owner === obj.owner && s.column === obj.column && s.row === obj.row,
+			(s) => s.owner === actualOwner && s.column === column && s.row === row,
 		);
+
 		if (selectionOnBase.length || selected.length) {
 			const result: selectionObject =
-				gameService.checkIfLetterSelectionIsallowed(obj, board, selected, turn);
+				gameService.checkIfLetterSelectionIsallowed(
+					validationObj,
+					board,
+					selected,
+					turn,
+				);
 			if (result.possibleSelection) {
 				result.selectedBeforeIndex === -1
-					? dispatch(allActions.baseActions.updateSelection([...selected, obj]))
+					? dispatch(
+							allActions.baseActions.updateSelection([...selected, displayObj]),
+						)
 					: dispatch(
 							allActions.baseActions.removeFromSelection(
 								result.selectedBeforeIndex,
