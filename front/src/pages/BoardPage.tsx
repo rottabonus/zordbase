@@ -1,5 +1,5 @@
 import type React from "react";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import allActions from "../actions/allActions";
 import { Board } from "../components/Board";
@@ -33,39 +33,24 @@ export const GameBoardPage: React.FC = () => {
 	);
 	const dispatch = useDispatch();
 
-	const gameChange = () => {
+	const startNewGame = useCallback(() => {
+		dispatch(allActions.baseActions.removeSelectionAndPlayedWords([], []));
+		dispatch(allActions.boardActions.newGame(true, playerName, true));
+		if (messageType === "start") {
+			dispatch(allActions.messageActions.clearMessage());
+		}
+	}, [dispatch, messageType, playerName]);
+
+	const gameChange = useCallback(() => {
 		setTimeout(() => {
 			dispatch(
 				allActions.messageActions.setMessage(`winner is ${turn}`, "message"),
 			);
 			startNewGame();
 		}, 1500);
-	};
+	}, [dispatch, turn, startNewGame]);
 
-	const startNewGame = () => {
-		dispatch(allActions.baseActions.removeSelectionAndPlayedWords([], []));
-		dispatch(allActions.boardActions.newGame(true, playerName, true));
-		if (messageType === "start") {
-			dispatch(allActions.messageActions.clearMessage());
-		}
-	};
-
-	const checkBoard = async () => {
-		const positionsWithPossibleWords = base.filter(
-			(w) => w.possibleWords && w.possibleWords.length > 0,
-		);
-		const possibleWordsPercentage =
-			(100 * positionsWithPossibleWords.length) / base.length;
-		if (!Number.isNaN(possibleWordsPercentage)) {
-			if (possibleWordsPercentage < 74) {
-				initializeBase();
-			} else {
-				dispatch(allActions.boardActions.isLoading(false));
-			}
-		}
-	};
-
-	const initializeBase = async () => {
+	const initializeBase = useCallback(async () => {
 		const words = await wordService.fetchAll();
 		const objToSend = {
 			board,
@@ -79,7 +64,44 @@ export const GameBoardPage: React.FC = () => {
 		webWorker.onmessage = (event) => {
 			dispatch(allActions.baseActions.createBase(event.data));
 		};
-	};
+	}, [board, dispatch, playerName, webWorker]);
+
+	const checkBoard = useCallback(async () => {
+		const positionsWithPossibleWords = base.filter(
+			(w) => w.possibleWords && w.possibleWords.length > 0,
+		);
+		const possibleWordsPercentage =
+			(100 * positionsWithPossibleWords.length) / base.length;
+		if (!Number.isNaN(possibleWordsPercentage)) {
+			if (possibleWordsPercentage < 74) {
+				initializeBase();
+			} else {
+				dispatch(allActions.boardActions.isLoading(false));
+			}
+		}
+	}, [base, dispatch, initializeBase]);
+
+	const computerSelect = useCallback(
+		(selection: letterObject[]) => {
+			for (const [i, _s] of selection.entries()) {
+				const selectionArray = selection.filter((_s, j) => j <= i);
+				setTimeout(
+					() => {
+						dispatch(allActions.baseActions.updateSelection(selectionArray));
+					},
+					(i + 1) * 500,
+				);
+			}
+		},
+		[dispatch],
+	);
+
+	const backToPresent = useCallback(
+		(base: letterObject[]) => {
+			dispatch(allActions.baseActions.updateBase(base));
+		},
+		[dispatch],
+	);
 
 	const showResetModal = () => {
 		dispatch(
@@ -148,11 +170,11 @@ export const GameBoardPage: React.FC = () => {
 		}
 	};
 
-	const removeSelection = () => {
+	const removeSelection = useCallback(() => {
 		dispatch(allActions.baseActions.removeFromSelection(0));
-	};
+	}, [dispatch]);
 
-	const computersTurn = () => {
+	const computersTurn = useCallback(() => {
 		const history = [...base];
 		const computerSelected = gameService.getBestWord(base, turn, board.length);
 		const newSelectionConfirmed = computerSelected.map((s) => ({
@@ -210,7 +232,18 @@ export const GameBoardPage: React.FC = () => {
 			},
 			timeOutCounter * 500 + 700,
 		);
-	};
+	}, [
+		base,
+		turn,
+		board,
+		dispatch,
+		playerName,
+		stateHistory,
+		playedWords,
+		possibleWordPositions,
+		gameChange,
+		computerSelect,
+	]);
 
 	const selectLetter = async (
 		letter: string,
@@ -250,22 +283,6 @@ export const GameBoardPage: React.FC = () => {
 			},
 			timeOutCounter * 500 + 700,
 		);
-	};
-
-	const computerSelect = (selection: letterObject[]) => {
-		for (const [i, _s] of selection.entries()) {
-			const selectionArray = selection.filter((_s, j) => j <= i);
-			setTimeout(
-				() => {
-					dispatch(allActions.baseActions.updateSelection(selectionArray));
-				},
-				(i + 1) * 500,
-			);
-		}
-	};
-
-	const backToPresent = (base: letterObject[]) => {
-		dispatch(allActions.baseActions.updateBase(base));
 	};
 
 	useEffect(() => {

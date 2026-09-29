@@ -1,5 +1,5 @@
 import type React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { io, type Socket } from "socket.io-client";
@@ -18,16 +18,47 @@ import gameService from "../services/game";
 import { storageService } from "../services/storageService";
 import wordService from "../services/words";
 import type {
-	GameClientToServerEvents,
-	GameEndData,
-	GameMove,
-	GameServerToClientEvents,
 	GameState,
 	letterObject,
+	playedWord,
 	selectionObject,
 } from "../types/types";
 
-const socket: Socket<GameServerToClientEvents, GameClientToServerEvents> = io(
+interface GameMove {
+	gameId: string;
+	playerId: string;
+	selection: letterObject[];
+	word: string;
+	newBase: letterObject[];
+	playedWords: playedWord[];
+	nextTurn: string;
+	winner?: string;
+}
+
+interface GameEndData {
+	gameId: string;
+	winner: string;
+	reason: "win" | "forfeit" | "disconnect";
+}
+
+interface ServerToClientEvents {
+	"game:state": (state: GameState) => void;
+	"game:move": (move: GameMove) => void;
+	"game:turn": (turn: string) => void;
+	"game:end": (data: GameEndData) => void;
+	"game:error": (error: string) => void;
+}
+
+interface ClientToServerEvents {
+	"game:join": (gameId: string) => void;
+	"game:move": (move: {
+		gameId: string;
+		selection: letterObject[];
+		word: string;
+	}) => void;
+}
+
+const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
 	"http://localhost:3000",
 	{ autoConnect: false },
 );
@@ -53,9 +84,20 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 	const [gameStatus, setGameStatus] = useState<
 		"waiting" | "playing" | "finished"
 	>("waiting");
-	const [error, setError] = useState<string | null>(null);
+	const [error, _setError] = useState<string | null>(null);
 	const [isMyTurn, setIsMyTurn] = useState(false);
 	const gameStateRef = useRef<GameState | null>(null);
+
+	const initializeBaseFromServer = useCallback(
+		(serverBase: letterObject[]) => {
+			// For multiplayer, we don't need the worker (which calculates possibleWords for AI).
+			// Human players only need adjacency validation, which is done by checkIfLetterSelectionIsallowed.
+			// Just use the server's base directly which has correct ownership.
+			dispatch(allActions.baseActions.createBase(serverBase));
+			dispatch(allActions.boardActions.isLoading(false));
+		},
+		[dispatch],
+	);
 
 	// Initialize socket connection
 	useEffect(() => {
@@ -135,7 +177,8 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 				),
 			);
 
-			initializeBaseFromServer(state.base, state.board);
+			// Initialize base from server state
+			initializeBaseFromServer(state.base);
 		});
 
 		socket.on("game:move", (move: GameMove) => {
@@ -231,7 +274,7 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 
 		socket.on("game:error", (err: string) => {
 			console.error("Game error", err);
-			setError(err);
+			_setError(err);
 			dispatch(allActions.messageActions.setMessage(err, "message"));
 		});
 
@@ -241,18 +284,7 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 			socket.off("game:end");
 			socket.off("game:error");
 		};
-	}, [myUserId, opponentName, dispatch, playerName]);
-
-	const initializeBaseFromServer = async (
-		serverBase: letterObject[],
-		_serverBoard: string[][],
-	) => {
-		// For multiplayer, we don't need the worker (which calculates possibleWords for AI).
-		// Human players only need adjacency validation, which is done by checkIfLetterSelectionIsallowed.
-		// Just use the server's base directly which has correct ownership.
-		dispatch(allActions.baseActions.createBase(serverBase));
-		dispatch(allActions.boardActions.isLoading(false));
-	};
+	}, [myUserId, dispatch, initializeBaseFromServer]);
 
 	const startNewGame = () => {
 		dispatch(allActions.baseActions.removeSelectionAndPlayedWords([], []));
@@ -464,19 +496,28 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 		);
 	};
 
+	const _computerSelect = (selection: letterObject[]) => {
+		for (const [i, _s] of selection.entries()) {
+			const selectionArray = selection.filter((_s, j) => j <= i);
+			setTimeout(
+				() => {
+					dispatch(allActions.baseActions.updateSelection(selectionArray));
+				},
+				(i + 1) * 500,
+			);
+		}
+	};
+
 	const backToPresent = (base: letterObject[]) => {
 		dispatch(allActions.baseActions.updateBase(base));
 	};
 
 	useEffect(() => {
 		if (newGame && gameStateRef.current) {
-			initializeBaseFromServer(
-				gameStateRef.current.base,
-				gameStateRef.current.board,
-			);
+			initializeBaseFromServer(gameStateRef.current.base);
 		}
 		// No automatic computer turn - wait for server move events
-	}, [newGame]);
+	}, [newGame, initializeBaseFromServer]);
 
 	return (
 		<div className="page-container">
