@@ -1,7 +1,7 @@
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { io, type Socket } from "socket.io-client";
 import allActions from "../actions/allActions";
 import { Board } from "../components/Board";
@@ -18,45 +18,15 @@ import gameService from "../services/game";
 import { storageService } from "../services/storageService";
 import wordService from "../services/words";
 import type {
+    ClientToServerEvents,
+	GameEndData,
+	GameMove,
 	GameState,
 	letterObject,
-	playedWord,
 	selectionObject,
+    ServerToClientEvents,
 } from "../types/types";
 
-interface GameMove {
-	gameId: string;
-	playerId: string;
-	selection: letterObject[];
-	word: string;
-	newBase: letterObject[];
-	playedWords: playedWord[];
-	nextTurn: string;
-	winner?: string;
-}
-
-interface GameEndData {
-	gameId: string;
-	winner: string;
-	reason: "win" | "forfeit" | "disconnect";
-}
-
-interface ServerToClientEvents {
-	"game:state": (state: GameState) => void;
-	"game:move": (move: GameMove) => void;
-	"game:turn": (turn: string) => void;
-	"game:end": (data: GameEndData) => void;
-	"game:error": (error: string) => void;
-}
-
-interface ClientToServerEvents {
-	"game:join": (gameId: string) => void;
-	"game:move": (move: {
-		gameId: string;
-		selection: letterObject[];
-		word: string;
-	}) => void;
-}
 
 const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
 	"http://localhost:3000",
@@ -157,7 +127,7 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 				base: state.base,
 				selection: [],
 				turn: isMyTurnNow ? myPlayerLabel : opponentPlayerLabel,
-			};
+			} as const;
 			dispatch(
 				allActions.baseActions.createHistory(
 					initialHistory.base,
@@ -166,8 +136,6 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 				),
 			);
 
-			// Convert base to include possibleWords from worker
-			// For now, just use the base as-is and let worker calculate possibleWords
 			initializeBaseFromServer(state.base, state.board);
 		});
 
@@ -187,7 +155,6 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 				player1Id: previousPlayer1Id, // Preserve player1Id
 			};
 
-			const isMyMove = move.playerId === myUserId;
 			const nextIsMyTurn = move.nextTurn === myUserId;
 			setIsMyTurn(nextIsMyTurn);
 
@@ -415,7 +382,7 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 		letter: string,
 		row: number,
 		column: number,
-		owner: string,
+		_owner: string,
 	) => {
 		if (!isMyTurn || gameStatus !== "playing") return;
 
@@ -463,18 +430,6 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 			},
 			timeOutCounter * 500 + 700,
 		);
-	};
-
-	const computerSelect = (selection: letterObject[]) => {
-		for (const [i, _s] of selection.entries()) {
-			const selectionArray = selection.filter((_s, j) => j <= i);
-			setTimeout(
-				() => {
-					dispatch(allActions.baseActions.updateSelection(selectionArray));
-				},
-				(i + 1) * 500,
-			);
-		}
 	};
 
 	const backToPresent = (base: letterObject[]) => {

@@ -20,7 +20,6 @@ export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
 	const { isLoading } = useSelector(selectBoard);
 	const { opponentName, isMultiplayer, myUserId, opponentId } = props;
 
-	// For multiplayer, use userIDs for comparison; for single player, use "computer"
 	const myIdentifier = isMultiplayer && myUserId ? myUserId : "player";
 	const opponentIdentifier =
 		isMultiplayer && opponentId ? opponentId : "computer";
@@ -34,7 +33,7 @@ export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
 
 	const getWordStyle = (owner: string): PlayerWordStyle => {
 		return owner === opponentIdentifier
-			? { color: "#f4a261", textAlign: "right" } // Opponent color (orange)
+			? { color: "khaki", textAlign: "right" }
 			: { color: "#87b6b8", textAlign: "left" }; // My color (blue)
 	};
 
@@ -53,7 +52,7 @@ export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
 			<BalanceOfPower
 				playerPercentage={percentageDifference}
 				playerName={playerName}
-				opponentName={opponentIdentifier}
+				opponentName={opponentName}
 			/>
 			<div className="wordListWords">
 				{played.map((w, i) => {

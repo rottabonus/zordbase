@@ -22,7 +22,6 @@ export const Board: React.FC<BoardProps> = (props) => {
 	const getLetterStyle = (r: number, c: number): LetterStyle => {
 		const found = selected.filter((a) => a.row === r && a.column === c);
 		const isSelected = found.length === 0 ? "none" : "selectedLetter";
-		// Check if it's computer's turn (single player) or opponent's turn (multiplayer)
 		const isComputerTurn = turn === "computer";
 		const cursorStyle = isComputerTurn ? "progress" : "pointer";
 		const selectedWithOwner = selected.map((s) => ({
@@ -35,12 +34,10 @@ export const Board: React.FC<BoardProps> = (props) => {
 		const ownerArr = allSelected.filter((a) => a.row === r && a.column === c);
 		const owner = ownerArr.length === 0 ? "none" : ownerArr[0].owner;
 		let backgroundColor = "transparent";
-		if (owner === "computer") {
+		if (owner === props.myUserId) {
+			backgroundColor = "#87b6b8";
+		} else if (owner === props.opponentId || owner === "computer") {
 			backgroundColor = "khaki";
-		} else if (owner === props.myUserId) {
-			backgroundColor = "#87b6b8"; // Current player - blue
-		} else if (owner === props.opponentId) {
-			backgroundColor = "#f4a261"; // Opponent - orange/sand
 		}
 		return {
 			class: isSelected,

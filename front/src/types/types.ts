@@ -78,3 +78,39 @@ export interface GameState {
 	winner?: string;
 	player1Id: string;
 }
+
+export interface GameMove {
+	gameId: string;
+	playerId: string;
+	selection: letterObject[];
+	word: string;
+	newBase: letterObject[];
+	playedWords: playedWord[];
+	nextTurn: string;
+	winner?: string;
+}
+
+export interface GameEndData {
+	gameId: string;
+	winner: string;
+	reason: "win" | "forfeit" | "disconnect";
+}
+
+export interface ServerToClientEvents {
+	"game:state": (state: GameState) => void;
+	"game:move": (move: GameMove) => void;
+	"game:turn": (turn: string) => void;
+	"game:end": (data: GameEndData) => void;
+	"game:error": (error: string) => void;
+}
+
+export interface ClientToServerEvents {
+	"game:join": (gameId: string) => void;
+	"game:move": (move: {
+		gameId: string;
+		selection: letterObject[];
+		word: string;
+	}) => void;
+}
+
+
