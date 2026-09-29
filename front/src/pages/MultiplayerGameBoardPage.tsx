@@ -145,14 +145,33 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 				gameStateRef.current?.player1Id ||
 				gameStateRef.current?.players[0] ||
 				"";
-			gameStateRef.current = {
-				...gameStateRef.current!,
-				...move,
-				base: move.newBase,
-				playedWords: move.playedWords,
-				turn: move.nextTurn,
-				player1Id: previousPlayer1Id, // Preserve player1Id
-			};
+			// Extract values before conditional to avoid TypeScript narrowing
+			const currentBoard = gameStateRef.current?.board || [];
+			const currentPlayers = gameStateRef.current?.players || ["", ""];
+			const currentPlayerNames = gameStateRef.current?.playerNames || {};
+			
+			if (gameStateRef.current) {
+				gameStateRef.current = {
+					...gameStateRef.current,
+					...move,
+					base: move.newBase,
+					playedWords: move.playedWords,
+					turn: move.nextTurn,
+					player1Id: previousPlayer1Id, // Preserve player1Id
+				};
+			} else {
+				gameStateRef.current = {
+					gameId: move.gameId,
+					board: currentBoard,
+					base: move.newBase,
+					turn: move.nextTurn,
+					playedWords: move.playedWords,
+					players: currentPlayers,
+					playerNames: currentPlayerNames,
+					status: "playing" as const,
+					player1Id: previousPlayer1Id,
+				};
+			}
 
 			const nextIsMyTurn = move.nextTurn === myUserId;
 			setIsMyTurn(nextIsMyTurn);
@@ -339,11 +358,13 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 			);
 
 			// Send move to server
-			socket.emit("game:move", {
-				gameId: gameId!,
-				selection: selected,
-				word: newWord,
-			});
+			if (gameId) {
+				socket.emit("game:move", {
+					gameId,
+					selection: selected,
+					word: newWord,
+				});
+			}
 
 			// Optimistic update - always change turn, server will confirm or end game
 			dispatch(

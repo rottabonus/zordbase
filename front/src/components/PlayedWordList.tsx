@@ -1,5 +1,5 @@
 import type React from "react";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { useWindowSize } from "../hooks/windowSize";
 import { selectBase } from "../reducers/baseReducer";
@@ -37,15 +37,15 @@ export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
 			: { color: "#87b6b8", textAlign: "left" }; // My color (blue)
 	};
 
-	const scrollToBottom = () => {
+	const scrollToBottom = useCallback(() => {
 		if (size.width > 550 && messagesEndRef.current) {
 			messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
 		}
-	};
+	}, [size.width]);
 
 	useEffect(() => {
 		scrollToBottom();
-	}, [played]);
+	}, [scrollToBottom]);
 
 	return (
 		<div className="wordListContainer">
@@ -55,21 +55,33 @@ export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
 				opponentName={opponentName}
 			/>
 			<div className="wordListWords">
-				{played.map((w, i) => {
+				{played.map((w, wordIndex) => {
 					const styleValues = getWordStyle(w.owner);
+					const handleClick = () => props.timeTravel(w.turn);
+					const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+						if (e.key === "Enter" || e.key === " ") {
+							e.preventDefault();
+							handleClick();
+						}
+					};
 					return (
-						<span
-							key={i}
-							onClick={() => props.timeTravel(w.turn)}
+						<button
+							// biome-ignore lint/suspicious/noArrayIndexKey: wordIndex is stable for played words list
+							key={wordIndex}
+							type="button"
+							onClick={handleClick}
+							onKeyDown={handleKeyDown}
 							style={{
 								color: styleValues.color,
 								textAlign: styleValues.textAlign,
-								cursor: "pointer",
 								padding: "4px",
+								background: "transparent",
+								border: "none",
+								cursor: "pointer",
 							}}
 						>
 							{w.word}
-						</span>
+						</button>
 					);
 				})}
 				<div ref={messagesEndRef} />

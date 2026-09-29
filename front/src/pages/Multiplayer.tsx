@@ -92,20 +92,20 @@ interface GameStartData {
 }
 
 interface ServerToClientEvents {
-	["users:list"]: (users: Array<User>) => void;
-	["user:connected"]: (data: User) => void;
-	["user:disconnected"]: (id: string) => void;
-	["session:set"]: (data: Session) => void;
+	"users:list": (users: Array<User>) => void;
+	"user:connected": (data: User) => void;
+	"user:disconnected": (id: string) => void;
+	"session:set": (data: Session) => void;
 
-	["challenge:got"]: (challenge: Challenge) => void;
-	["game:start"]: (data: GameStartData) => void;
+	"challenge:got": (challenge: Challenge) => void;
+	"game:start": (data: GameStartData) => void;
 }
 
 type Session = { userID: string; sessionID: string };
 
 interface ClientToServerEvents {
-	["challenge:new"]: (challenged: string) => void;
-	["challenge:accept"]: (challenger: string) => void;
+	"challenge:new": (challenged: string) => void;
+	"challenge:accept": (challenger: string) => void;
 }
 
 const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
@@ -242,7 +242,9 @@ export const Multiplayer = () => {
 			</div>
 			<ChallengeModal
 				challenge={incomingChallenge}
-				onAccept={() => handleChallengeAccept(incomingChallenge!.from)}
+				onAccept={() =>
+					incomingChallenge && handleChallengeAccept(incomingChallenge.from)
+				}
 				onDecline={handleChallengeDecline}
 			/>
 		</div>

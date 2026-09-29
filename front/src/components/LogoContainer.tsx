@@ -5,7 +5,7 @@ export const LogoContainer: React.FC = () => {
 	return (
 		<div className="dog-container">
 			<span>
-				<img className="dog-image" src={logo} />
+				<img className="dog-image" src={logo} alt="Game logo" />
 			</span>
 		</div>
 	);

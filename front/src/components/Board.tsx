@@ -50,15 +50,27 @@ export const Board: React.FC<BoardProps> = (props) => {
 		<div>
 			<table>
 				<tbody>
-					{board.map((row, i) => (
-						<tr key={i}>
-							{row.map((cellId, j) => {
-								const styleValues = getLetterStyle(i, j);
+					{board.map((row, rowIdx) => (
+						// biome-ignore lint/suspicious/noArrayIndexKey: rowIdx/colIdx are stable board coordinates
+						<tr key={`r${rowIdx}`}>
+							{row.map((cellId, colIdx) => {
+								const styleValues = getLetterStyle(rowIdx, colIdx);
 								// Find actual owner from base
 								const baseCell = base.find(
-									(b) => b.row === i && b.column === j,
+									(b) => b.row === rowIdx && b.column === colIdx,
 								);
 								const actualOwner = baseCell?.owner || "none";
+								const cellKey = `c${rowIdx}-${colIdx}`;
+								const handleClick = () =>
+									props.selectLetter(cellId, rowIdx, colIdx, actualOwner);
+								const handleKeyDown = (
+									e: React.KeyboardEvent<HTMLButtonElement>,
+								) => {
+									if (e.key === "Enter" || e.key === " ") {
+										e.preventDefault();
+										handleClick();
+									}
+								};
 								return (
 									<td
 										className={styleValues.class}
@@ -66,12 +78,24 @@ export const Board: React.FC<BoardProps> = (props) => {
 											backgroundColor: styleValues.backgroundColor,
 											cursor: styleValues.cursor,
 										}}
-										key={j}
-										onClick={() =>
-											props.selectLetter(cellId, i, j, actualOwner)
-										}
+										key={cellKey}
 									>
-										{cellId}
+										<button
+											type="button"
+											onClick={handleClick}
+											onKeyDown={handleKeyDown}
+											aria-label={`${cellId} at row ${rowIdx + 1}, column ${colIdx + 1}`}
+											style={{
+												background: "transparent",
+												border: "none",
+												padding: "0",
+												width: "100%",
+												height: "100%",
+												cursor: "inherit",
+											}}
+										>
+											{cellId}
+										</button>
 									</td>
 								);
 							})}

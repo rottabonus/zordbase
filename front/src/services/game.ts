@@ -144,7 +144,7 @@ const getBestWord = (base: letterObject[], turn: string, max: number) => {
 	const letterValueArray = [0, 0, 0, 0, 0]; //word length,letters touching opponents base,letters touching own base,letters touching goal 5 higher than starting pos
 	let greatestWordValue = 0;
 	let selection: letterObject[] = [];
-	for (const [i, letter] of computerBase.entries()) {
+	for (const [_i, letter] of computerBase.entries()) {
 		if (letter.possibleWords && letter.possibleWords.length > 0) {
 			for (const [j, possibleWord] of letter.possibleWords.entries()) {
 				letterValueArray[0] = possibleWord.length; //word length
@@ -200,7 +200,7 @@ const checkIfLetterSelectionIsallowed = (
 	turn: string,
 ) => {
 	const selectedAgainIndex = selected.findIndex(
-		(l) => l.row == letter.row && l.column == letter.column,
+		(l) => l.row === letter.row && l.column === letter.column,
 	);
 	if (!selected.length) {
 		return letter.owner === turn

@@ -277,7 +277,15 @@ export const GameBoardPage: React.FC = () => {
 		} else if (turn === "computer" && !newGame) {
 			computersTurn();
 		}
-	}, [turn, newGame, possibleWordPositions]);
+	}, [
+		turn,
+		newGame,
+		checkBoard,
+		dispatch,
+		initializeBase,
+		computersTurn,
+		isLoading,
+	]);
 
 	return (
 		<div className="page-container">
