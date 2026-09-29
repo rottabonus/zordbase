@@ -96,7 +96,7 @@ export interface GameEndData {
 	reason: "win" | "forfeit" | "disconnect";
 }
 
-export interface ServerToClientEvents {
+export interface GameServerToClientEvents {
 	"game:state": (state: GameState) => void;
 	"game:move": (move: GameMove) => void;
 	"game:turn": (turn: string) => void;
@@ -104,11 +104,39 @@ export interface ServerToClientEvents {
 	"game:error": (error: string) => void;
 }
 
-export interface ClientToServerEvents {
+export interface GameClientToServerEvents {
 	"game:join": (gameId: string) => void;
 	"game:move": (move: {
 		gameId: string;
 		selection: letterObject[];
 		word: string;
 	}) => void;
+}
+
+export interface GameStartData {
+	gameId: string;
+	players: [string, string];
+	player1: string;
+	player2: string;
+	board: string[][];
+}
+
+export type User = { username?: string; userID: string; connected: boolean };
+export type Challenge = { from: string; to: string };
+
+export interface LobbyServerToClientEvents {
+	"users:list": (users: Array<User>) => void;
+	"user:connected": (data: User) => void;
+	"user:disconnected": (id: string) => void;
+	"session:set": (data: Session) => void;
+
+	"challenge:got": (challenge: Challenge) => void;
+	"game:start": (data: GameStartData) => void;
+}
+
+export type Session = { userID: string; sessionID: string };
+
+export interface LobbyClientToServerEvents {
+	"challenge:new": (challenged: string) => void;
+	"challenge:accept": (challenger: string) => void;
 }

@@ -149,7 +149,7 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 			const currentBoard = gameStateRef.current?.board || [];
 			const currentPlayers = gameStateRef.current?.players || ["", ""];
 			const currentPlayerNames = gameStateRef.current?.playerNames || {};
-			
+
 			if (gameStateRef.current) {
 				gameStateRef.current = {
 					...gameStateRef.current,
