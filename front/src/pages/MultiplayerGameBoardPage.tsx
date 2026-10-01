@@ -1,5 +1,5 @@
 import type React from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { io, type Socket } from "socket.io-client";
@@ -14,6 +14,7 @@ import { PlayedWordList } from "../components/PlayedWordList";
 import { selectBase } from "../reducers/baseReducer";
 import { selectBoard } from "../reducers/boardReducer";
 import { selectMessage } from "../reducers/messageReducer";
+import { selectMultiplayer } from "../reducers/multiplayerReducer";
 import gameService from "../services/game";
 import { storageService } from "../services/storageService";
 import wordService from "../services/words";
@@ -76,6 +77,7 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 		stateHistory,
 	} = useSelector(selectBase);
 	const { type: messageType } = useSelector(selectMessage);
+	const { gameState, isConnected, error: multiplayerError } = useSelector(selectMultiplayer);
 
 	const [myUserId, setMyUserId] = useState<string>("");
 	const [_myUsername, setMyUsername] = useState<string>("");
@@ -86,7 +88,6 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 	>("waiting");
 	const [error, _setError] = useState<string | null>(null);
 	const [isMyTurn, setIsMyTurn] = useState(false);
-	const gameStateRef = useRef<GameState | null>(null);
 
 	const initializeBaseFromServer = useCallback(
 		(serverBase: letterObject[]) => {
@@ -123,7 +124,9 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 	useEffect(() => {
 		socket.on("game:state", (state: GameState) => {
 			console.log("Received game state", state);
-			gameStateRef.current = state;
+			dispatch(allActions.multiplayerActions.setGameState(state));
+			dispatch(allActions.multiplayerActions.setConnected(true));
+
 			const opponentIdFound = state.players.find((p) => p !== myUserId) || "";
 			setOpponentId(opponentIdFound);
 			setOpponentName(state.playerNames[opponentIdFound] || "Opponent");
@@ -182,44 +185,23 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 
 		socket.on("game:move", (move: GameMove) => {
 			console.log("Received game move", move);
-			// Preserve player1Id from previous state
-			const previousPlayer1Id: string =
-				gameStateRef.current?.player1Id ||
-				gameStateRef.current?.players[0] ||
-				"";
-			// Extract values before conditional to avoid TypeScript narrowing
-			const currentBoard = gameStateRef.current?.board || [];
-			const currentPlayers = gameStateRef.current?.players || ["", ""];
-			const currentPlayerNames = gameStateRef.current?.playerNames || {};
-
-			if (gameStateRef.current) {
-				gameStateRef.current = {
-					...gameStateRef.current,
-					...move,
+			// Update game state in Redux
+			dispatch(
+				allActions.multiplayerActions.updateGameState({
 					base: move.newBase,
 					playedWords: move.playedWords,
 					turn: move.nextTurn,
-					player1Id: previousPlayer1Id, // Preserve player1Id
-				};
-			} else {
-				gameStateRef.current = {
-					gameId: move.gameId,
-					board: currentBoard,
-					base: move.newBase,
-					turn: move.nextTurn,
-					playedWords: move.playedWords,
-					players: currentPlayers,
-					playerNames: currentPlayerNames,
-					status: "playing" as const,
-					player1Id: previousPlayer1Id,
-				};
-			}
+					winner: move.winner,
+				}),
+			);
 
 			const nextIsMyTurn = move.nextTurn === myUserId;
 			setIsMyTurn(nextIsMyTurn);
 
-			// Use actual usernames from server
+			// Use actual usernames from server (from current Redux state)
+			const currentPlayerNames = gameState?.playerNames || {};
 			const myUsername = currentPlayerNames[myUserId] || "You";
+			const currentPlayers = gameState?.players || ["", ""];
 			const opponentIdFound = currentPlayers.find((p) => p !== myUserId) || "";
 			const opponentUsername =
 				currentPlayerNames[opponentIdFound] || "Opponent";
@@ -255,9 +237,17 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 			console.log("Game ended", data);
 			setGameStatus("finished");
 
-			const currentPlayerNames = gameStateRef.current?.playerNames || {};
+			dispatch(
+				allActions.multiplayerActions.updateGameState({
+					status: "finished",
+					winner: data.winner,
+				}),
+			);
+
+			const currentPlayerNames = gameState?.playerNames || {};
+			const currentPlayers = gameState?.players || ["", ""];
 			const opponentIdFound =
-				gameStateRef.current?.players.find((p) => p !== myUserId) || "";
+				currentPlayers.find((p) => p !== myUserId) || "";
 			const opponentUsername =
 				currentPlayerNames[opponentIdFound] || "Opponent";
 
@@ -272,6 +262,7 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 		socket.on("game:error", (err: string) => {
 			console.error("Game error", err);
 			_setError(err);
+			dispatch(allActions.multiplayerActions.setError(err));
 			dispatch(allActions.messageActions.setMessage(err, "message"));
 		});
 
@@ -281,20 +272,19 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 			socket.off("game:end");
 			socket.off("game:error");
 		};
-	}, [myUserId, dispatch, initializeBaseFromServer]);
+	}, [myUserId, dispatch, initializeBaseFromServer, gameState]);
 
 	const startNewGame = () => {
 		dispatch(allActions.baseActions.removeSelectionAndPlayedWords([], []));
 
 		// Determine player labels
-		const player1Id =
-			gameStateRef.current?.player1Id || gameStateRef.current?.players[0];
+		const player1Id = gameState?.player1Id || gameState?.players[0];
 		const isPlayer1 = myUserId === player1Id;
 		const myPlayerLabel = isPlayer1 ? "Player 1" : "Player 2";
 
 		// Use server's board for new game
-		if (gameStateRef.current) {
-			dispatch(allActions.boardActions.createBoard(gameStateRef.current.board));
+		if (gameState) {
+			dispatch(allActions.boardActions.createBoard(gameState.board));
 		}
 		dispatch(allActions.boardActions.newGame(true, myPlayerLabel, true));
 		if (messageType === "start") {
@@ -322,23 +312,22 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 
 	const resetGame = () => {
 		// For multiplayer, reset to initial base from server
-		if (gameStateRef.current) {
-			const initialBase = gameStateRef.current.base;
+		if (gameState) {
+			const initialBase = gameState.base;
 			dispatch(allActions.baseActions.resetBase(initialBase));
 
 			// Use server's board
-			dispatch(allActions.boardActions.createBoard(gameStateRef.current.board));
+			dispatch(allActions.boardActions.createBoard(gameState.board));
 
 			// Use actual usernames from server
-			const myUsername = gameStateRef.current.playerNames[myUserId] || "You";
+			const myUsername = gameState.playerNames[myUserId] || "You";
 			const opponentIdFound =
-				gameStateRef.current.players.find((p) => p !== myUserId) || "";
+				gameState.players.find((p) => p !== myUserId) || "";
 			const opponentUsername =
-				gameStateRef.current.playerNames[opponentIdFound] || "Opponent";
+				gameState.playerNames[opponentIdFound] || "Opponent";
 
 			// Reset turn to player 1 (who starts at row 0)
-			const player1Id =
-				gameStateRef.current.player1Id || gameStateRef.current.players[0];
+			const player1Id = gameState.player1Id || gameState.players[0];
 			const isPlayer1 = myUserId === player1Id;
 			const firstTurnUsername = isPlayer1 ? myUsername : opponentUsername;
 			dispatch(allActions.baseActions.changePlayerName(myUsername));
@@ -368,10 +357,10 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 			const history = [...base];
 
 			// Use actual usernames from server
-			const currentPlayerNames = gameStateRef.current?.playerNames || {};
+			const currentPlayerNames = gameState?.playerNames || {};
 			const myUsername = currentPlayerNames[myUserId] || "You";
 			const opponentIdFound =
-				gameStateRef.current?.players.find((p) => p !== myUserId) || "";
+				gameState?.players.find((p) => p !== myUserId) || "";
 			const opponentUsername =
 				currentPlayerNames[opponentIdFound] || "Opponent";
 
@@ -390,7 +379,7 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 				selected,
 				myUserId,
 				board.length,
-				gameStateRef.current?.players[0] || myUserId,
+				gameState?.players[0] || myUserId,
 			);
 
 			// Send move to server
@@ -516,11 +505,11 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 	};
 
 	useEffect(() => {
-		if (newGame && gameStateRef.current) {
-			initializeBaseFromServer(gameStateRef.current.base);
+		if (newGame && gameState) {
+			initializeBaseFromServer(gameState.base);
 		}
 		// No automatic computer turn - wait for server move events
-	}, [newGame, initializeBaseFromServer]);
+	}, [newGame, initializeBaseFromServer, gameState]);
 
 	return (
 		<div className="page-container">
@@ -548,7 +537,9 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 						removeSelection={removeSelection}
 						disabled={!isMyTurn || gameStatus !== "playing"}
 					/>
-					{error && <div className="error-message">{error}</div>}
+					{(error || multiplayerError) && (
+						<div className="error-message">{error || multiplayerError}</div>
+					)}
 				</div>
 				<div className="wordlist-and-info-container">
 					<PlayedWordList
