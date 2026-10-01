@@ -66,19 +66,6 @@ export type ButtonVisibility = {
 	cursor: "pointer" | "auto";
 };
 
-export interface GameState {
-	gameId: string;
-	board: string[][];
-	base: letterObject[];
-	turn: string;
-	playedWords: playedWord[];
-	players: [string, string];
-	playerNames: Record<string, string>;
-	status: "waiting" | "playing" | "finished";
-	winner?: string;
-	player1Id: string;
-}
-
 export interface GameMove {
 	gameId: string;
 	playerId: string;
@@ -111,6 +98,19 @@ export interface GameClientToServerEvents {
 		selection: letterObject[];
 		word: string;
 	}) => void;
+}
+
+export interface GameState {
+	gameId: string;
+	board: string[][];
+	base: letterObject[];
+	turn: string;
+	playedWords: playedWord[];
+	players: [string, string];
+	playerNames: Record<string, string>;
+	status: "waiting" | "playing" | "finished";
+	winner?: string;
+	player1Id: string;
 }
 
 export interface GameStartData {
