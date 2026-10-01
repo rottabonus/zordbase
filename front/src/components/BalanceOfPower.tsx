@@ -3,6 +3,7 @@ import type React from "react";
 interface BalanceOfPowerProps {
 	playerPercentage: number;
 	playerName: string;
+	opponentName?: string;
 }
 
 export const BalanceOfPower: React.FC<BalanceOfPowerProps> = (props) => {
@@ -13,11 +14,13 @@ export const BalanceOfPower: React.FC<BalanceOfPowerProps> = (props) => {
 		borderRadius: "inherit",
 	};
 
+	const opponentName = props.opponentName || "computer";
+
 	return (
 		<div className="balanceBar">
 			<div style={fillerStyles}>
 				<span className="playerLabel">{props.playerName}</span>
-				<span className="comLabel">computer</span>
+				<span className="comLabel">{opponentName}</span>
 			</div>
 		</div>
 	);

@@ -125,13 +125,26 @@ const checkIfWin = (selections: letterObject[], turn: string, max: number) => {
 	return win.length > 0;
 };
 
+const checkIfWinMultiplayer = (
+	selections: letterObject[],
+	playerId: string,
+	max: number,
+	player1Id: string,
+) => {
+	// player1 starts at row 0, wins at row max-1
+	// player2 starts at row max-1, wins at row 0
+	const targetRow = playerId === player1Id ? max - 1 : 0;
+	const win = selections.filter((sel) => sel.row === targetRow);
+	return win.length > 0;
+};
+
 const getBestWord = (base: letterObject[], turn: string, max: number) => {
 	const computerBase = base.filter((s) => s.owner === turn);
 	const opponentBase = base.filter((s) => s.owner !== turn);
 	const letterValueArray = [0, 0, 0, 0, 0]; //word length,letters touching opponents base,letters touching own base,letters touching goal 5 higher than starting pos
 	let greatestWordValue = 0;
 	let selection: letterObject[] = [];
-	for (const [i, letter] of computerBase.entries()) {
+	for (const [_i, letter] of computerBase.entries()) {
 		if (letter.possibleWords && letter.possibleWords.length > 0) {
 			for (const [j, possibleWord] of letter.possibleWords.entries()) {
 				letterValueArray[0] = possibleWord.length; //word length
@@ -187,7 +200,7 @@ const checkIfLetterSelectionIsallowed = (
 	turn: string,
 ) => {
 	const selectedAgainIndex = selected.findIndex(
-		(l) => l.row == letter.row && l.column == letter.column,
+		(l) => l.row === letter.row && l.column === letter.column,
 	);
 	if (!selected.length) {
 		return letter.owner === turn
@@ -257,6 +270,7 @@ export default {
 	checkIfLetterSelectionIsallowed,
 	updateOwnersAndRemoveIsolatedNodes,
 	checkIfWin,
+	checkIfWinMultiplayer,
 	getBestWord,
 	updateBaseWithPossibleWordTable,
 };

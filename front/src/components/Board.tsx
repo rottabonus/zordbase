@@ -5,17 +5,25 @@ import { selectBoard } from "../reducers/boardReducer";
 import type { LetterStyle } from "../types/types";
 
 interface BoardProps {
-	selectLetter: (L: string, row: number, column: number, owner: string) => void;
+	selectLetter: (
+		letter: string,
+		row: number,
+		column: number,
+		owner: string,
+	) => void;
+	myUserId: string;
+	opponentId?: string;
 }
 
 export const Board: React.FC<BoardProps> = (props) => {
 	const { board, turn } = useSelector(selectBoard);
-	const { base, selection: selected, playerName } = useSelector(selectBase);
+	const { base, selection: selected } = useSelector(selectBase);
 
 	const getLetterStyle = (r: number, c: number): LetterStyle => {
 		const found = selected.filter((a) => a.row === r && a.column === c);
 		const isSelected = found.length === 0 ? "none" : "selectedLetter";
-		const cursorStyle = turn === "computer" ? "progress" : "pointer";
+		const isComputerTurn = turn === "computer";
+		const cursorStyle = isComputerTurn ? "progress" : "pointer";
 		const selectedWithOwner = selected.map((s) => ({
 			row: s.row,
 			column: s.column,
@@ -25,12 +33,12 @@ export const Board: React.FC<BoardProps> = (props) => {
 		const allSelected = selectedWithOwner.concat(base);
 		const ownerArr = allSelected.filter((a) => a.row === r && a.column === c);
 		const owner = ownerArr.length === 0 ? "none" : ownerArr[0].owner;
-		const backgroundColor =
-			owner === "computer"
-				? "khaki"
-				: owner === playerName
-					? "#87b6b8"
-					: "transparent";
+		let backgroundColor = "transparent";
+		if (owner === props.myUserId) {
+			backgroundColor = "#87b6b8";
+		} else if (owner === props.opponentId || owner === "computer") {
+			backgroundColor = "khaki";
+		}
 		return {
 			class: isSelected,
 			backgroundColor: backgroundColor,
@@ -42,10 +50,27 @@ export const Board: React.FC<BoardProps> = (props) => {
 		<div>
 			<table>
 				<tbody>
-					{board.map((row, i) => (
-						<tr key={i}>
-							{row.map((cellId, j) => {
-								const styleValues = getLetterStyle(i, j);
+					{board.map((row, rowIdx) => (
+						// biome-ignore lint/suspicious/noArrayIndexKey: rowIdx/colIdx are stable board coordinates
+						<tr key={`r${rowIdx}`}>
+							{row.map((cellId, colIdx) => {
+								const styleValues = getLetterStyle(rowIdx, colIdx);
+								// Find actual owner from base
+								const baseCell = base.find(
+									(b) => b.row === rowIdx && b.column === colIdx,
+								);
+								const actualOwner = baseCell?.owner || "none";
+								const cellKey = `c${rowIdx}-${colIdx}`;
+								const handleClick = () =>
+									props.selectLetter(cellId, rowIdx, colIdx, actualOwner);
+								const handleKeyDown = (
+									e: React.KeyboardEvent<HTMLButtonElement>,
+								) => {
+									if (e.key === "Enter" || e.key === " ") {
+										e.preventDefault();
+										handleClick();
+									}
+								};
 								return (
 									<td
 										className={styleValues.class}
@@ -53,10 +78,24 @@ export const Board: React.FC<BoardProps> = (props) => {
 											backgroundColor: styleValues.backgroundColor,
 											cursor: styleValues.cursor,
 										}}
-										key={j}
-										onClick={() => props.selectLetter(cellId, i, j, playerName)}
+										key={cellKey}
 									>
-										{cellId}
+										<button
+											type="button"
+											onClick={handleClick}
+											onKeyDown={handleKeyDown}
+											aria-label={`${cellId} at row ${rowIdx + 1}, column ${colIdx + 1}`}
+											style={{
+												background: "transparent",
+												border: "none",
+												padding: "0",
+												width: "100%",
+												height: "100%",
+												cursor: "inherit",
+											}}
+										>
+											{cellId}
+										</button>
 									</td>
 								);
 							})}
