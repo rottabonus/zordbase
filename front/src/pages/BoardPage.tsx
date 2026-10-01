@@ -1,5 +1,5 @@
 import type React from "react";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import allActions from "../actions/allActions";
 import { Board } from "../components/Board";
@@ -27,11 +27,17 @@ export const GameBoardPage: React.FC = () => {
 		stateHistory,
 	} = useSelector(selectBase);
 	const { type: messageType } = useSelector(selectMessage);
-	const webWorker = new Worker(
-		new URL("../worker/worker.js", import.meta.url),
-		{ type: "module" },
-	);
 	const dispatch = useDispatch();
+
+	// Create worker once, not on every render
+	const webWorkerRef = useRef<Worker | null>(null);
+	if (!webWorkerRef.current) {
+		webWorkerRef.current = new Worker(
+			new URL("../worker/worker.js", import.meta.url),
+			{ type: "module" },
+		);
+	}
+	const webWorker = webWorkerRef.current;
 
 	const startNewGame = useCallback(() => {
 		dispatch(allActions.baseActions.removeSelectionAndPlayedWords([], []));
@@ -174,6 +180,8 @@ export const GameBoardPage: React.FC = () => {
 		dispatch(allActions.baseActions.removeFromSelection(0));
 	}, [dispatch]);
 
+	const computersTurnRef = useRef<() => void>(() => {});
+
 	const computersTurn = useCallback(() => {
 		const history = [...base];
 		const computerSelected = gameService.getBestWord(base, turn, board.length);
@@ -231,7 +239,7 @@ export const GameBoardPage: React.FC = () => {
 					: dispatch(allActions.boardActions.changeTurn(playerName));
 			},
 			timeOutCounter * 500 + 700,
-		);
+			);
 	}, [
 		base,
 		turn,
@@ -244,6 +252,8 @@ export const GameBoardPage: React.FC = () => {
 		gameChange,
 		computerSelect,
 	]);
+
+	computersTurnRef.current = computersTurn;
 
 	const selectLetter = async (
 		letter: string,
@@ -315,7 +325,7 @@ export const GameBoardPage: React.FC = () => {
 		} else if (isLoading) {
 			checkBoard();
 		} else if (turn === "computer" && !newGame) {
-			computersTurn();
+			computersTurnRef.current();
 		}
 	}, [
 		turn,
@@ -323,7 +333,6 @@ export const GameBoardPage: React.FC = () => {
 		checkBoard,
 		dispatch,
 		initializeBase,
-		computersTurn,
 		isLoading,
 	]);
 
