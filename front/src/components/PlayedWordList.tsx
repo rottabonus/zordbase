@@ -16,9 +16,19 @@ interface PlayedWordProps {
 }
 
 export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
-	const { base, playerName, playedWords: played } = useSelector(selectBase);
+	const {
+		base,
+		playerName,
+		playedWords: played,
+		stateHistory,
+	} = useSelector(selectBase);
 	const { isLoading } = useSelector(selectBoard);
 	const { opponentName, isMultiplayer, myUserId, opponentId } = props;
+
+	// Calculate offset between stateHistory and playedWords
+	// stateHistory includes initial entries (empty + server initial in multiplayer)
+	// playedWords only includes actual played words
+	const historyOffset = stateHistory.length - played.length;
 
 	const myIdentifier = isMultiplayer && myUserId ? myUserId : "player";
 	const opponentIdentifier =
@@ -57,7 +67,10 @@ export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
 			<div className="wordListWords">
 				{played.map((w, wordIndex) => {
 					const styleValues = getWordStyle(w.owner);
-					const handleClick = () => props.timeTravel(w.turn);
+					// Use wordIndex + historyOffset to map to correct stateHistory index
+					// w.turn from server doesn't match client's stateHistory indices
+					const historyIndex = wordIndex + historyOffset;
+					const handleClick = () => props.timeTravel(historyIndex);
 					const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
 						if (e.key === "Enter" || e.key === " ") {
 							e.preventDefault();

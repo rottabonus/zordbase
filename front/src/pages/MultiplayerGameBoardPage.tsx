@@ -180,6 +180,17 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 				return;
 			}
 
+			// Create history entry for opponent's move (for time travel visualization)
+			const movePlayerName =
+				move.playerId === myUserId ? myUsername : opponentUsername;
+			dispatch(
+				allActions.baseActions.createHistory(
+					base,
+					move.selection,
+					movePlayerName,
+				),
+			);
+
 			dispatch(
 				allActions.baseActions.confirmSelection(
 					move.newBase,
@@ -426,6 +437,7 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 		const timeOutCounter = stateHistory[turn].selection.length;
 		dispatch(allActions.baseActions.updateBase(stateHistory[turn].base));
 		// Visual replay
+		computerSelect(stateHistory[turn].selection);
 		setTimeout(
 			() => {
 				backToPresent(currentBase);
@@ -434,6 +446,21 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 			timeOutCounter * 500 + 700,
 		);
 	};
+
+	const computerSelect = useCallback(
+		(selection: letterObject[]) => {
+			for (const [i, _s] of selection.entries()) {
+				const selectionArray = selection.filter((_s, j) => j <= i);
+				setTimeout(
+					() => {
+						dispatch(allActions.baseActions.updateSelection(selectionArray));
+					},
+					(i + 1) * 500,
+				);
+			}
+		},
+		[dispatch],
+	);
 
 	const backToPresent = (base: letterObject[]) => {
 		dispatch(allActions.baseActions.updateBase(base));

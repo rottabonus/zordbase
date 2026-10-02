@@ -239,7 +239,7 @@ export const GameBoardPage: React.FC = () => {
 					: dispatch(allActions.boardActions.changeTurn(playerName));
 			},
 			timeOutCounter * 500 + 700,
-			);
+		);
 	}, [
 		base,
 		turn,
@@ -327,14 +327,7 @@ export const GameBoardPage: React.FC = () => {
 		} else if (turn === "computer" && !newGame) {
 			computersTurnRef.current();
 		}
-	}, [
-		turn,
-		newGame,
-		checkBoard,
-		dispatch,
-		initializeBase,
-		isLoading,
-	]);
+	}, [turn, newGame, checkBoard, dispatch, initializeBase, isLoading]);
 
 	return (
 		<div className="page-container">

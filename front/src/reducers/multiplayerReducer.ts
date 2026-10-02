@@ -20,7 +20,10 @@ type Action =
 	| { type: "SET_ERROR"; payload: string | null }
 	| { type: "CLEAR_GAME_STATE" };
 
-const multiplayerReducer = (state = initialState, action: Action): MultiplayerState => {
+const multiplayerReducer = (
+	state = initialState,
+	action: Action,
+): MultiplayerState => {
 	switch (action.type) {
 		case "SET_GAME_STATE":
 			return {
