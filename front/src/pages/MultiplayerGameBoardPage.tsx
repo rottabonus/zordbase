@@ -180,29 +180,53 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 				return;
 			}
 
-			// Create history entry for opponent's move (for time travel visualization)
+			// Create history entry for opponent's move (using pre-move base from history)
 			const movePlayerName =
 				move.playerId === myUserId ? myUsername : opponentUsername;
+			const preMoveBase = stateHistory[stateHistory.length - 1]?.base || base;
 			dispatch(
 				allActions.baseActions.createHistory(
-					base,
+					preMoveBase,
 					move.selection,
 					movePlayerName,
 				),
 			);
 
-			dispatch(
-				allActions.baseActions.confirmSelection(
-					move.newBase,
-					move.playedWords,
-					[],
-				),
-			);
-			dispatch(
-				allActions.boardActions.changeTurn(
-					nextIsMyTurn ? myUsername : opponentUsername,
-				),
-			);
+			// Visualize opponent's move when it becomes our turn (after opponent finishes)
+			if (nextIsMyTurn) {
+				computerSelect(move.selection);
+				// Delay confirmSelection until after animation completes
+				// Animation duration: selection.length * 500 + 700 (same as computerSelect)
+				const animationDuration = move.selection.length * 500 + 700;
+				setTimeout(() => {
+					dispatch(
+						allActions.baseActions.confirmSelection(
+							move.newBase,
+							move.playedWords,
+							[],
+						),
+					);
+					dispatch(
+						allActions.boardActions.changeTurn(
+							nextIsMyTurn ? myUsername : opponentUsername,
+						),
+					);
+				}, animationDuration);
+			} else {
+				// Opponent's move, it's now their turn - apply immediately
+				dispatch(
+					allActions.baseActions.confirmSelection(
+						move.newBase,
+						move.playedWords,
+						[],
+					),
+				);
+				dispatch(
+					allActions.boardActions.changeTurn(
+						nextIsMyTurn ? myUsername : opponentUsername,
+					),
+				);
+			}
 		});
 
 		socket.on("game:end", (data: GameEndData) => {
