@@ -1,8 +1,7 @@
 import type React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { io, type Socket } from "socket.io-client";
 import allActions from "../actions/allActions";
 import { Board } from "../components/Board";
 import { GameBoardButtons } from "../components/GameBoardButtons";
@@ -11,25 +10,14 @@ import { LoadingTable } from "../components/LoadingTable";
 import { LogoContainer } from "../components/LogoContainer";
 import { Message } from "../components/Message";
 import { PlayedWordList } from "../components/PlayedWordList";
+import { useMultiplayerGame } from "../hooks/useMultiplayer";
 import { selectBase } from "../reducers/baseReducer";
 import { selectBoard } from "../reducers/boardReducer";
 import { selectMessage } from "../reducers/messageReducer";
 import { selectMultiplayer } from "../reducers/multiplayerReducer";
 import gameService from "../services/game";
-import { storageService } from "../services/storageService";
 import wordService from "../services/words";
-import { useMultiplayerSocket } from "../hooks/useMultiplayerSocket";
-import type {
-	GameClientToServerEvents,
-	GameServerToClientEvents,
-	letterObject,
-	selectionObject,
-} from "../types/types";
-
-const socket: Socket<GameServerToClientEvents, GameClientToServerEvents> = io(
-	"http://localhost:3000",
-	{ autoConnect: false },
-);
+import type { letterObject, selectionObject } from "../types/types";
 
 export const MultiplayerGameBoardPage: React.FC = () => {
 	const { gameId } = useParams<{ gameId: string }>();
@@ -46,9 +34,6 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 	const { type: messageType } = useSelector(selectMessage);
 	const { gameState, error: multiplayerError } = useSelector(selectMultiplayer);
 
-	const [myUserId, setMyUserId] = useState<string>("");
-	const [_myUsername, setMyUsername] = useState<string>("");
-
 	const initializeBaseFromServer = useCallback(
 		(serverBase: letterObject[]) => {
 			// For multiplayer, we don't need the worker (which calculates possibleWords for AI).
@@ -60,39 +45,28 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 		[dispatch],
 	);
 
-	// Initialize socket connection
-	useEffect(() => {
-		if (!gameId) return;
-
-		const session = storageService.getItem("session");
-		if (session) {
-			const parsed = JSON.parse(session);
-			setMyUserId(parsed.userID);
-			setMyUsername(parsed.username || "Player");
-			socket.auth = { sessionID: parsed.sessionID };
-		}
-
-		socket.connect();
-		socket.emit("game:join", gameId);
-
-		return () => {
-			socket.disconnect();
-		};
-	}, [gameId]);
-
 	const {
 		opponentId,
 		opponentName,
 		gameStatus,
 		isMyTurn,
 		error,
-		computerSelect,
-	} = useMultiplayerSocket({
-		socket,
-		gameId,
 		myUserId,
+		computerSelect,
+		joinGame,
+		makeMove,
+		setPreMoveBase,
+	} = useMultiplayerGame({
+		gameId,
 		initializeBaseFromServer,
 	});
+
+	// Join game when connected and we have user ID
+	useEffect(() => {
+		if (gameId && myUserId) {
+			joinGame();
+		}
+	}, [gameId, myUserId, joinGame]);
 
 	const startNewGame = () => {
 		dispatch(allActions.baseActions.removeSelectionAndPlayedWords([], []));
@@ -177,10 +151,6 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 			const opponentUsername =
 				currentPlayerNames[opponentIdFound] || "Opponent";
 
-			dispatch(
-				allActions.baseActions.createHistory(history, selected, myUsername),
-			);
-
 			const confirmedAndFiltered =
 				gameService.updateOwnersAndRemoveIsolatedNodes(
 					selected,
@@ -196,11 +166,8 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 			);
 
 			if (gameId) {
-				socket.emit("game:move", {
-					gameId,
-					selection: selected,
-					word: newWord,
-				});
+				setPreMoveBase(base);
+				makeMove(gameId, selected, newWord);
 			}
 
 			dispatch(

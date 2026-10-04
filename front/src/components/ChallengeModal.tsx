@@ -11,16 +11,18 @@ export const ChallengeModal = ({
 }) => {
 	if (!challenge) return null;
 
-	const handleOverlayKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+	const handleOverlayKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
 		if (e.key === "Escape") {
 			onDecline();
 		}
 	};
 
 	return (
-		<button
-			type="button"
+		// biome-ignore lint/a11y/useSemanticElements: Modal overlay needs click handler but contains buttons
+		<div
 			className="modal-overlay"
+			role="button"
+			tabIndex={0}
 			onClick={onDecline}
 			onKeyDown={handleOverlayKeyDown}
 			style={{
@@ -34,7 +36,6 @@ export const ChallengeModal = ({
 				alignItems: "center",
 				justifyContent: "center",
 				zIndex: 1000,
-				border: "none",
 				padding: 0,
 				cursor: "pointer",
 			}}
@@ -92,6 +93,6 @@ export const ChallengeModal = ({
 					</button>
 				</div>
 			</div>
-		</button>
+		</div>
 	);
 };
