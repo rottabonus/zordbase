@@ -5,10 +5,10 @@ import { sessionStore } from "./sessionService.ts";
 const randomId = () => crypto.randomBytes(8).toString("hex");
 
 const service = (io: SocketServer) => {
-	io.use((socket, next) => {
+	io.use(async (socket, next) => {
 		const { sessionID, username } = socket.handshake.auth;
 		if (sessionID) {
-			const session = sessionStore.findSession(sessionID);
+			const session = await sessionStore.findSession(sessionID);
 			if (session) {
 				socket.data.sessionID = sessionID;
 				socket.data.userID = session.userID;
@@ -21,9 +21,10 @@ const service = (io: SocketServer) => {
 			return next(new Error("invalid username"));
 		}
 
-		const isNameExisting = sessionStore
-			.findAllBut(sessionID) // if the session exists, we can use same username
-			.some((session) => session.username === username);
+		const allSessions = await sessionStore.findAllBut(sessionID);
+		const isNameExisting = allSessions.some(
+			(session) => session.username === username,
+		);
 		if (isNameExisting) {
 			return next(new Error("name already taken"));
 		}
@@ -34,10 +35,10 @@ const service = (io: SocketServer) => {
 		next();
 	});
 
-	io.on("connection", (socket) => {
+	io.on("connection", async (socket) => {
 		// persist session
 		if (socket.data.sessionID) {
-			sessionStore.saveSession(socket.data.sessionID, {
+			await sessionStore.saveSession(socket.data.sessionID, {
 				userID: socket.data.userID ?? "",
 				username: socket.data.username ?? "",
 				connected: true,
@@ -55,7 +56,8 @@ const service = (io: SocketServer) => {
 		});
 
 		// fetch existing users
-		const users = sessionStore.findAllSessions().map((session) => ({
+		const sessions = await sessionStore.findAllSessions();
+		const users = sessions.map((session) => ({
 			userID: session.userID,
 			username: session.username,
 			connected: session.connected,
@@ -76,7 +78,7 @@ const service = (io: SocketServer) => {
 					// notify other users
 					socket.broadcast.emit("user:disconnected", socket.data.userID);
 					// update the connection status of the session
-					sessionStore.saveSession(socket.data.sessionID, {
+					await sessionStore.saveSession(socket.data.sessionID, {
 						userID: socket.data.userID,
 						username: socket.data.username ?? "",
 						connected: false,

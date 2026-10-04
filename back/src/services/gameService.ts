@@ -1,3 +1,5 @@
+import { gameMoveRepository, gameRoomRepository } from "../db/repositories.ts";
+import type { GameRoom as DbGameRoom } from "../db/schema.ts";
 import type {
 	ClientGameMove,
 	GameMove,
@@ -9,22 +11,20 @@ import type {
 } from "../types.ts";
 import { sessionStore } from "./sessionService.ts";
 
-// In-memory game store
+// Internal game room representation (matches DB structure)
 interface GameRoom {
 	id: string;
-	players: [string, string]; // [player1Id, player2Id]
+	players: [string, string];
 	playerNames: Record<string, string>;
 	board: string[][];
 	base: LetterData[];
-	turn: string; // userID of current turn
+	turn: string;
 	playedWords: PlayedWordData[];
 	status: "waiting" | "playing" | "finished";
 	winner?: string;
 	turnCount: number;
-	player1Id: string; // Player who starts at row 0
+	player1Id: string;
 }
-
-const gameRooms = new Map<string, GameRoom>();
 
 const generateGameId = () => Math.random().toString(36).slice(2, 10);
 
@@ -68,15 +68,10 @@ const createInitialBase = (
 	return base;
 };
 
-// Word validation - simple check if word exists in dictionary
-// In production, this would use the word service
 const validateWord = async (word: string): Promise<boolean> => {
-	// For now, we'll accept any word >= 2 letters
-	// TODO: integrate with actual word dictionary
 	return word.length >= 2;
 };
 
-// Check if selection forms a valid path (adjacent letters)
 const isValidPath = (selection: LetterData[]): boolean => {
 	if (selection.length < 2) return false;
 
@@ -90,7 +85,6 @@ const isValidPath = (selection: LetterData[]): boolean => {
 	return true;
 };
 
-// Check if all selected letters belong to the current player or are neutral
 const isValidOwnership = (
 	selection: LetterData[],
 	playerId: string,
@@ -98,7 +92,6 @@ const isValidOwnership = (
 	return selection.every((s) => s.owner === playerId || s.owner === "none");
 };
 
-// Check win condition - player reaches opposite side
 const checkWin = (
 	base: LetterData[],
 	playerId: string,
@@ -109,7 +102,6 @@ const checkWin = (
 	return base.some((b) => b.owner === playerId && b.row === targetRowForPlayer);
 };
 
-// Update ownership and remove isolated nodes (adapted from frontend game.ts)
 const updateOwnersAndRemoveIsolated = (
 	newSelection: LetterData[],
 	base: LetterData[],
@@ -117,7 +109,6 @@ const updateOwnersAndRemoveIsolated = (
 	playerId: string,
 	player1Id: string,
 ): LetterData[] => {
-	// First, update ownership of selected letters
 	const updated = base.map((o) => {
 		const inSelection = newSelection.some(
 			(s) => s.row === o.row && s.column === o.column,
@@ -128,19 +119,15 @@ const updateOwnersAndRemoveIsolated = (
 		return o;
 	});
 
-	// Remove isolated nodes (simplified version)
-	// Find all nodes owned by opponent that are not connected to their base
 	const opponentId = base.find(
 		(b) => b.owner !== "none" && b.owner !== playerId,
 	)?.owner;
 	if (!opponentId) return updated;
 
-	// Build adjacency graph
 	const movements = generateMovements(board);
 	const opponentNodes = updated.filter((o) => o.owner === opponentId);
 
-	// Find opponent nodes connected to their starting edge
-	const opponentStartRow = opponentId === player1Id ? 0 : board.length - 1; // player1Id starts at row 0, player2Id starts at row board.length - 1;
+	const opponentStartRow = opponentId === player1Id ? 0 : board.length - 1;
 	const connectedOpponent = new Set<string>();
 	const queue: LetterData[] = [];
 
@@ -169,7 +156,6 @@ const updateOwnersAndRemoveIsolated = (
 		});
 	}
 
-	// Disconnect isolated opponent nodes
 	return updated.map((o) => {
 		if (
 			o.owner === opponentId &&
@@ -219,6 +205,24 @@ const getNeighborsData = (node: LetterData, board: string[][]) => {
 	return possibleMoves;
 };
 
+// Helper to convert DB GameRoom to internal GameRoom
+const toInternalGameRoom = (dbRoom: DbGameRoom): GameRoom => ({
+	id: dbRoom.id,
+	players: [dbRoom.player1Id, dbRoom.player2Id],
+	playerNames: {
+		[dbRoom.player1Id]: dbRoom.player1Name,
+		[dbRoom.player2Id]: dbRoom.player2Name,
+	},
+	board: dbRoom.board,
+	base: dbRoom.base,
+	turn: dbRoom.turn,
+	playedWords: dbRoom.playedWords,
+	status: dbRoom.status,
+	winner: dbRoom.winner ?? undefined,
+	turnCount: dbRoom.turnCount,
+	player1Id: dbRoom.player1IdAtRow0,
+});
+
 const service = (io: SocketServer) => {
 	io.on("connection", (socket) => {
 		const getUserId = () => socket.data.userID ?? "";
@@ -235,49 +239,42 @@ const service = (io: SocketServer) => {
 			socket.to(challenge.to).emit("challenge:got", challenge);
 		});
 
-		socket.on("challenge:accept", (challengerID, _acceptorUsername) => {
+		socket.on("challenge:accept", async (challengerID, _acceptorUsername) => {
 			const userId = getUserId();
 			const acceptorUsername = socket.data.username ?? "";
 			if (!userId) return;
 			const challenge = { from: userId, to: challengerID };
 			console.log("game was accepted, now start with", challenge);
 
-			// Create game room
 			const gameId = generateGameId();
 			const board = createGameBoard(12, 10);
-			// challenge.from = challenged player (acceptor), challenge.to = challenger
-			// Challenger starts at row 11 (bottom), challenged at row 0 (top)
 			const base = createInitialBase(board, challenge.from, challenge.to);
 
-			// Get player names - acceptor is player1 (row 0), challenger is player2 (row 11)
 			const player1Name = acceptorUsername || "Player 1";
-			const challengerSession = sessionStore.findSessionByUserId(challengerID);
+			const challengerSession =
+				await sessionStore.findSessionByUserId(challengerID);
 			const player2Name = challengerSession?.username ?? "Player 2";
 
-			const gameRoom: GameRoom = {
+			const gameRoomData = {
 				id: gameId,
-				players: [challenge.from, challenge.to],
-				playerNames: {
-					[challenge.from]: player1Name,
-					[challenge.to]: player2Name,
-				},
+				player1Id: challenge.from,
+				player2Id: challenge.to,
+				player1Name,
+				player2Name,
 				board,
 				base,
-				turn: challenge.to, // Challenger starts (challenge.to is the challenger)
+				turn: challenge.to,
 				playedWords: [],
-				status: "playing",
+				status: "playing" as const,
 				turnCount: 0,
-				player1Id: challenge.from, // Player 1 is at row 0 (challenged)
+				player1IdAtRow0: challenge.from,
 			};
 
-			gameRooms.set(gameId, gameRoom);
+			await gameRoomRepository.create(gameRoomData);
 
-			// Join both players to game room
 			socket.join(gameId);
-			// Use io.in(userID).socketsJoin(room) to make the other player's socket join the game room
 			io.in(challenge.to).socketsJoin(gameId);
 
-			// Notify both players
 			const startData: GameStartData = {
 				gameId,
 				players: [challenge.from, challenge.to],
@@ -288,24 +285,27 @@ const service = (io: SocketServer) => {
 
 			io.to(gameId).emit("game:start", startData);
 
-			// Send initial game state
 			const gameState: GameState = {
 				gameId,
 				board,
 				base,
-				turn: challenge.to, // Challenger starts (challenge.to is the challenger)
+				turn: challenge.to,
 				playedWords: [],
 				players: [challenge.from, challenge.to],
-				playerNames: gameRoom.playerNames,
+				playerNames: {
+					[challenge.from]: player1Name,
+					[challenge.to]: player2Name,
+				},
 				status: "playing",
-				player1Id: challenge.from, // Player 1 is at row 0 (challenged)
+				player1Id: challenge.from,
 			};
 			io.to(gameId).emit("game:state", gameState);
 		});
 
-		socket.on("game:join", (gameId: string) => {
-			const gameRoom = gameRooms.get(gameId);
-			if (gameRoom) {
+		socket.on("game:join", async (gameId: string) => {
+			const dbRoom = await gameRoomRepository.findById(gameId);
+			if (dbRoom) {
+				const gameRoom = toInternalGameRoom(dbRoom);
 				socket.join(gameId);
 				const gameState: GameState = {
 					gameId: gameRoom.id,
@@ -326,13 +326,14 @@ const service = (io: SocketServer) => {
 		});
 
 		socket.on("game:move", async (move: ClientGameMove) => {
-			const gameRoom = gameRooms.get(move.gameId);
-			if (!gameRoom) {
+			const dbRoom = await gameRoomRepository.findById(move.gameId);
+			if (!dbRoom) {
 				socket.emit("game:error", "Game not found");
 				return;
 			}
 
-			// Validate it's the player's turn
+			const gameRoom = toInternalGameRoom(dbRoom);
+
 			const userId = getUserId();
 			if (!userId) return;
 			if (gameRoom.turn !== userId) {
@@ -340,19 +341,16 @@ const service = (io: SocketServer) => {
 				return;
 			}
 
-			// Validate game is still playing
 			if (gameRoom.status !== "playing") {
 				socket.emit("game:error", "Game already finished");
 				return;
 			}
 
-			// Validate selection path
 			if (!isValidPath(move.selection)) {
 				socket.emit("game:error", "Invalid path - letters must be adjacent");
 				return;
 			}
 
-			// Validate ownership
 			if (!isValidOwnership(move.selection, userId)) {
 				socket.emit(
 					"game:error",
@@ -361,14 +359,12 @@ const service = (io: SocketServer) => {
 				return;
 			}
 
-			// Validate word
 			const wordValid = await validateWord(move.word);
 			if (!wordValid) {
 				socket.emit("game:error", "Invalid word");
 				return;
 			}
 
-			// Check if word already played by this player
 			const alreadyPlayed = gameRoom.playedWords.some(
 				(pw) => pw.word === move.word && pw.owner === userId,
 			);
@@ -377,7 +373,6 @@ const service = (io: SocketServer) => {
 				return;
 			}
 
-			// Apply move
 			const newBase = updateOwnersAndRemoveIsolated(
 				move.selection,
 				gameRoom.base,
@@ -394,7 +389,6 @@ const service = (io: SocketServer) => {
 				},
 			];
 
-			// Check win
 			const winner = checkWin(
 				newBase,
 				userId,
@@ -404,12 +398,10 @@ const service = (io: SocketServer) => {
 				? userId
 				: undefined;
 
-			// Determine next turn
 			const nextTurn = winner
 				? ""
 				: (gameRoom.players.find((p) => p !== userId) ?? "");
 
-			// Update game room
 			gameRoom.base = newBase;
 			gameRoom.playedWords = newPlayedWords;
 			gameRoom.turn = nextTurn;
@@ -419,7 +411,26 @@ const service = (io: SocketServer) => {
 				gameRoom.winner = winner;
 			}
 
-			// Broadcast move to both players
+			await gameRoomRepository.update(move.gameId, {
+				base: newBase,
+				playedWords: newPlayedWords,
+				turn: nextTurn,
+				turnCount: gameRoom.turnCount,
+				status: gameRoom.status,
+				winner: gameRoom.winner,
+			});
+			await gameMoveRepository.create({
+				gameId: move.gameId,
+				playerId: userId,
+				selection: move.selection,
+				word: move.word,
+				newBase,
+				playedWords: newPlayedWords,
+				nextTurn,
+				winner,
+				turnNumber: gameRoom.turnCount,
+			});
+
 			const gameMove: GameMove = {
 				gameId: move.gameId,
 				playerId: userId,
@@ -432,7 +443,6 @@ const service = (io: SocketServer) => {
 			};
 			io.to(move.gameId).emit("game:move", gameMove);
 
-			// If game ended, send end event
 			if (winner) {
 				const endData = {
 					gameId: move.gameId,
@@ -443,28 +453,25 @@ const service = (io: SocketServer) => {
 			}
 		});
 
-		// Handle disconnect during game
 		socket.on("disconnect", async () => {
 			const userId = getUserId();
 			if (!userId) return;
-			// Check if player was in an active game
-			for (const [gameId, gameRoom] of gameRooms.entries()) {
-				if (
-					gameRoom.players.includes(userId) &&
-					gameRoom.status === "playing"
-				) {
-					const otherPlayer = gameRoom.players.find((p) => p !== userId);
-					if (otherPlayer) {
-						gameRoom.status = "finished";
-						gameRoom.winner = otherPlayer;
-						io.to(gameId).emit("game:end", {
-							gameId,
-							winner: otherPlayer,
-							reason: "disconnect",
-						});
-					}
-					break;
-				}
+
+			const activeGame = await gameRoomRepository.findActiveForUser(userId);
+			if (activeGame) {
+				const otherPlayer =
+					activeGame.player1Id === userId
+						? activeGame.player2Id
+						: activeGame.player1Id;
+				await gameRoomRepository.update(activeGame.id, {
+					status: "finished",
+					winner: otherPlayer,
+				});
+				io.to(activeGame.id).emit("game:end", {
+					gameId: activeGame.id,
+					winner: otherPlayer,
+					reason: "disconnect",
+				});
 			}
 		});
 	});

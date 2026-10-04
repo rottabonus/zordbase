@@ -1,49 +1,57 @@
+import { sessionRepository } from "../db/repositories.js";
 import type { SocketData } from "../types.ts";
 
 type Session = Omit<SocketData, "sessionID">;
-abstract class SessionStore {
-	abstract findSession(id: string): Session | undefined;
-	abstract findSessionByUserId(userId: string): Session | undefined;
-	abstract saveSession(id: string, session: Session): void;
-	abstract findAllSessions(): Array<Session>;
-	abstract findAllBut(id: string): Array<Session>;
+
+class SessionStore {
+	async findSession(id: string) {
+		const session = await sessionRepository.findById(id);
+		if (!session) return undefined;
+		return {
+			userID: session.userId,
+			username: session.username,
+			connected: session.connected,
+		};
+	}
+
+	async findSessionByUserId(userId: string) {
+		const session = await sessionRepository.findByUserId(userId);
+		if (!session) return undefined;
+		return {
+			userID: session.userId,
+			username: session.username,
+			connected: session.connected,
+		};
+	}
+
+	async saveSession(id: string, session: Session) {
+		await sessionRepository.save({
+			id,
+			userId: session.userID,
+			username: session.username,
+			connected: session.connected,
+		});
+	}
+
+	async findAllSessions() {
+		const sessions = await sessionRepository.findAll();
+		return sessions.map((s) => ({
+			userID: s.userId,
+			username: s.username,
+			connected: s.connected,
+		}));
+	}
+
+	async findAllBut(id: string) {
+		const sessions = await sessionRepository.findAllBut(id);
+		return sessions.map((s) => ({
+			userID: s.userId,
+			username: s.username,
+			connected: s.connected,
+		}));
+	}
 }
 
-class InMemorySessionStore extends SessionStore {
-	sessions: Map<string, Session>;
-	constructor() {
-		super();
-		this.sessions = new Map();
-	}
+const sessionStore = new SessionStore();
 
-	findSession(id: string) {
-		return this.sessions.get(id);
-	}
-
-	findSessionByUserId(userId: string) {
-		for (const session of this.sessions.values()) {
-			if (session.userID === userId) {
-				return session;
-			}
-		}
-		return undefined;
-	}
-
-	saveSession(id: string, session: Session) {
-		this.sessions.set(id, session);
-	}
-
-	findAllSessions() {
-		return [...this.sessions.values()];
-	}
-
-	findAllBut(id: string) {
-		return [...this.sessions.entries()]
-			.filter(([sessionId]) => sessionId !== id)
-			.map(([, session]) => session);
-	}
-}
-
-const sessionStore = new InMemorySessionStore();
-
-export { InMemorySessionStore, sessionStore };
+export { sessionStore };

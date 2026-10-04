@@ -1,4 +1,35 @@
 services:
+  database:
+    image: postgres:15-bookworm
+    ports:
+      - ${POSTGRES_PORT:-5432}:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d ${POSTGRES_DB:-zordbase} -U ${POSTGRES_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-zordbase}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  migrater:
+    image: zordbase-backend
+    build:
+      context: ./back
+      dockerfile: Dockerfile.dev
+    command: ["sh", "-c", "npx drizzle-kit migrate"]
+    depends_on:
+      database:
+        condition: service_healthy
+    container_name: migrater
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-secret}@database:5432/${POSTGRES_DB:-zordbase}
+    volumes:
+      - ./back/src:/app/src
+      - ./back/drizzle:/app/drizzle
 
   back:
     image: zordbase-backend
@@ -6,6 +37,11 @@ services:
       context: ./back
       dockerfile: Dockerfile.dev
     container_name: backend
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-secret}@database:5432/${POSTGRES_DB:-zordbase}
     volumes:
       - ./back/src:/app/src
       - ./words:/words
@@ -25,3 +61,6 @@ services:
       - ./front/src:/app/src
     ports:
       - 6540:6540
+
+volumes:
+  db_data:
