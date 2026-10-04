@@ -18,12 +18,10 @@ import { selectMultiplayer } from "../reducers/multiplayerReducer";
 import gameService from "../services/game";
 import { storageService } from "../services/storageService";
 import wordService from "../services/words";
+import { useMultiplayerSocket } from "../hooks/useMultiplayerSocket";
 import type {
 	GameClientToServerEvents,
-	GameEndData,
-	GameMove,
 	GameServerToClientEvents,
-	GameState,
 	letterObject,
 	selectionObject,
 } from "../types/types";
@@ -50,13 +48,6 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 
 	const [myUserId, setMyUserId] = useState<string>("");
 	const [_myUsername, setMyUsername] = useState<string>("");
-	const [opponentId, setOpponentId] = useState<string>("");
-	const [opponentName, setOpponentName] = useState<string>("");
-	const [gameStatus, setGameStatus] = useState<
-		"waiting" | "playing" | "finished"
-	>("waiting");
-	const [error, _setError] = useState<string | null>(null);
-	const [isMyTurn, setIsMyTurn] = useState(false);
 
 	const initializeBaseFromServer = useCallback(
 		(serverBase: letterObject[]) => {
@@ -89,185 +80,19 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 		};
 	}, [gameId]);
 
-	// Socket event handlers
-	useEffect(() => {
-		socket.on("game:state", (state: GameState) => {
-			console.log("Received game state", state);
-			dispatch(allActions.multiplayerActions.setGameState(state));
-			dispatch(allActions.multiplayerActions.setConnected(true));
-
-			const opponentIdFound = state.players.find((p) => p !== myUserId) || "";
-			setOpponentId(opponentIdFound);
-			setOpponentName(state.playerNames[opponentIdFound] || "Opponent");
-			setGameStatus(state.status);
-
-			const isMyTurnNow = state.turn === myUserId;
-			setIsMyTurn(isMyTurnNow);
-
-			const myUsername = state.playerNames[myUserId] || "You";
-			const opponentIdFound2 = state.players.find((p) => p !== myUserId) || "";
-			const opponentUsername =
-				state.playerNames[opponentIdFound2] || "Opponent";
-
-			dispatch(allActions.baseActions.changePlayerName(myUsername));
-
-			if (state.status === "finished" && state.winner) {
-				const winnerName = state.winner === myUserId ? "You" : opponentUsername;
-				dispatch(
-					allActions.messageActions.setMessage(
-						`Game over! ${winnerName} won!`,
-						"message",
-					),
-				);
-			}
-
-			dispatch(allActions.boardActions.createBoard(state.board));
-			dispatch(
-				allActions.boardActions.newGame(
-					false,
-					isMyTurnNow ? myUsername : opponentUsername,
-					false,
-				),
-			);
-			dispatch(allActions.boardActions.gameStart());
-
-			const initialHistory = {
-				base: state.base,
-				selection: [],
-				turn: isMyTurnNow ? myUsername : opponentUsername,
-			} as const;
-			dispatch(
-				allActions.baseActions.createHistory(
-					initialHistory.base,
-					[],
-					initialHistory.turn,
-				),
-			);
-
-			initializeBaseFromServer(state.base);
-		});
-
-		socket.on("game:move", (move: GameMove) => {
-			console.log("Received game move", move);
-			dispatch(
-				allActions.multiplayerActions.updateGameState({
-					base: move.newBase,
-					playedWords: move.playedWords,
-					turn: move.nextTurn,
-					winner: move.winner,
-				}),
-			);
-
-			const nextIsMyTurn = move.nextTurn === myUserId;
-			setIsMyTurn(nextIsMyTurn);
-
-			const currentPlayerNames = gameState?.playerNames || {};
-			const myUsername = currentPlayerNames[myUserId] || "You";
-			const currentPlayers = gameState?.players || ["", ""];
-			const opponentIdFound = currentPlayers.find((p) => p !== myUserId) || "";
-			const opponentUsername =
-				currentPlayerNames[opponentIdFound] || "Opponent";
-
-			if (move.winner) {
-				setGameStatus("finished");
-				const winnerName = move.winner === myUserId ? "You" : opponentUsername;
-				dispatch(
-					allActions.messageActions.setMessage(
-						`Game over! ${winnerName} won with "${move.word}"!`,
-						"message",
-					),
-				);
-				return;
-			}
-
-			// Create history entry for opponent's move (using pre-move base from history)
-			const movePlayerName =
-				move.playerId === myUserId ? myUsername : opponentUsername;
-			const preMoveBase = stateHistory[stateHistory.length - 1]?.base || base;
-			dispatch(
-				allActions.baseActions.createHistory(
-					preMoveBase,
-					move.selection,
-					movePlayerName,
-				),
-			);
-
-			// Visualize opponent's move when it becomes our turn (after opponent finishes)
-			if (nextIsMyTurn) {
-				computerSelect(move.selection);
-				// Delay confirmSelection until after animation completes
-				// Animation duration: selection.length * 500 + 700 (same as computerSelect)
-				const animationDuration = move.selection.length * 500 + 700;
-				setTimeout(() => {
-					dispatch(
-						allActions.baseActions.confirmSelection(
-							move.newBase,
-							move.playedWords,
-							[],
-						),
-					);
-					dispatch(
-						allActions.boardActions.changeTurn(
-							nextIsMyTurn ? myUsername : opponentUsername,
-						),
-					);
-				}, animationDuration);
-			} else {
-				// Opponent's move, it's now their turn - apply immediately
-				dispatch(
-					allActions.baseActions.confirmSelection(
-						move.newBase,
-						move.playedWords,
-						[],
-					),
-				);
-				dispatch(
-					allActions.boardActions.changeTurn(
-						nextIsMyTurn ? myUsername : opponentUsername,
-					),
-				);
-			}
-		});
-
-		socket.on("game:end", (data: GameEndData) => {
-			console.log("Game ended", data);
-			setGameStatus("finished");
-
-			dispatch(
-				allActions.multiplayerActions.updateGameState({
-					status: "finished",
-					winner: data.winner,
-				}),
-			);
-
-			const currentPlayerNames = gameState?.playerNames || {};
-			const currentPlayers = gameState?.players || ["", ""];
-			const opponentIdFound = currentPlayers.find((p) => p !== myUserId) || "";
-			const opponentUsername =
-				currentPlayerNames[opponentIdFound] || "Opponent";
-
-			const winnerName = data.winner === myUserId ? "You" : opponentUsername;
-			let message = `Game over! ${winnerName} won!`;
-			if (data.reason === "disconnect") {
-				message = `Game over! ${winnerName} won by forfeit (opponent disconnected).`;
-			}
-			dispatch(allActions.messageActions.setMessage(message, "message"));
-		});
-
-		socket.on("game:error", (err: string) => {
-			console.error("Game error", err);
-			_setError(err);
-			dispatch(allActions.multiplayerActions.setError(err));
-			dispatch(allActions.messageActions.setMessage(err, "message"));
-		});
-
-		return () => {
-			socket.off("game:state");
-			socket.off("game:move");
-			socket.off("game:end");
-			socket.off("game:error");
-		};
-	}, [myUserId, dispatch, initializeBaseFromServer, gameState]);
+	const {
+		opponentId,
+		opponentName,
+		gameStatus,
+		isMyTurn,
+		error,
+		computerSelect,
+	} = useMultiplayerSocket({
+		socket,
+		gameId,
+		myUserId,
+		initializeBaseFromServer,
+	});
 
 	const startNewGame = () => {
 		dispatch(allActions.baseActions.removeSelectionAndPlayedWords([], []));
@@ -470,21 +295,6 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 			timeOutCounter * 500 + 700,
 		);
 	};
-
-	const computerSelect = useCallback(
-		(selection: letterObject[]) => {
-			for (const [i, _s] of selection.entries()) {
-				const selectionArray = selection.filter((_s, j) => j <= i);
-				setTimeout(
-					() => {
-						dispatch(allActions.baseActions.updateSelection(selectionArray));
-					},
-					(i + 1) * 500,
-				);
-			}
-		},
-		[dispatch],
-	);
 
 	const backToPresent = (base: letterObject[]) => {
 		dispatch(allActions.baseActions.updateBase(base));
