@@ -1,4 +1,5 @@
-import { gameMoveRepository, gameRoomRepository } from "../db/repositories.ts";
+import { gameMoveRepository } from "../db/gameMoveRepository.ts";
+import { gameRoomRepository } from "../db/gameRoomRepository.ts";
 import type { GameRoom as DbGameRoom } from "../db/schema.ts";
 import type {
 	ClientGameMove,
@@ -11,7 +12,6 @@ import type {
 } from "../types.ts";
 import { sessionStore } from "./sessionService.ts";
 
-// Internal game room representation (matches DB structure)
 interface GameRoom {
 	id: string;
 	players: [string, string];
@@ -205,7 +205,6 @@ const getNeighborsData = (node: LetterData, board: string[][]) => {
 	return possibleMoves;
 };
 
-// Helper to convert DB GameRoom to internal GameRoom
 const toInternalGameRoom = (dbRoom: DbGameRoom): GameRoom => ({
 	id: dbRoom.id,
 	players: [dbRoom.player1Id, dbRoom.player2Id],

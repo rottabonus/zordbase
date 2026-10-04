@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 
 // These are the pure functions from gameService.ts that we want to test
 // Since they're not exported, we'll recreate them here for testing

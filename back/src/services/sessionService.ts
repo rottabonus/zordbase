@@ -1,4 +1,4 @@
-import { sessionRepository } from "../db/repositories.js";
+import { sessionRepository } from "../db/sessionRepository.ts";
 import type { SocketData } from "../types.ts";
 
 type Session = Omit<SocketData, "sessionID">;

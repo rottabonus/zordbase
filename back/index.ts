@@ -14,7 +14,6 @@ app.use(cors());
 app.use(express.static("dist"));
 app.use("/api/words", wordRouter);
 
-// Health check endpoint
 app.get("/health", async (_req, res) => {
 	try {
 		await db.execute("SELECT 1");
@@ -38,7 +37,6 @@ server.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`);
 });
 
-// Graceful shutdown
 const shutdown = async () => {
 	console.log("Shutting down...");
 	await closePool();
