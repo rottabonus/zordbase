@@ -12,7 +12,6 @@ import type {
 import allActions from "../actions/allActions";
 import { selectBase } from "../reducers/baseReducer";
 import { selectMultiplayer } from "../reducers/multiplayerReducer";
-import gameService from "../services/game";
 
 interface UseMultiplayerSocketOptions {
 	socket: Socket<GameServerToClientEvents, GameClientToServerEvents>;
@@ -44,8 +43,8 @@ export const useMultiplayerSocket = ({
 	initializeBaseFromServer,
 }: UseMultiplayerSocketOptions): UseMultiplayerSocketReturn => {
 	const dispatch = useDispatch();
-	const { gameState, error: multiplayerError } = useSelector(selectMultiplayer);
-	const { stateHistory, base, playedWords } = useSelector(selectBase);
+	const { gameState } = useSelector(selectMultiplayer);
+	const { stateHistory, base } = useSelector(selectBase);
 
 	const [opponentId, setOpponentId] = useState<string>("");
 	const [opponentName, setOpponentName] = useState<string>("");
@@ -262,8 +261,9 @@ export const useMultiplayerSocket = ({
 		gameState,
 		stateHistory,
 		base,
-		playedWords,
 		computerSelect,
+		socket.on,
+		socket.off,
 	]);
 
 	return {
