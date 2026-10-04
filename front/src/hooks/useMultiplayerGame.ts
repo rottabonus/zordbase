@@ -27,8 +27,12 @@ interface UseMultiplayerGameReturn {
 	myUsername: string;
 	computerSelect: (selection: letterObject[]) => void;
 	joinGame: () => void;
-	makeMove: (gameId: string, selection: letterObject[], word: string) => void;
-	setPreMoveBase: (base: letterObject[]) => void;
+	makeMove: (
+		gameId: string,
+		selection: letterObject[],
+		word: string,
+		preMoveBase?: letterObject[],
+	) => void;
 }
 
 export const useMultiplayerGame = ({
@@ -57,7 +61,6 @@ export const useMultiplayerGame = ({
 	const stateHistoryRef = useRef(stateHistory);
 	const baseRef = useRef(base);
 	const gameIdRef = useRef(gameId);
-	// Pre-move base for our own move (set by page before makeMove)
 	const ourMovePreBaseRef = useRef<letterObject[] | null>(null);
 
 	useEffect(() => {
@@ -308,7 +311,7 @@ export const useMultiplayerGame = ({
 		socket.on("game:end", handleGameEnd);
 		socket.on("game:error", handleGameError);
 
-		// Auto-join game when connected (will re-emit if already connected)
+		// Auto-join game when connected
 		const handleJoinGame = () => {
 			if (gameIdRef.current && isConnected) {
 				console.log("Emitting game:join", {
@@ -381,13 +384,22 @@ export const useMultiplayerGame = ({
 	}, [gameId, isConnected, socket]);
 
 	const makeMove = useCallback(
-		(moveGameId: string, selection: letterObject[], word: string) => {
+		(
+			moveGameId: string,
+			selection: letterObject[],
+			word: string,
+			preMoveBase?: letterObject[],
+		) => {
 			if (socket) {
 				console.log("Emitting game:move", {
 					gameId: moveGameId,
 					selection,
 					word,
 				});
+				// Store pre-move base for history entry when server echoes back
+				if (preMoveBase) {
+					ourMovePreBaseRef.current = preMoveBase;
+				}
 				socket.emit("game:move", {
 					gameId: moveGameId,
 					selection,
@@ -397,10 +409,6 @@ export const useMultiplayerGame = ({
 		},
 		[socket],
 	);
-
-	const setPreMoveBase = useCallback((preBase: letterObject[]) => {
-		ourMovePreBaseRef.current = preBase;
-	}, []);
 
 	return {
 		opponentId,
@@ -413,6 +421,5 @@ export const useMultiplayerGame = ({
 		computerSelect,
 		joinGame,
 		makeMove,
-		setPreMoveBase,
 	};
 };

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSocket } from "../contexts/SocketContext";
 import { storageService } from "../services/storageService";
 import type { Challenge, GameStartData, Session, User } from "../types/types";
@@ -39,12 +39,6 @@ export const useMultiplayerLobby = ({
 		null,
 	);
 
-	// Refs for callbacks to avoid stale closures
-	const onGameStartRef = useRef(onGameStart);
-	useEffect(() => {
-		onGameStartRef.current = onGameStart;
-	}, [onGameStart]);
-
 	// Session restore handler
 	const handleSessionRestore = useCallback(
 		(restoredSession: Session) => {
@@ -64,42 +58,49 @@ export const useMultiplayerLobby = ({
 		[connect],
 	);
 
-	// Event handlers for lobby
-	useEffect(() => {
-		if (!socket) return;
-
-		const handleSessionSet = (newSession: Session) => {
+	// Event handlers defined with useCallback to avoid stale closures
+	const handleSessionSet = useCallback(
+		(newSession: Session) => {
 			setSession(newSession);
 			storageService.setItem("session", JSON.stringify(newSession));
 			handleSessionRestore(newSession);
-		};
+		},
+		[handleSessionRestore],
+	);
 
-		const handleUsersList = (usersList: User[]) => {
-			console.log("initial users", usersList);
-			setUsers(usersList.filter((user) => user.connected));
-		};
+	const handleUsersList = useCallback((usersList: User[]) => {
+		console.log("initial users", usersList);
+		setUsers(usersList.filter((user) => user.connected));
+	}, []);
 
-		const handleUserConnected = (user: User) => {
-			console.log("userconnected", user);
-			setUsers((prevUsers) => [...prevUsers, user]);
-		};
+	const handleUserConnected = useCallback((user: User) => {
+		console.log("userconnected", user);
+		setUsers((prevUsers) => [...prevUsers, user]);
+	}, []);
 
-		const handleUserDisconnected = (id: string) => {
-			console.log("disconnected", id);
-			setUsers((prevUsers) =>
-				prevUsers.filter((user) => user.userID !== id && user.connected),
-			);
-		};
+	const handleUserDisconnected = useCallback((id: string) => {
+		console.log("disconnected", id);
+		setUsers((prevUsers) =>
+			prevUsers.filter((user) => user.userID !== id && user.connected),
+		);
+	}, []);
 
-		const handleChallengeGot = (challenge: Challenge) => {
-			console.log("you got challenged", challenge);
-			setIncomingChallenge(challenge);
-		};
+	const handleChallengeGot = useCallback((challenge: Challenge) => {
+		console.log("you got challenged", challenge);
+		setIncomingChallenge(challenge);
+	}, []);
 
-		const handleGameStart = (data: GameStartData) => {
+	const handleGameStart = useCallback(
+		(data: GameStartData) => {
 			console.log("game starting", data);
-			onGameStartRef.current?.(data);
-		};
+			onGameStart?.(data);
+		},
+		[onGameStart],
+	);
+
+	// Event handlers for lobby
+	useEffect(() => {
+		if (!socket) return;
 
 		socket.on("session:set", handleSessionSet);
 		socket.on("users:list", handleUsersList);
@@ -116,7 +117,15 @@ export const useMultiplayerLobby = ({
 			socket.off("challenge:got", handleChallengeGot);
 			socket.off("game:start", handleGameStart);
 		};
-	}, [socket, handleSessionRestore]);
+	}, [
+		socket,
+		handleSessionSet,
+		handleUsersList,
+		handleUserConnected,
+		handleUserDisconnected,
+		handleChallengeGot,
+		handleGameStart,
+	]);
 
 	// Challenge actions
 	const challenge = useCallback(

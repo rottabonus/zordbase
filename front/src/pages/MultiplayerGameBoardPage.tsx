@@ -55,7 +55,6 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 		computerSelect,
 		joinGame,
 		makeMove,
-		setPreMoveBase,
 	} = useMultiplayerGame({
 		gameId,
 		initializeBaseFromServer,
@@ -163,8 +162,7 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 			);
 
 			if (gameId) {
-				setPreMoveBase(base);
-				makeMove(gameId, selected, newWord);
+				makeMove(gameId, selected, newWord, base);
 			}
 
 			dispatch(
