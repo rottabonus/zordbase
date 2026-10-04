@@ -10,7 +10,7 @@ import { LoadingTable } from "../components/LoadingTable";
 import { LogoContainer } from "../components/LogoContainer";
 import { Message } from "../components/Message";
 import { PlayedWordList } from "../components/PlayedWordList";
-import { useMultiplayerGame } from "../hooks/useMultiplayer";
+import { useMultiplayerGame } from "../hooks/useMultiplayerGame";
 import { selectBase } from "../reducers/baseReducer";
 import { selectBoard } from "../reducers/boardReducer";
 import { selectMessage } from "../reducers/messageReducer";
@@ -142,10 +142,7 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 			.filter((word) => word.word === newWord);
 
 		if (wordExist && !playedAgain.length) {
-			const history = [...base];
-
 			const currentPlayerNames = gameState?.playerNames || {};
-			const myUsername = currentPlayerNames[myUserId] || "You";
 			const opponentIdFound =
 				gameState?.players.find((p) => p !== myUserId) || "";
 			const opponentUsername =

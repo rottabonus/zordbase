@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { ChallengeModal } from "../components/ChallengeModal";
-import { useMultiplayerLobby } from "../hooks/useMultiplayer";
+import { useMultiplayerLobby } from "../hooks/useMultiplayerLobby";
 import type { GameStartData } from "../types/types";
 
 export const MultiplayerLobby = () => {
@@ -23,11 +23,7 @@ export const MultiplayerLobby = () => {
 		isConnected,
 	} = useMultiplayerLobby({
 		onSessionRestore: (restoredSession) => {
-			// Session is already set in the hook
 			console.log("Session restored in lobby:", restoredSession);
-		},
-		onConnectError: (err) => {
-			console.error("Connection error:", err);
 		},
 		onGameStart: (data: GameStartData) => {
 			isNavigatingToGame.current = true;
