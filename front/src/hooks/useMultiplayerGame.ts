@@ -175,8 +175,6 @@ export const useMultiplayerGame = ({
 			const myUserId = myUserIdRef.current;
 			const myUsername = myUsernameRef.current;
 			const gameState = gameStateRef.current;
-			const _stateHistory = stateHistoryRef.current;
-			const _base = baseRef.current;
 
 			const nextIsMyTurn = move.nextTurn === myUserId;
 			setIsMyTurn(nextIsMyTurn);
@@ -196,7 +194,6 @@ export const useMultiplayerGame = ({
 						"message",
 					),
 				);
-				// Still update multiplayer state for winner
 				dispatch(
 					allActions.multiplayerActions.updateGameState({
 						base: move.newBase,
@@ -231,11 +228,9 @@ export const useMultiplayerGame = ({
 
 			// For remote player's move (now our turn): visualize FIRST, then update state
 			if (nextIsMyTurn) {
-				// Visualize opponent's move
 				computerSelect(move.selection);
 				const animationDuration = move.selection.length * 500 + 700;
 				setTimeout(() => {
-					// After animation: update base, playedWords, selection
 					dispatch(
 						allActions.baseActions.confirmSelection(
 							move.newBase,
@@ -243,7 +238,6 @@ export const useMultiplayerGame = ({
 							[],
 						),
 					);
-					// Update multiplayer state (turn, etc.) AFTER visualization
 					dispatch(
 						allActions.multiplayerActions.updateGameState({
 							base: move.newBase,
@@ -255,7 +249,7 @@ export const useMultiplayerGame = ({
 					dispatch(allActions.boardActions.changeTurn(myUsername));
 				}, animationDuration);
 			} else {
-				// Our move echoed back (now opponent's turn): apply immediately
+				// Our move: apply immediately
 				dispatch(
 					allActions.baseActions.confirmSelection(
 						move.newBase,

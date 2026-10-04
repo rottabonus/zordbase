@@ -12,4 +12,11 @@ export default defineConfig({
 			},
 		},
 	},
+	build: {
+		minify: "esbuild",
+	},
+	esbuild: {
+		pure: ["console.log"],
+		drop: process.env.NODE_ENV === "production" ? ["console", "debugger"] : [],
+	},
 });
