@@ -1,7 +1,7 @@
-import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { legacy_createStore as createStore } from "redux";
+import { describe, expect, it, vi } from "vitest";
 import { Board } from "../components/Board";
 import rootReducer from "../reducers/combineReducer";
 
@@ -12,18 +12,22 @@ const mockSelectLetter = vi.fn();
 const createTestStore = () => {
 	return createStore(rootReducer, {
 		board: {
-			board: Array(12).fill(null).map(() => Array(10).fill("A")),
+			board: Array(12)
+				.fill(null)
+				.map(() => Array(10).fill("A")),
 			newGame: true,
 			turn: "player1",
 			isLoading: false,
 		},
 		base: {
-			base: Array(120).fill(null).map((_, i) => ({
-				letter: "A",
-				row: Math.floor(i / 10),
-				column: i % 10,
-				owner: i < 10 ? "player1" : i >= 110 ? "player2" : "none",
-			})),
+			base: Array(120)
+				.fill(null)
+				.map((_, i) => ({
+					letter: "A",
+					row: Math.floor(i / 10),
+					column: i % 10,
+					owner: i < 10 ? "player1" : i >= 110 ? "player2" : "none",
+				})),
 			selection: [],
 			playedWords: [],
 			playerName: "player1",
@@ -47,7 +51,7 @@ describe("Board", () => {
 				selectLetter={mockSelectLetter}
 				myUserId="player1"
 				opponentId="player2"
-			 />,
+			/>,
 		);
 
 		const cells = container.querySelectorAll("td");
@@ -60,10 +64,12 @@ describe("Board", () => {
 				selectLetter={mockSelectLetter}
 				myUserId="player1"
 				opponentId="player2"
-			 />,
+			/>,
 		);
 
-		const firstCell = screen.getByRole("button", { name: "A at row 1, column 1" });
+		const firstCell = screen.getByRole("button", {
+			name: "A at row 1, column 1",
+		});
 		firstCell.click();
 
 		expect(mockSelectLetter).toHaveBeenCalledWith(
@@ -80,7 +86,7 @@ describe("Board", () => {
 				selectLetter={mockSelectLetter}
 				myUserId="player1"
 				opponentId="player2"
-			 />,
+			/>,
 		);
 
 		const cells = container.querySelectorAll("td");

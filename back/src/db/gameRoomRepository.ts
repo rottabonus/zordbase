@@ -1,13 +1,6 @@
 import { and, desc, eq, or } from "drizzle-orm";
 import { db } from "./client.ts";
-import {
-	type GameMove,
-	type GameRoom,
-	gameMoves,
-	gameRooms,
-	type NewGameMove,
-	type NewGameRoom,
-} from "./schema.ts";
+import { type GameRoom, gameRooms, type NewGameRoom } from "./schema.ts";
 
 export const gameRoomRepository = {
 	async create(room: NewGameRoom): Promise<GameRoom> {

@@ -13,7 +13,9 @@ interface LetterData {
 }
 
 const LETTERS =
-	"aaaaaaaaaaaaiiiiiiiiiiittttttttttnnnnnnnnneeeeeeeesssssssslllllloooookkkkkuuuuuääääämmmmvvrrjjhhyyppdö".split("");
+	"aaaaaaaaaaaaiiiiiiiiiiittttttttttnnnnnnnnneeeeeeeesssssssslllllloooookkkkkuuuuuääääämmmmvvrrjjhhyyppdö".split(
+		"",
+	);
 
 const createGameBoard = (rows: number, columns: number): string[][] => {
 	const toArray = (num: number) => Array.from(Array(num).keys());
@@ -220,9 +222,7 @@ describe("Game Logic", () => {
 		});
 
 		it("returns false for single letter", () => {
-			const selection = [
-				{ letter: "A", row: 0, column: 0, owner: player1 },
-			];
+			const selection = [{ letter: "A", row: 0, column: 0, owner: player1 }];
 			expect(isValidPath(selection)).toBe(false);
 		});
 

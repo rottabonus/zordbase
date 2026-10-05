@@ -249,7 +249,11 @@ export const useMultiplayerGame = ({
 					}),
 				);
 				// Change turn to the player whose turn it is NOW (after this move)
-				dispatch(allActions.boardActions.changeTurn(nextIsMyTurn ? myUsername : opponentUsername));
+				dispatch(
+					allActions.boardActions.changeTurn(
+						nextIsMyTurn ? myUsername : opponentUsername,
+					),
+				);
 			}, animationDuration);
 		};
 

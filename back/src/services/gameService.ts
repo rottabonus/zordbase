@@ -10,6 +10,7 @@ import type {
 	PlayedWordData,
 	SocketServer,
 } from "../types.ts";
+import { parseClientGameMove, parseGameId } from "../validation/middleware.ts";
 import { sessionStore } from "./sessionService.ts";
 
 interface GameRoom {
@@ -302,7 +303,12 @@ const service = (io: SocketServer) => {
 		});
 
 		socket.on("game:join", async (gameId: string) => {
-			const dbRoom = await gameRoomRepository.findById(gameId);
+			const parsed = parseGameId(gameId);
+			if (!parsed.success || !parsed.data) {
+				socket.emit("game:error", parsed.error ?? "Invalid game ID");
+				return;
+			}
+			const dbRoom = await gameRoomRepository.findById(parsed.data);
 			if (dbRoom) {
 				const gameRoom = toInternalGameRoom(dbRoom);
 				socket.join(gameId);
@@ -325,7 +331,14 @@ const service = (io: SocketServer) => {
 		});
 
 		socket.on("game:move", async (move: ClientGameMove) => {
-			const dbRoom = await gameRoomRepository.findById(move.gameId);
+			const parsed = parseClientGameMove(move);
+			if (!parsed.success || !parsed.data) {
+				socket.emit("game:error", parsed.error ?? "Invalid move data");
+				return;
+			}
+			const parsedMove = parsed.data;
+
+			const dbRoom = await gameRoomRepository.findById(parsedMove.gameId);
 			if (!dbRoom) {
 				socket.emit("game:error", "Game not found");
 				return;
@@ -345,12 +358,12 @@ const service = (io: SocketServer) => {
 				return;
 			}
 
-			if (!isValidPath(move.selection)) {
+			if (!isValidPath(parsedMove.selection)) {
 				socket.emit("game:error", "Invalid path - letters must be adjacent");
 				return;
 			}
 
-			if (!isValidOwnership(move.selection, userId)) {
+			if (!isValidOwnership(parsedMove.selection, userId)) {
 				socket.emit(
 					"game:error",
 					"Can only select your own or neutral letters",
@@ -358,14 +371,14 @@ const service = (io: SocketServer) => {
 				return;
 			}
 
-			const wordValid = await validateWord(move.word);
+			const wordValid = await validateWord(parsedMove.word);
 			if (!wordValid) {
 				socket.emit("game:error", "Invalid word");
 				return;
 			}
 
 			const alreadyPlayed = gameRoom.playedWords.some(
-				(pw) => pw.word === move.word && pw.owner === userId,
+				(pw) => pw.word === parsedMove.word && pw.owner === userId,
 			);
 			if (alreadyPlayed) {
 				socket.emit("game:error", "Word already played");
@@ -373,7 +386,7 @@ const service = (io: SocketServer) => {
 			}
 
 			const newBase = updateOwnersAndRemoveIsolated(
-				move.selection,
+				parsedMove.selection,
 				gameRoom.base,
 				gameRoom.board,
 				userId,
@@ -382,7 +395,7 @@ const service = (io: SocketServer) => {
 			const newPlayedWords = [
 				...gameRoom.playedWords,
 				{
-					word: move.word,
+					word: parsedMove.word,
 					owner: userId,
 					turn: gameRoom.turnCount,
 				},
@@ -410,7 +423,7 @@ const service = (io: SocketServer) => {
 				gameRoom.winner = winner;
 			}
 
-			await gameRoomRepository.update(move.gameId, {
+			await gameRoomRepository.update(parsedMove.gameId, {
 				base: newBase,
 				playedWords: newPlayedWords,
 				turn: nextTurn,
@@ -419,10 +432,10 @@ const service = (io: SocketServer) => {
 				winner: gameRoom.winner,
 			});
 			await gameMoveRepository.create({
-				gameId: move.gameId,
+				gameId: parsedMove.gameId,
 				playerId: userId,
-				selection: move.selection,
-				word: move.word,
+				selection: parsedMove.selection,
+				word: parsedMove.word,
 				newBase,
 				playedWords: newPlayedWords,
 				nextTurn,
@@ -431,24 +444,24 @@ const service = (io: SocketServer) => {
 			});
 
 			const gameMove: GameMove = {
-				gameId: move.gameId,
+				gameId: parsedMove.gameId,
 				playerId: userId,
-				selection: move.selection,
-				word: move.word,
+				selection: parsedMove.selection,
+				word: parsedMove.word,
 				newBase,
 				playedWords: newPlayedWords,
 				nextTurn,
 				winner,
 			};
-			io.to(move.gameId).emit("game:move", gameMove);
+			io.to(parsedMove.gameId).emit("game:move", gameMove);
 
 			if (winner) {
 				const endData = {
-					gameId: move.gameId,
+					gameId: parsedMove.gameId,
 					winner,
 					reason: "win" as const,
 				};
-				io.to(move.gameId).emit("game:end", endData);
+				io.to(parsedMove.gameId).emit("game:end", endData);
 			}
 		});
 
