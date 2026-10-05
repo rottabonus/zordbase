@@ -1,3 +1,98 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ zordbase_app_name }}-postgres"
+  namespace: "{{ zordbase_app_namespace | default('default') }}"
+  labels:
+    app: "{{ zordbase_app_name }}-postgres"
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ zordbase_postgres_port | default(5432) }}
+      targetPort: {{ zordbase_postgres_port | default(5432) }}
+      name: postgres
+  selector:
+    app: "{{ zordbase_app_name }}-postgres"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: "{{ zordbase_app_name }}-postgres-secret"
+  namespace: "{{ zordbase_app_namespace | default('default') }}"
+type: Opaque
+stringData:
+  database-url: "postgresql://{{ zordbase_postgres_user }}:{{ zordbase_postgres_password }}@{{ zordbase_app_name }}-postgres:{{ zordbase_postgres_port | default(5432) }}/{{ zordbase_postgres_db }}"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: "{{ zordbase_app_name }}-postgres-pvc"
+  namespace: "{{ zordbase_app_namespace | default('default') }}"
+  labels:
+    app: "{{ zordbase_app_name }}-postgres"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ zordbase_postgres_storage_size | default("1Gi") }}
+  {% if zordbase_postgres_storage_class is defined %}
+  storageClassName: {{ zordbase_postgres_storage_class }}
+  {% endif %}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: "{{ zordbase_app_name }}-postgres"
+  namespace: "{{ zordbase_app_namespace | default('default') }}"
+  labels:
+    app: "{{ zordbase_app_name }}-postgres"
+spec:
+  serviceName: "{{ zordbase_app_name }}-postgres"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "{{ zordbase_app_name }}-postgres"
+  template:
+    metadata:
+      labels:
+        app: "{{ zordbase_app_name }}-postgres"
+    spec:
+      containers:
+      - name: postgres
+        image: "{{ zordbase_postgres_image | default('postgres:18-bookworm') }}"
+        ports:
+        - containerPort: {{ zordbase_postgres_port | default(5432) }}
+          name: postgres
+        env:
+        - name: POSTGRES_DB
+          value: "{{ zordbase_postgres_db }}"
+        - name: POSTGRES_USER
+          value: "{{ zordbase_postgres_user }}"
+        - name: POSTGRES_PASSWORD
+          value: "{{ zordbase_postgres_password }}"
+        volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: {{ zordbase_postgres_storage_size | default("1Gi") }}
+      {% if zordbase_postgres_storage_class is defined %}
+      storageClassName: {{ zordbase_postgres_storage_class }}
+      {% endif %}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -21,6 +116,12 @@ spec:
         imagePullPolicy: Never
         ports:
         - containerPort: {{ zordbase_container_port | default(3000) }}
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: "{{ zordbase_app_name }}-postgres-secret"
+              key: database-url
 ---
 apiVersion: v1
 kind: Service
