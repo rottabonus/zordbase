@@ -1,125 +1,14 @@
 import { describe, expect, it } from "vitest";
-
-// These are the pure functions from gameService.ts that we want to test
-// Since they're not exported, we'll recreate them here for testing
-// In a real scenario, you'd either export them or test via the service layer
-
-interface LetterData {
-	letter: string;
-	row: number;
-	column: number;
-	owner: string;
-	possibleWords?: Array<Array<LetterData>>;
-}
-
-const LETTERS =
-	"aaaaaaaaaaaaiiiiiiiiiiittttttttttnnnnnnnnneeeeeeeesssssssslllllloooookkkkkuuuuuääääämmmmvvrrjjhhyyppdö".split(
-		"",
-	);
-
-const createGameBoard = (rows: number, columns: number): string[][] => {
-	const toArray = (num: number) => Array.from(Array(num).keys());
-	const getRandomFrom = (arr: string[]) =>
-		arr[Math.floor(Math.random() * arr.length)];
-	return toArray(rows).map(() =>
-		toArray(columns).map(() => getRandomFrom(LETTERS).toUpperCase()),
-	);
-};
-
-const createInitialBase = (
-	board: string[][],
-	player1: string,
-	player2: string,
-): LetterData[] => {
-	const rows = board.length;
-	const cols = board[0].length;
-	const base: LetterData[] = [];
-
-	for (let r = 0; r < rows; r++) {
-		for (let c = 0; c < cols; c++) {
-			let owner = "none";
-			if (r === 0) owner = player1;
-			else if (r === rows - 1) owner = player2;
-
-			base.push({
-				letter: board[r][c],
-				row: r,
-				column: c,
-				owner,
-				possibleWords: [],
-			});
-		}
-	}
-	return base;
-};
-
-const isValidPath = (selection: LetterData[]): boolean => {
-	if (selection.length < 2) return false;
-
-	for (let i = 1; i < selection.length; i++) {
-		const prev = selection[i - 1];
-		const curr = selection[i];
-		const rowDiff = Math.abs(curr.row - prev.row);
-		const colDiff = Math.abs(curr.column - prev.column);
-		if (rowDiff > 1 || colDiff > 1) return false;
-	}
-	return true;
-};
-
-const isValidOwnership = (
-	selection: LetterData[],
-	playerId: string,
-): boolean => {
-	return selection.every((s) => s.owner === playerId || s.owner === "none");
-};
-
-const checkWin = (
-	base: LetterData[],
-	playerId: string,
-	boardRows: number,
-	player1Id: string,
-): boolean => {
-	const targetRowForPlayer = playerId === player1Id ? boardRows - 1 : 0;
-	return base.some((b) => b.owner === playerId && b.row === targetRowForPlayer);
-};
-
-const generateMovements = (board: string[][]) => {
-	const moves: Record<string, LetterData[]> = {};
-	board.forEach((row, r) => {
-		row.forEach((_, c) => {
-			moves[`${r},${c}`] = getNeighborsData(
-				{ letter: board[r][c], row: r, column: c, owner: "none" },
-				board,
-			);
-		});
-	});
-	return moves;
-};
-
-const getNeighborsData = (node: LetterData, board: string[][]) => {
-	const possibleMoves: LetterData[] = [];
-	const possibleXpositions = [node.row, node.row + 1, node.row - 1].filter(
-		(x) => x >= 0 && x < board.length,
-	);
-	const possibleYpositions = [
-		node.column,
-		node.column + 1,
-		node.column - 1,
-	].filter((x) => x >= 0 && x < board[0].length);
-	possibleXpositions.forEach((xPos) => {
-		possibleYpositions.forEach((yPos) => {
-			if (!(xPos === node.row && yPos === node.column)) {
-				possibleMoves.push({
-					row: xPos,
-					column: yPos,
-					letter: board[xPos][yPos],
-					owner: "none",
-				});
-			}
-		});
-	});
-	return possibleMoves;
-};
+import type { LetterData } from "../types.ts";
+import {
+	checkWin,
+	createGameBoard,
+	createInitialBase,
+	generateMovements,
+	isValidOwnership,
+	isValidPath,
+	updateOwnersAndRemoveIsolated,
+} from "./gameLogic.ts";
 
 describe("Game Logic", () => {
 	const player1 = "player1";
@@ -190,7 +79,7 @@ describe("Game Logic", () => {
 
 	describe("isValidPath", () => {
 		it("returns true for adjacent letters horizontally", () => {
-			const selection = [
+			const selection: LetterData[] = [
 				{ letter: "A", row: 0, column: 0, owner: player1 },
 				{ letter: "B", row: 0, column: 1, owner: "none" },
 			];
@@ -198,7 +87,7 @@ describe("Game Logic", () => {
 		});
 
 		it("returns true for adjacent letters vertically", () => {
-			const selection = [
+			const selection: LetterData[] = [
 				{ letter: "A", row: 0, column: 0, owner: player1 },
 				{ letter: "K", row: 1, column: 0, owner: "none" },
 			];
@@ -206,7 +95,7 @@ describe("Game Logic", () => {
 		});
 
 		it("returns true for diagonal adjacency", () => {
-			const selection = [
+			const selection: LetterData[] = [
 				{ letter: "A", row: 0, column: 0, owner: player1 },
 				{ letter: "L", row: 1, column: 1, owner: "none" },
 			];
@@ -214,7 +103,7 @@ describe("Game Logic", () => {
 		});
 
 		it("returns false for non-adjacent letters", () => {
-			const selection = [
+			const selection: LetterData[] = [
 				{ letter: "A", row: 0, column: 0, owner: player1 },
 				{ letter: "C", row: 0, column: 2, owner: "none" },
 			];
@@ -222,7 +111,9 @@ describe("Game Logic", () => {
 		});
 
 		it("returns false for single letter", () => {
-			const selection = [{ letter: "A", row: 0, column: 0, owner: player1 }];
+			const selection: LetterData[] = [
+				{ letter: "A", row: 0, column: 0, owner: player1 },
+			];
 			expect(isValidPath(selection)).toBe(false);
 		});
 
@@ -231,7 +122,7 @@ describe("Game Logic", () => {
 		});
 
 		it("validates entire path chain", () => {
-			const selection = [
+			const selection: LetterData[] = [
 				{ letter: "A", row: 0, column: 0, owner: player1 },
 				{ letter: "B", row: 0, column: 1, owner: "none" },
 				{ letter: "C", row: 0, column: 2, owner: "none" },
@@ -240,7 +131,7 @@ describe("Game Logic", () => {
 		});
 
 		it("fails on single gap in path", () => {
-			const selection = [
+			const selection: LetterData[] = [
 				{ letter: "A", row: 0, column: 0, owner: player1 },
 				{ letter: "B", row: 0, column: 1, owner: "none" },
 				{ letter: "D", row: 0, column: 3, owner: "none" }, // gap!
@@ -251,7 +142,7 @@ describe("Game Logic", () => {
 
 	describe("isValidOwnership", () => {
 		it("returns true for all player-owned letters", () => {
-			const selection = [
+			const selection: LetterData[] = [
 				{ letter: "A", row: 0, column: 0, owner: player1 },
 				{ letter: "B", row: 0, column: 1, owner: player1 },
 			];
@@ -259,7 +150,7 @@ describe("Game Logic", () => {
 		});
 
 		it("returns true for neutral letters", () => {
-			const selection = [
+			const selection: LetterData[] = [
 				{ letter: "K", row: 1, column: 0, owner: "none" },
 				{ letter: "L", row: 1, column: 1, owner: "none" },
 			];
@@ -267,7 +158,7 @@ describe("Game Logic", () => {
 		});
 
 		it("returns true for mix of player and neutral", () => {
-			const selection = [
+			const selection: LetterData[] = [
 				{ letter: "A", row: 0, column: 0, owner: player1 },
 				{ letter: "K", row: 1, column: 0, owner: "none" },
 			];
@@ -275,7 +166,7 @@ describe("Game Logic", () => {
 		});
 
 		it("returns false for opponent letters", () => {
-			const selection = [
+			const selection: LetterData[] = [
 				{ letter: "A", row: 0, column: 0, owner: player1 },
 				{ letter: "G", row: 11, column: 0, owner: player2 },
 			];
@@ -283,7 +174,7 @@ describe("Game Logic", () => {
 		});
 
 		it("returns false for mixed player and opponent", () => {
-			const selection = [
+			const selection: LetterData[] = [
 				{ letter: "A", row: 0, column: 0, owner: player1 },
 				{ letter: "G", row: 11, column: 0, owner: player2 },
 				{ letter: "K", row: 1, column: 0, owner: "none" },
@@ -352,6 +243,72 @@ describe("Game Logic", () => {
 			const neighbors = movements["0,0"];
 			const letters = neighbors.map((n) => n.letter).sort();
 			expect(letters).toEqual(["B", "K", "L"]);
+		});
+	});
+
+	describe("updateOwnersAndRemoveIsolated", () => {
+		it("updates ownership for selected cells", () => {
+			const selection: LetterData[] = [
+				{ letter: "K", row: 1, column: 0, owner: "none" },
+				{ letter: "L", row: 1, column: 1, owner: "none" },
+			];
+			const updated = updateOwnersAndRemoveIsolated(
+				selection,
+				base,
+				board,
+				player1,
+				player1,
+			);
+			expect(updated[10].owner).toBe(player1); // row 1, col 0
+			expect(updated[11].owner).toBe(player1); // row 1, col 1
+		});
+
+		it("removes isolated opponent pieces", () => {
+			// Create a base where player2 has an isolated piece
+			const baseWithIsolated = base.map((b) => {
+				if (b.row === 5 && b.column === 5) {
+					return { ...b, owner: player2 };
+				}
+				return b;
+			});
+
+			const selection: LetterData[] = [
+				{ letter: "K", row: 1, column: 0, owner: "none" },
+			];
+			const updated = updateOwnersAndRemoveIsolated(
+				selection,
+				baseWithIsolated,
+				board,
+				player1,
+				player1,
+			);
+			// The isolated player2 piece at (5,5) should become "none"
+			const idx = 5 * 10 + 5;
+			expect(updated[idx].owner).toBe("none");
+		});
+
+		it("keeps connected opponent pieces", () => {
+			// Create a base where player2 has a connected piece at bottom row
+			const baseWithConnected = base.map((b) => {
+				if (b.row === 11 && b.column === 5) {
+					return { ...b, owner: player2 };
+				}
+				return b;
+			});
+
+			const selection: LetterData[] = [
+				{ letter: "K", row: 1, column: 0, owner: "none" },
+			];
+			const updated = updateOwnersAndRemoveIsolated(
+				selection,
+				baseWithConnected,
+				board,
+				player1,
+				player1,
+			);
+			// The connected player2 piece at (11,5) should remain player2
+			const idx = 11 * 10 + 5;
+			expect(updated[idx].owner).toBe(player2);
 		});
 	});
 });
