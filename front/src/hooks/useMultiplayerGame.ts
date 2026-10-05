@@ -208,11 +208,10 @@ export const useMultiplayerGame = ({
 				return;
 			}
 
-			// Create history entry for opponent's move
+			// Create history entry for the move
 			const movePlayerName =
 				move.playerId === myUserId ? myUsername : opponentUsername;
-			// Use current board state (after all previous moves) as the base before this move
-			// For our own moves, use the pre-move base captured before optimistic update
+			// Use pre-move base for history (for our moves, we stored it before sending)
 			const preMoveBase =
 				move.playerId === myUserId
 					? (ourMovePreBaseRef.current ?? baseRef.current)
@@ -229,30 +228,11 @@ export const useMultiplayerGame = ({
 				),
 			);
 
-			// For remote player's move (now our turn): visualize FIRST, then update state
-			if (nextIsMyTurn) {
-				computerSelect(move.selection);
-				const animationDuration = move.selection.length * 500 + 700;
-				setTimeout(() => {
-					dispatch(
-						allActions.baseActions.confirmSelection(
-							move.newBase,
-							move.playedWords,
-							[],
-						),
-					);
-					dispatch(
-						allActions.multiplayerActions.updateGameState({
-							base: move.newBase,
-							playedWords: move.playedWords,
-							turn: move.nextTurn,
-							winner: move.winner,
-						}),
-					);
-					dispatch(allActions.boardActions.changeTurn(myUsername));
-				}, animationDuration);
-			} else {
-				// Our move: apply immediately
+			// Server-authoritative: ALWAYS visualize first, then apply state
+			// This applies to BOTH our moves (echoed back) and opponent's moves
+			computerSelect(move.selection);
+			const animationDuration = move.selection.length * 500 + 700;
+			setTimeout(() => {
 				dispatch(
 					allActions.baseActions.confirmSelection(
 						move.newBase,
@@ -268,8 +248,9 @@ export const useMultiplayerGame = ({
 						winner: move.winner,
 					}),
 				);
-				dispatch(allActions.boardActions.changeTurn(opponentUsername));
-			}
+				// Change turn to the player whose turn it is NOW (after this move)
+				dispatch(allActions.boardActions.changeTurn(nextIsMyTurn ? myUsername : opponentUsername));
+			}, animationDuration);
 		};
 
 		const handleGameEnd = (data: GameEndData) => {

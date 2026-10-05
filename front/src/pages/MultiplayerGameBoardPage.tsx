@@ -141,44 +141,12 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 			.filter((word) => word.word === newWord);
 
 		if (wordExist && !playedAgain.length) {
-			const currentPlayerNames = gameState?.playerNames || {};
-			const opponentIdFound =
-				gameState?.players.find((p) => p !== myUserId) || "";
-			const opponentUsername =
-				currentPlayerNames[opponentIdFound] || "Opponent";
-
-			const confirmedAndFiltered =
-				gameService.updateOwnersAndRemoveIsolatedNodes(
-					selected,
-					base,
-					board,
-					myUserId,
-				);
-			const checkGame = gameService.checkIfWinMultiplayer(
-				selected,
-				myUserId,
-				board.length,
-				gameState?.players[0] || myUserId,
-			);
-
+			// Optimistic UI: show pending state, but don't compute locally
+			// Server is authoritative - it will validate and compute the new state
 			if (gameId) {
 				makeMove(gameId, selected, newWord, base);
 			}
-
-			dispatch(
-				allActions.baseActions.confirmSelection(
-					confirmedAndFiltered,
-					[
-						...playedWords,
-						{ word: newWord, owner: myUserId, turn: stateHistory.length },
-					],
-					[],
-				),
-			);
-
-			if (!checkGame) {
-				dispatch(allActions.boardActions.changeTurn(opponentUsername));
-			}
+			// Could add a pending indicator here if needed
 		} else {
 			const message =
 				playedAgain.length > 0
