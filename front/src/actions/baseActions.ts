@@ -95,24 +95,6 @@ const resetBase = (base: letterObject[]) => {
 	};
 };
 
-const _startingBase = (
-	base: letterObject[],
-	max: number,
-	playerName: string,
-) => {
-	const startingBase = base.map((letter) => {
-		if (letter.row === 0) {
-			letter = { ...letter, owner: playerName };
-		} else if (letter.row === max - 1) {
-			letter = { ...letter, owner: "computer" };
-		} else {
-			letter = { ...letter, owner: "none" };
-		}
-		return letter;
-	});
-	return startingBase;
-};
-
 const createHistory = (
 	base: letterObject[],
 	selection: letterObject[],

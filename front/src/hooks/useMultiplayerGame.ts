@@ -19,6 +19,7 @@ import {
 	parseGameMove,
 	parseGameState,
 } from "../validation/socketValidators";
+import { useSelectionAnimator } from "./useSelectionAnimator";
 
 interface UseMultiplayerGameOptions {
 	gameId: string | undefined;
@@ -90,20 +91,7 @@ export const useMultiplayerGame = ({
 		gameIdRef.current = gameId;
 	}, [gameId]);
 
-	const computerSelect = useCallback(
-		(selection: letterObject[]) => {
-			for (const [i, _s] of selection.entries()) {
-				const selectionArray = selection.filter((_s, j) => j <= i);
-				setTimeout(
-					() => {
-						dispatch(allActions.baseActions.updateSelection(selectionArray));
-					},
-					(i + 1) * 500,
-				);
-			}
-		},
-		[dispatch],
-	);
+	const computerSelect = useSelectionAnimator();
 
 	// Session restore handler
 	const handleSessionRestore = useCallback(

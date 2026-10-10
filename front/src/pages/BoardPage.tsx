@@ -9,6 +9,7 @@ import { LoadingTable } from "../components/LoadingTable";
 import { LogoContainer } from "../components/LogoContainer";
 import { Message } from "../components/Message";
 import { PlayedWordList } from "../components/PlayedWordList";
+import { useSelectionAnimator } from "../hooks/useSelectionAnimator";
 import { selectBase } from "../reducers/baseReducer";
 import { selectBoard } from "../reducers/boardReducer";
 import { selectMessage } from "../reducers/messageReducer";
@@ -87,20 +88,7 @@ export const GameBoardPage: React.FC = () => {
 		}
 	}, [base, dispatch, initializeBase]);
 
-	const computerSelect = useCallback(
-		(selection: letterObject[]) => {
-			for (const [i, _s] of selection.entries()) {
-				const selectionArray = selection.filter((_s, j) => j <= i);
-				setTimeout(
-					() => {
-						dispatch(allActions.baseActions.updateSelection(selectionArray));
-					},
-					(i + 1) * 500,
-				);
-			}
-		},
-		[dispatch],
-	);
+	const computerSelect = useSelectionAnimator();
 
 	const backToPresent = useCallback(
 		(base: letterObject[]) => {

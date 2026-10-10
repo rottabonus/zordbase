@@ -15,8 +15,6 @@ export const GameBoardHeader: React.FC<GameBoardHeaderProps> = (props) => {
 	const { selection: selected } = useSelector(selectBase);
 	const { playerName, opponentName, isMyTurn, gameStatus } = props;
 
-	const headerMessage = turn.endsWith("s") ? `${turn}'s turn` : `${turn}s turn`;
-
 	if (gameStatus === "finished") {
 		return (
 			<div className="gameboard-header">
@@ -33,25 +31,15 @@ export const GameBoardHeader: React.FC<GameBoardHeaderProps> = (props) => {
 		);
 	}
 
-	// Multiplayer mode with opponent name
-	if (opponentName && playerName) {
-		const currentPlayer = isMyTurn ? playerName : opponentName;
-		const turnMessage = `${currentPlayer}'s turn`;
+	// Multiplayer passes playerName/opponentName/isMyTurn; singleplayer passes
+	// none of them and falls back to the shared `turn` state (player name or
+	// "computer").
+	const currentPlayer =
+		opponentName && playerName ? (isMyTurn ? playerName : opponentName) : turn;
+	const turnMessage = currentPlayer.endsWith("s")
+		? `${currentPlayer}'s turn`
+		: `${currentPlayer}s turn`;
 
-		return (
-			<div className="gameboard-header">
-				{isLoading ? (
-					<span>Generating Board</span>
-				) : selected.length ? (
-					<span>{selected.map((s) => s.letter).join("")}</span>
-				) : (
-					<span>{turnMessage}</span>
-				)}
-			</div>
-		);
-	}
-
-	// Single player mode (vs computer)
 	return (
 		<div className="gameboard-header">
 			{isLoading ? (
@@ -59,7 +47,7 @@ export const GameBoardHeader: React.FC<GameBoardHeaderProps> = (props) => {
 			) : selected.length ? (
 				<span>{selected.map((s) => s.letter).join("")}</span>
 			) : (
-				<span>{headerMessage}</span>
+				<span>{turnMessage}</span>
 			)}
 		</div>
 	);
