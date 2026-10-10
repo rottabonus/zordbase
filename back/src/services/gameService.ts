@@ -314,21 +314,25 @@ const service = (io: SocketServer) => {
 			const userId = getUserId();
 			if (!userId) return;
 
-			const activeGame = await gameRoomRepository.findActiveForUser(userId);
-			if (activeGame) {
-				const otherPlayer =
-					activeGame.player1Id === userId
-						? activeGame.player2Id
-						: activeGame.player1Id;
-				await gameRoomRepository.update(activeGame.id, {
-					status: "finished",
-					winner: otherPlayer,
-				});
-				io.to(activeGame.id).emit("game:end", {
-					gameId: activeGame.id,
-					winner: otherPlayer,
-					reason: "disconnect",
-				});
+			try {
+				const activeGame = await gameRoomRepository.findActiveForUser(userId);
+				if (activeGame) {
+					const otherPlayer =
+						activeGame.player1Id === userId
+							? activeGame.player2Id
+							: activeGame.player1Id;
+					await gameRoomRepository.update(activeGame.id, {
+						status: "finished",
+						winner: otherPlayer,
+					});
+					io.to(activeGame.id).emit("game:end", {
+						gameId: activeGame.id,
+						winner: otherPlayer,
+						reason: "disconnect",
+					});
+				}
+			} catch (error) {
+				console.error("Unhandled error in disconnect handler:", error);
 			}
 		});
 	});

@@ -10,6 +10,11 @@ const formatZodError = (error: z.ZodError): string =>
  * (e.g. `game:move`) and events emitted with multiple positional
  * arguments (e.g. `challenge:new`), by validating against a tuple schema.
  * On failure, emits "game:error" and never calls the handler.
+ *
+ * Also catches any error thrown by the handler itself (e.g. a corrupt DB
+ * row failing its own zod parse in a repository) - an async socket.io
+ * listener that throws becomes an unhandled rejection, which by default
+ * crashes the whole Node process, taking down every connected player.
  */
 export const validateEvent = <S extends z.ZodTypeAny>(
 	schema: S,
@@ -23,6 +28,11 @@ export const validateEvent = <S extends z.ZodTypeAny>(
 			socket.emit("game:error", formatZodError(result.error));
 			return;
 		}
-		await handler(result.data);
+		try {
+			await handler(result.data);
+		} catch (error) {
+			console.error("Unhandled error in socket handler:", error);
+			socket.emit("game:error", "Internal server error");
+		}
 	};
 };

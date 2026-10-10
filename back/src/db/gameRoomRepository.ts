@@ -1,11 +1,12 @@
 import { and, desc, eq, or } from "drizzle-orm";
+import { parseGameRoomJson } from "../validation/dbSchemas.ts";
 import { db } from "./client.ts";
 import { type GameRoom, gameRooms, type NewGameRoom } from "./schema.ts";
 
 export const gameRoomRepository = {
 	async create(room: NewGameRoom): Promise<GameRoom> {
 		const result = await db.insert(gameRooms).values(room).returning();
-		return result[0];
+		return parseGameRoomJson(result[0]);
 	},
 
 	async findById(id: string): Promise<GameRoom | undefined> {
@@ -14,7 +15,7 @@ export const gameRoomRepository = {
 			.from(gameRooms)
 			.where(eq(gameRooms.id, id))
 			.limit(1);
-		return result[0];
+		return result[0] ? parseGameRoomJson(result[0]) : undefined;
 	},
 
 	async findByPlayerId(
@@ -27,11 +28,12 @@ export const gameRoomRepository = {
 		if (status) {
 			conditions.push(eq(gameRooms.status, status));
 		}
-		return db
+		const rows = await db
 			.select()
 			.from(gameRooms)
 			.where(and(...conditions))
 			.orderBy(desc(gameRooms.createdAt));
+		return rows.map(parseGameRoomJson);
 	},
 
 	async update(
@@ -43,7 +45,7 @@ export const gameRoomRepository = {
 			.set({ ...data, updatedAt: new Date() })
 			.where(eq(gameRooms.id, id))
 			.returning();
-		return result[0];
+		return result[0] ? parseGameRoomJson(result[0]) : undefined;
 	},
 
 	async delete(id: string): Promise<void> {
@@ -61,6 +63,6 @@ export const gameRoomRepository = {
 				),
 			)
 			.limit(1);
-		return result[0];
+		return result[0] ? parseGameRoomJson(result[0]) : undefined;
 	},
 };
