@@ -1,7 +1,4 @@
-export const LETTERS =
-	"aaaaaaaaaaaaiiiiiiiiiiittttttttttnnnnnnnnneeeeeeeesssssssslllllloooookkkkkuuuuuääääämmmmvvrrjjhhyyppdö".split(
-		"",
-	);
+import { createGameBoard } from "../../../shared/boardLogic";
 
 const createBoard = (board?: string[][]) => {
 	return {
@@ -36,20 +33,6 @@ const changeTurn = (turn: string) => {
 		type: "CHANGETURN",
 		payload: turn,
 	};
-};
-
-const toArray = (num: number) => Array.from(Array(num).keys());
-
-const createGameBoard = (rows: number, columns: number) => {
-	return toArray(rows).map((_row) =>
-		toArray(columns).map((_column) => getRandomFrom(LETTERS).toUpperCase()),
-	);
-};
-
-const getRandomFrom = (arr: Array<string>) => arr[getRandomInt(arr.length)];
-
-const getRandomInt = (max: number) => {
-	return Math.floor(Math.random() * Math.floor(max));
 };
 
 export default {

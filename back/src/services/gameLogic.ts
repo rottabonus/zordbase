@@ -1,18 +1,10 @@
+import {
+	createGameBoard,
+	generateMovements,
+} from "../../../shared/boardLogic.ts";
 import type { LetterData } from "../types.ts";
 
-const LETTERS =
-	"aaaaaaaaaaaaiiiiiiiiiiittttttttttnnnnnnnnneeeeeeeesssssssslllllloooookkkkkuuuuuääääämmmmvvrrjjhhyyppdö".split(
-		"",
-	);
-
-export const createGameBoard = (rows: number, columns: number): string[][] => {
-	const toArray = (num: number) => Array.from(Array(num).keys());
-	const getRandomFrom = (arr: string[]) =>
-		arr[Math.floor(Math.random() * arr.length)];
-	return toArray(rows).map(() =>
-		toArray(columns).map(() => getRandomFrom(LETTERS).toUpperCase()),
-	);
-};
+export { createGameBoard, generateMovements };
 
 export const createInitialBase = (
 	board: string[][],
@@ -73,44 +65,6 @@ export const checkWin = (
 ): boolean => {
 	const targetRowForPlayer = playerId === player1Id ? boardRows - 1 : 0;
 	return base.some((b) => b.owner === playerId && b.row === targetRowForPlayer);
-};
-
-export const generateMovements = (board: string[][]) => {
-	const moves: Record<string, LetterData[]> = {};
-	board.forEach((row, r) => {
-		row.forEach((_, c) => {
-			moves[`${r},${c}`] = getNeighborsData(
-				{ letter: board[r][c], row: r, column: c, owner: "none" },
-				board,
-			);
-		});
-	});
-	return moves;
-};
-
-export const getNeighborsData = (node: LetterData, board: string[][]) => {
-	const possibleMoves: LetterData[] = [];
-	const possibleXpositions = [node.row, node.row + 1, node.row - 1].filter(
-		(x) => x >= 0 && x < board.length,
-	);
-	const possibleYpositions = [
-		node.column,
-		node.column + 1,
-		node.column - 1,
-	].filter((x) => x >= 0 && x < board[0].length);
-	possibleXpositions.forEach((xPos) => {
-		possibleYpositions.forEach((yPos) => {
-			if (!(xPos === node.row && yPos === node.column)) {
-				possibleMoves.push({
-					row: xPos,
-					column: yPos,
-					letter: board[xPos][yPos],
-					owner: "none",
-				});
-			}
-		});
-	});
-	return possibleMoves;
 };
 
 export const updateOwnersAndRemoveIsolated = (

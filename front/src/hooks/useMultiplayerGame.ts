@@ -19,6 +19,7 @@ import {
 	parseGameMove,
 	parseGameState,
 } from "../validation/socketValidators";
+import { useAnimatedMove } from "./useAnimatedMove";
 import { useSelectionAnimator } from "./useSelectionAnimator";
 
 interface UseMultiplayerGameOptions {
@@ -92,6 +93,7 @@ export const useMultiplayerGame = ({
 	}, [gameId]);
 
 	const computerSelect = useSelectionAnimator();
+	const applyMove = useAnimatedMove();
 
 	// Session restore handler
 	const handleSessionRestore = useCallback(
@@ -228,41 +230,32 @@ export const useMultiplayerGame = ({
 			if (move.playerId === myUserId) {
 				ourMovePreBaseRef.current = null;
 			}
-			dispatch(
-				allActions.baseActions.createHistory(
-					preMoveBase,
-					move.selection,
-					movePlayerName,
-				),
-			);
 
 			// Server-authoritative: ALWAYS visualize first, then apply state
 			// This applies to BOTH our moves (echoed back) and opponent's moves
-			computerSelect(move.selection);
-			const animationDuration = move.selection.length * 500 + 700;
-			setTimeout(() => {
-				dispatch(
-					allActions.baseActions.confirmSelection(
-						move.newBase,
-						move.playedWords,
-						[],
-					),
-				);
-				dispatch(
-					allActions.multiplayerActions.updateGameState({
-						base: move.newBase,
-						playedWords: move.playedWords,
-						turn: move.nextTurn,
-						winner: move.winner,
-					}),
-				);
-				// Change turn to the player whose turn it is NOW (after this move)
-				dispatch(
-					allActions.boardActions.changeTurn(
-						nextIsMyTurn ? myUsername : opponentUsername,
-					),
-				);
-			}, animationDuration);
+			applyMove({
+				preMoveBase,
+				selection: move.selection,
+				historyTurnLabel: movePlayerName,
+				newBase: move.newBase,
+				playedWords: move.playedWords,
+				onComplete: () => {
+					dispatch(
+						allActions.multiplayerActions.updateGameState({
+							base: move.newBase,
+							playedWords: move.playedWords,
+							turn: move.nextTurn,
+							winner: move.winner,
+						}),
+					);
+					// Change turn to the player whose turn it is NOW (after this move)
+					dispatch(
+						allActions.boardActions.changeTurn(
+							nextIsMyTurn ? myUsername : opponentUsername,
+						),
+					);
+				},
+			});
 		};
 
 		const handleGameEnd = (raw: unknown) => {
@@ -338,7 +331,7 @@ export const useMultiplayerGame = ({
 			socket.off("game:end", handleGameEnd);
 			socket.off("game:error", handleGameError);
 		};
-	}, [socket, isConnected, initializeBaseFromServer, computerSelect, dispatch]);
+	}, [socket, isConnected, initializeBaseFromServer, applyMove, dispatch]);
 
 	// Listen for session restore on connect
 	useEffect(() => {

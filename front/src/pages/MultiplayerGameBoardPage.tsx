@@ -10,10 +10,10 @@ import { LoadingTable } from "../components/LoadingTable";
 import { LogoContainer } from "../components/LogoContainer";
 import { Message } from "../components/Message";
 import { PlayedWordList } from "../components/PlayedWordList";
+import { useGameModals } from "../hooks/useGameModals";
 import { useMultiplayerGame } from "../hooks/useMultiplayerGame";
 import { selectBase } from "../reducers/baseReducer";
 import { selectBoard } from "../reducers/boardReducer";
-import { selectMessage } from "../reducers/messageReducer";
 import { selectMultiplayer } from "../reducers/multiplayerReducer";
 import gameService from "../services/game";
 import wordService from "../services/words";
@@ -31,8 +31,9 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 		playerName,
 		stateHistory,
 	} = useSelector(selectBase);
-	const { type: messageType } = useSelector(selectMessage);
 	const { gameState, error: multiplayerError } = useSelector(selectMultiplayer);
+	const { showResetModal, showStartModal, clearMessage, clearStartModal } =
+		useGameModals();
 
 	const initializeBaseFromServer = useCallback(
 		(serverBase: letterObject[]) => {
@@ -78,27 +79,7 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 			dispatch(allActions.boardActions.createBoard(gameState.board));
 		}
 		dispatch(allActions.boardActions.newGame(true, myPlayerLabel, true));
-		if (messageType === "start") {
-			dispatch(allActions.messageActions.clearMessage());
-		}
-	};
-
-	const showResetModal = () => {
-		dispatch(
-			allActions.messageActions.setMessage(
-				"are you sure you want to reset the game?",
-				"reset",
-			),
-		);
-	};
-
-	const showStartModal = () => {
-		dispatch(
-			allActions.messageActions.setMessage(
-				"are you sure you want to start new game?",
-				"start",
-			),
-		);
+		clearStartModal();
 	};
 
 	const resetGame = () => {
@@ -124,10 +105,6 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 		} else {
 			dispatch(allActions.baseActions.resetBase(stateHistory[1]?.base || []));
 		}
-		dispatch(allActions.messageActions.clearMessage());
-	};
-
-	const clearMessage = () => {
 		dispatch(allActions.messageActions.clearMessage());
 	};
 

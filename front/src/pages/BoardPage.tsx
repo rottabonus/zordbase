@@ -9,10 +9,11 @@ import { LoadingTable } from "../components/LoadingTable";
 import { LogoContainer } from "../components/LogoContainer";
 import { Message } from "../components/Message";
 import { PlayedWordList } from "../components/PlayedWordList";
+import { useAnimatedMove } from "../hooks/useAnimatedMove";
+import { useGameModals } from "../hooks/useGameModals";
 import { useSelectionAnimator } from "../hooks/useSelectionAnimator";
 import { selectBase } from "../reducers/baseReducer";
 import { selectBoard } from "../reducers/boardReducer";
-import { selectMessage } from "../reducers/messageReducer";
 import gameService from "../services/game";
 import wordService from "../services/words";
 import type { letterObject, selectionObject } from "../types/types";
@@ -27,8 +28,9 @@ export const GameBoardPage: React.FC = () => {
 		possibleWordPositions,
 		stateHistory,
 	} = useSelector(selectBase);
-	const { type: messageType } = useSelector(selectMessage);
 	const dispatch = useDispatch();
+	const { showResetModal, showStartModal, clearMessage, clearStartModal } =
+		useGameModals();
 
 	// Create worker once, not on every render
 	const webWorkerRef = useRef<Worker | null>(null);
@@ -43,10 +45,8 @@ export const GameBoardPage: React.FC = () => {
 	const startNewGame = useCallback(() => {
 		dispatch(allActions.baseActions.removeSelectionAndPlayedWords([], []));
 		dispatch(allActions.boardActions.newGame(true, playerName, true));
-		if (messageType === "start") {
-			dispatch(allActions.messageActions.clearMessage());
-		}
-	}, [dispatch, messageType, playerName]);
+		clearStartModal();
+	}, [dispatch, clearStartModal, playerName]);
 
 	const gameChange = useCallback(() => {
 		setTimeout(() => {
@@ -89,6 +89,7 @@ export const GameBoardPage: React.FC = () => {
 	}, [base, dispatch, initializeBase]);
 
 	const computerSelect = useSelectionAnimator();
+	const applyMove = useAnimatedMove();
 
 	const backToPresent = useCallback(
 		(base: letterObject[]) => {
@@ -97,30 +98,8 @@ export const GameBoardPage: React.FC = () => {
 		[dispatch],
 	);
 
-	const showResetModal = () => {
-		dispatch(
-			allActions.messageActions.setMessage(
-				"are you sure you want to reset the game?",
-				"reset",
-			),
-		);
-	};
-
-	const showStartModal = () => {
-		dispatch(
-			allActions.messageActions.setMessage(
-				"are you sure you want to start new game?",
-				"start",
-			),
-		);
-	};
-
 	const resetGame = () => {
 		dispatch(allActions.baseActions.resetBase(stateHistory[1].base));
-		dispatch(allActions.messageActions.clearMessage());
-	};
-
-	const clearMessage = () => {
 		dispatch(allActions.messageActions.clearMessage());
 	};
 
@@ -180,54 +159,41 @@ export const GameBoardPage: React.FC = () => {
 			owner: turn,
 			possibleWords: s.possibleWords,
 		}));
-		dispatch(
-			allActions.baseActions.createHistory(
-				history,
-				newSelectionConfirmed,
-				turn,
-			),
+		const confirmedAndFiltered = gameService.updateOwnersAndRemoveIsolatedNodes(
+			newSelectionConfirmed,
+			base,
+			board,
+			turn,
 		);
-		computerSelect(newSelectionConfirmed);
-		const timeOutCounter = newSelectionConfirmed.length;
-		setTimeout(
-			() => {
-				const confirmedAndFiltered =
-					gameService.updateOwnersAndRemoveIsolatedNodes(
-						newSelectionConfirmed,
-						base,
-						board,
-						turn,
-					);
-				const fullyUpdatedBase = gameService.updateBaseWithPossibleWordTable(
-					newSelectionConfirmed,
-					possibleWordPositions,
-					confirmedAndFiltered,
-				);
-				const checkGame = gameService.checkIfWin(
-					newSelectionConfirmed,
-					turn,
-					board.length,
-				);
-				dispatch(
-					allActions.baseActions.confirmSelection(
-						fullyUpdatedBase,
-						[
-							...playedWords,
-							{
-								word: computerSelected.map((s) => s.letter).join(""),
-								owner: turn,
-								turn: stateHistory.length,
-							},
-						],
-						[],
-					),
-				);
+		const fullyUpdatedBase = gameService.updateBaseWithPossibleWordTable(
+			newSelectionConfirmed,
+			possibleWordPositions,
+			confirmedAndFiltered,
+		);
+		const checkGame = gameService.checkIfWin(
+			newSelectionConfirmed,
+			turn,
+			board.length,
+		);
+		applyMove({
+			preMoveBase: history,
+			selection: newSelectionConfirmed,
+			historyTurnLabel: turn,
+			newBase: fullyUpdatedBase,
+			playedWords: [
+				...playedWords,
+				{
+					word: computerSelected.map((s) => s.letter).join(""),
+					owner: turn,
+					turn: stateHistory.length,
+				},
+			],
+			onComplete: () => {
 				checkGame
 					? gameChange()
 					: dispatch(allActions.boardActions.changeTurn(playerName));
 			},
-			timeOutCounter * 500 + 700,
-		);
+		});
 	}, [
 		base,
 		turn,
@@ -238,7 +204,7 @@ export const GameBoardPage: React.FC = () => {
 		playedWords,
 		possibleWordPositions,
 		gameChange,
-		computerSelect,
+		applyMove,
 	]);
 
 	computersTurnRef.current = computersTurn;

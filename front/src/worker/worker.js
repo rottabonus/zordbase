@@ -1,3 +1,5 @@
+import { generateMovements } from "../../../shared/boardLogic.ts";
+
 addEventListener("message", (event) => {
 	//console.log('postmessage event')
 	const wholeBoard = calculateValues(
@@ -127,46 +129,8 @@ const returnNonPathSearchedNodeIndexes = (
 	return toReturnIndexes;
 };
 
-const generateMovements = (board) => {
-	const moves = {};
-	board.forEach((row, r) => {
-		row.forEach((_column, c) => {
-			moves[`${r},${c}`] = getNeighborsData(
-				{ letter: board[r][c], row: r, column: c, owner: "none" },
-				board,
-			);
-		});
-	});
-	return moves;
-};
-
 const getKeyNameObject = (obj) => {
 	return `${obj.row},${obj.column}`;
-};
-
-const getNeighborsData = (node, board) => {
-	const possibleMoves = [];
-	const possibleXpositions = [node.row, node.row + 1, node.row - 1].filter(
-		(x) => x >= 0 && x < board.length,
-	);
-	const possibleYpositions = [
-		node.column,
-		node.column + 1,
-		node.column - 1,
-	].filter((x) => x >= 0 && x < board[0].length);
-	possibleXpositions.forEach((xPos) => {
-		possibleYpositions.forEach((yPos) => {
-			if (!(xPos === node.row && yPos === node.column)) {
-				possibleMoves.push({
-					row: xPos,
-					column: yPos,
-					letter: board[xPos][yPos],
-					owner: "none",
-				});
-			}
-		});
-	});
-	return possibleMoves;
 };
 
 const checkPosition = (r, c, arr) => {
