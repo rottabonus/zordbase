@@ -20,15 +20,15 @@ export const LoadingTable: React.FC = () => {
 		<div>
 			<table>
 				<tbody>
-					{loadingBoard.map((row, i) => (
-						<tr key={i}>
-							{row.map((cellId, j) => {
-								return (
-									<td key={j} className="spin">
-										{cellId}
-									</td>
-								);
-							})}
+					{loadingBoard.map((row, rowIndex) => (
+						// biome-ignore lint/suspicious/noArrayIndexKey: rowIndex/colIndex are stable loading text coordinates
+						<tr key={`lr${rowIndex}`}>
+							{row.map((cellId, colIndex) => (
+								// biome-ignore lint/suspicious/noArrayIndexKey: rowIndex/colIndex are stable loading text coordinates
+								<td key={`lc${rowIndex}-${colIndex}`} className="spin">
+									{cellId}
+								</td>
+							))}
 						</tr>
 					))}
 				</tbody>

@@ -1,0 +1,10 @@
+{
+	"name": "shared",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Zod schemas shared between back/ and front/",
+	"type": "module",
+	"dependencies": {
+		"zod": "^4.6.5"
+	}
+}

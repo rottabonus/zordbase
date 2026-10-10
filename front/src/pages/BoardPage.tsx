@@ -1,5 +1,5 @@
 import type React from "react";
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import allActions from "../actions/allActions";
 import { Board } from "../components/Board";
@@ -9,12 +9,14 @@ import { LoadingTable } from "../components/LoadingTable";
 import { LogoContainer } from "../components/LogoContainer";
 import { Message } from "../components/Message";
 import { PlayedWordList } from "../components/PlayedWordList";
+import { useAnimatedMove } from "../hooks/useAnimatedMove";
+import { useGameModals } from "../hooks/useGameModals";
+import { useTimeTravel } from "../hooks/useTimeTravel";
 import { selectBase } from "../reducers/baseReducer";
 import { selectBoard } from "../reducers/boardReducer";
-import { selectMessage } from "../reducers/messageReducer";
 import gameService from "../services/game";
 import wordService from "../services/words";
-import type { letterObject, selectionObject } from "../types/types";
+import type { selectionObject } from "../types/types";
 
 export const GameBoardPage: React.FC = () => {
 	const { board, turn, newGame, isLoading } = useSelector(selectBoard);
@@ -26,31 +28,52 @@ export const GameBoardPage: React.FC = () => {
 		possibleWordPositions,
 		stateHistory,
 	} = useSelector(selectBase);
-	const { type: messageType } = useSelector(selectMessage);
-	const webWorker = new Worker(
-		new URL("../worker/worker.js", import.meta.url),
-		{ type: "module" },
-	);
 	const dispatch = useDispatch();
+	const { showResetModal, showStartModal, clearMessage, clearStartModal } =
+		useGameModals();
 
-	const gameChange = () => {
+	// Create worker once, not on every render
+	const webWorkerRef = useRef<Worker | null>(null);
+	if (!webWorkerRef.current) {
+		webWorkerRef.current = new Worker(
+			new URL("../worker/worker.js", import.meta.url),
+			{ type: "module" },
+		);
+	}
+	const webWorker = webWorkerRef.current;
+
+	const startNewGame = useCallback(() => {
+		dispatch(allActions.baseActions.removeSelectionAndPlayedWords([], []));
+		dispatch(allActions.boardActions.newGame(true, playerName, true));
+		clearStartModal();
+	}, [dispatch, clearStartModal, playerName]);
+
+	const gameChange = useCallback(() => {
 		setTimeout(() => {
 			dispatch(
 				allActions.messageActions.setMessage(`winner is ${turn}`, "message"),
 			);
 			startNewGame();
 		}, 1500);
-	};
+	}, [dispatch, turn, startNewGame]);
 
-	const startNewGame = () => {
-		dispatch(allActions.baseActions.removeSelectionAndPlayedWords([], []));
-		dispatch(allActions.boardActions.newGame(true, playerName, true));
-		if (messageType === "start") {
-			dispatch(allActions.messageActions.clearMessage());
-		}
-	};
+	const initializeBase = useCallback(async () => {
+		const words = await wordService.fetchAll();
+		const objToSend = {
+			board,
+			player1Id: playerName,
+			player2Id: "computer",
+			isMultiplayer: false,
+			words,
+		};
+		webWorker.postMessage(objToSend);
+		dispatch(allActions.boardActions.isLoading(true));
+		webWorker.onmessage = (event) => {
+			dispatch(allActions.baseActions.createBase(event.data));
+		};
+	}, [board, dispatch, playerName, webWorker]);
 
-	const checkBoard = async () => {
+	const checkBoard = useCallback(async () => {
 		const positionsWithPossibleWords = base.filter(
 			(w) => w.possibleWords && w.possibleWords.length > 0,
 		);
@@ -63,42 +86,13 @@ export const GameBoardPage: React.FC = () => {
 				dispatch(allActions.boardActions.isLoading(false));
 			}
 		}
-	};
+	}, [base, dispatch, initializeBase]);
 
-	const initializeBase = async () => {
-		const words = await wordService.fetchAll();
-		const objToSend = { board, playerName, words };
-		webWorker.postMessage(objToSend);
-		dispatch(allActions.boardActions.isLoading(true));
-		webWorker.onmessage = (event) => {
-			dispatch(allActions.baseActions.createBase(event.data));
-		};
-	};
-
-	const showResetModal = () => {
-		dispatch(
-			allActions.messageActions.setMessage(
-				"are you sure you want to reset the game?",
-				"reset",
-			),
-		);
-	};
-
-	const showStartModal = () => {
-		dispatch(
-			allActions.messageActions.setMessage(
-				"are you sure you want to start new game?",
-				"start",
-			),
-		);
-	};
+	const applyMove = useAnimatedMove();
+	const { timeTravel, isTimeTraveling } = useTimeTravel(base, stateHistory);
 
 	const resetGame = () => {
 		dispatch(allActions.baseActions.resetBase(stateHistory[1].base));
-		dispatch(allActions.messageActions.clearMessage());
-	};
-
-	const clearMessage = () => {
 		dispatch(allActions.messageActions.clearMessage());
 	};
 
@@ -142,11 +136,13 @@ export const GameBoardPage: React.FC = () => {
 		}
 	};
 
-	const removeSelection = () => {
+	const removeSelection = useCallback(() => {
 		dispatch(allActions.baseActions.removeFromSelection(0));
-	};
+	}, [dispatch]);
 
-	const computersTurn = () => {
+	const computersTurnRef = useRef<() => void>(() => {});
+
+	const computersTurn = useCallback(() => {
 		const history = [...base];
 		const computerSelected = gameService.getBestWord(base, turn, board.length);
 		const newSelectionConfirmed = computerSelected.map((s) => ({
@@ -156,73 +152,101 @@ export const GameBoardPage: React.FC = () => {
 			owner: turn,
 			possibleWords: s.possibleWords,
 		}));
-		dispatch(
-			allActions.baseActions.createHistory(
-				history,
-				newSelectionConfirmed,
-				turn,
-			),
+		const confirmedAndFiltered = gameService.updateOwnersAndRemoveIsolatedNodes(
+			newSelectionConfirmed,
+			base,
+			board,
+			turn,
 		);
-		computerSelect(newSelectionConfirmed);
-		const timeOutCounter = newSelectionConfirmed.length;
-		setTimeout(
-			() => {
-				const confirmedAndFiltered =
-					gameService.updateOwnersAndRemoveIsolatedNodes(
-						newSelectionConfirmed,
-						base,
-						board,
-						turn,
-					);
-				const fullyUpdatedBase = gameService.updateBaseWithPossibleWordTable(
-					newSelectionConfirmed,
-					possibleWordPositions,
-					confirmedAndFiltered,
-				);
-				const checkGame = gameService.checkIfWin(
-					newSelectionConfirmed,
-					turn,
-					board.length,
-				);
-				dispatch(
-					allActions.baseActions.confirmSelection(
-						fullyUpdatedBase,
-						[
-							...playedWords,
-							{
-								word: computerSelected.map((s) => s.letter).join(""),
-								owner: turn,
-								turn: stateHistory.length,
-							},
-						],
-						[],
-					),
-				);
-				checkGame
-					? gameChange()
-					: dispatch(allActions.boardActions.changeTurn(playerName));
+		const fullyUpdatedBase = gameService.updateBaseWithPossibleWordTable(
+			newSelectionConfirmed,
+			possibleWordPositions,
+			confirmedAndFiltered,
+		);
+		const checkGame = gameService.checkIfWin(
+			newSelectionConfirmed,
+			turn,
+			board.length,
+		);
+		applyMove({
+			preMoveBase: history,
+			selection: newSelectionConfirmed,
+			historyTurnLabel: turn,
+			newBase: fullyUpdatedBase,
+			playedWords: [
+				...playedWords,
+				{
+					word: computerSelected.map((s) => s.letter).join(""),
+					owner: turn,
+					turn: stateHistory.length,
+				},
+			],
+			onComplete: () => {
+				// Always hand the turn back to the player, even on a win - otherwise
+				// `turn` stays "computer" and the effect below keeps re-triggering
+				// computer moves after the game is already over.
+				dispatch(allActions.boardActions.changeTurn(playerName));
+				if (checkGame) {
+					gameChange();
+				}
 			},
-			timeOutCounter * 500 + 700,
-		);
-	};
+		});
+	}, [
+		base,
+		turn,
+		board,
+		dispatch,
+		playerName,
+		stateHistory,
+		playedWords,
+		possibleWordPositions,
+		gameChange,
+		applyMove,
+	]);
+
+	computersTurnRef.current = computersTurn;
 
 	const selectLetter = async (
 		letter: string,
 		row: number,
 		column: number,
-		owner: string,
+		_owner: string,
 	) => {
-		const obj = { letter: letter, row: row, column: column, owner: owner };
+		if (isTimeTraveling) return;
+		const baseCell = base.find((b) => b.row === row && b.column === column);
+		const actualOwner = baseCell?.owner || "none";
+
+		// For validation, use actualOwner; for display in selection, use current player's turn
+		const validationObj = {
+			letter: letter,
+			row: row,
+			column: column,
+			owner: actualOwner,
+		};
+		const displayObj = {
+			letter: letter,
+			row: row,
+			column: column,
+			owner: turn, // Use current player's turn for display
+		};
+
 		const selectionOnBase = base.filter(
-			(s) =>
-				s.owner === obj.owner && s.column === obj.column && s.row === obj.row,
+			(s) => s.owner === actualOwner && s.column === column && s.row === row,
 		);
+
 		if (selectionOnBase.length || selected.length) {
 			const result: selectionObject =
-				gameService.checkIfLetterSelectionIsallowed(obj, board, selected, turn);
+				gameService.checkIfLetterSelectionIsallowed(
+					validationObj,
+					board,
+					selected,
+					turn,
+				);
 			if (result.possibleSelection) {
 				result.selectedBeforeIndex === -1
-					? dispatch(allActions.baseActions.updateSelection([...selected, obj]))
+					? dispatch(
+							allActions.baseActions.updateSelection([...selected, displayObj]),
+						)
 					: dispatch(
 							allActions.baseActions.removeFromSelection(
 								result.selectedBeforeIndex,
@@ -232,36 +256,6 @@ export const GameBoardPage: React.FC = () => {
 		}
 	};
 
-	const timeTravel = (turn: number) => {
-		const currentBase = [...base];
-		const timeOutCounter = stateHistory[turn].selection.length;
-		dispatch(allActions.baseActions.updateBase(stateHistory[turn].base));
-		computerSelect(stateHistory[turn].selection);
-		setTimeout(
-			() => {
-				backToPresent(currentBase);
-				removeSelection();
-			},
-			timeOutCounter * 500 + 700,
-		);
-	};
-
-	const computerSelect = (selection: letterObject[]) => {
-		for (const [i, _s] of selection.entries()) {
-			const selectionArray = selection.filter((_s, j) => j <= i);
-			setTimeout(
-				() => {
-					dispatch(allActions.baseActions.updateSelection(selectionArray));
-				},
-				(i + 1) * 500,
-			);
-		}
-	};
-
-	const backToPresent = (base: letterObject[]) => {
-		dispatch(allActions.baseActions.updateBase(base));
-	};
-
 	useEffect(() => {
 		if (newGame) {
 			dispatch(allActions.boardActions.gameStart());
@@ -269,25 +263,41 @@ export const GameBoardPage: React.FC = () => {
 		} else if (isLoading) {
 			checkBoard();
 		} else if (turn === "computer" && !newGame) {
-			computersTurn();
+			computersTurnRef.current();
 		}
-	}, [turn, newGame, possibleWordPositions]);
+	}, [turn, newGame, checkBoard, dispatch, initializeBase, isLoading]);
 
 	return (
-		<div className="gameboard-page-container">
+		<div className="page-container">
 			<div className="board-and-word-list">
 				<div className="gameboard">
 					<GameBoardHeader />
-					{isLoading ? <LoadingTable /> : <Board selectLetter={selectLetter} />}
+					{isLoading ? (
+						<LoadingTable />
+					) : (
+						<Board
+							selectLetter={selectLetter}
+							myUserId={playerName}
+							opponentId="computer"
+						/>
+					)}
 					<GameBoardButtons
 						newGame={showStartModal}
 						resetGame={showResetModal}
 						confirmSelection={confirmSelection}
 						removeSelection={removeSelection}
+						disabled={isTimeTraveling}
 					/>
 				</div>
 				<div className="wordlist-and-info-container">
-					<PlayedWordList timeTravel={timeTravel} />
+					<PlayedWordList
+						timeTravel={timeTravel}
+						opponentName="computer"
+						isMultiplayer={false}
+						myUserId={playerName}
+						opponentId="computer"
+						disabled={isTimeTraveling}
+					/>
 					<LogoContainer />
 				</div>
 				<div>

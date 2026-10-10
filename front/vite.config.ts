@@ -1,3 +1,4 @@
+import path from "node:path";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
@@ -11,5 +12,16 @@ export default defineConfig({
 				changeOrigin: true,
 			},
 		},
+		fs: {
+			// Allow serving ../shared (schemas shared with back/) from the dev server.
+			allow: [path.resolve(import.meta.dirname, "..")],
+		},
+	},
+	build: {
+		minify: "esbuild",
+	},
+	esbuild: {
+		pure: ["console.log"],
+		drop: process.env.NODE_ENV === "production" ? ["console", "debugger"] : [],
 	},
 });

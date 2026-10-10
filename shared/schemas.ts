@@ -1,0 +1,121 @@
+import { z } from "zod";
+
+// Single source of truth for every shape that crosses the socket.io wire
+// between back/ and front/. Both sides import this file directly
+// (see back/src/validation/schemas.ts and front/src/validation/schemas.ts)
+// instead of hand-duplicating these shapes.
+
+export interface LetterData {
+	letter: string;
+	row: number;
+	column: number;
+	owner: string;
+	possibleWords?: LetterData[][];
+}
+
+export const LetterDataSchema: z.ZodType<LetterData> = z.object({
+	letter: z.string().min(1).max(1),
+	row: z.number().int().nonnegative(),
+	column: z.number().int().nonnegative(),
+	owner: z.string().min(1),
+	possibleWords: z.array(z.array(z.lazy(() => LetterDataSchema))).optional(),
+});
+
+export const PlayedWordDataSchema = z.object({
+	word: z.string().min(1),
+	owner: z.string().min(1),
+	turn: z.number().int().nonnegative(),
+});
+
+export const GameStartDataSchema = z.object({
+	gameId: z.string().min(1),
+	players: z.tuple([z.string().min(1), z.string().min(1)]),
+	player1: z.string().min(1),
+	player2: z.string().min(1),
+	board: z.array(z.array(z.string().min(1).max(1))),
+});
+
+export const GameStateSchema = z.object({
+	gameId: z.string().min(1),
+	board: z.array(z.array(z.string().min(1).max(1))),
+	base: z.array(LetterDataSchema),
+	turn: z.string().min(1),
+	playedWords: z.array(PlayedWordDataSchema),
+	players: z.tuple([z.string().min(1), z.string().min(1)]),
+	playerNames: z.record(z.string().min(1), z.string().min(1)),
+	status: z.enum(["waiting", "playing", "finished"]),
+	winner: z.string().min(1).optional(),
+	player1Id: z.string().min(1),
+});
+
+export const GameMoveSchema = z.object({
+	gameId: z.string().min(1),
+	playerId: z.string().min(1),
+	selection: z.array(LetterDataSchema),
+	word: z.string().min(1),
+	newBase: z.array(LetterDataSchema),
+	playedWords: z.array(PlayedWordDataSchema),
+	nextTurn: z.string().min(1),
+	winner: z.string().min(1).optional(),
+});
+
+export const ClientGameMoveSchema = z.object({
+	gameId: z.string().min(1),
+	selection: z.array(LetterDataSchema).min(2),
+	word: z.string().min(2),
+});
+
+export const GameEndDataSchema = z.object({
+	gameId: z.string().min(1),
+	winner: z.string().min(1),
+	reason: z.enum(["win", "forfeit", "disconnect"]),
+});
+
+export const ChallengeSchema = z.object({
+	from: z.string().min(1),
+	to: z.string().min(1),
+	fromUsername: z.string().min(1),
+});
+
+// `challenge:new` / `challenge:accept` are emitted as two positional
+// arguments rather than a single object, so they get tuple schemas.
+export const ChallengeNewArgsSchema = z.tuple([
+	z.string().min(1), // challengedID
+	z.string().min(1), // challengerUsername
+]);
+
+export const ChallengeAcceptArgsSchema = z.tuple([
+	z.string().min(1), // challengerID
+	z.string().min(1), // acceptorUsername
+]);
+
+export const GameIdSchema = z.string().min(1);
+
+export const UserSchema = z.object({
+	username: z.string().optional(),
+	userID: z.string().min(1),
+	connected: z.boolean().optional(),
+});
+
+export const SessionSchema = z.object({
+	userID: z.string().min(1),
+	sessionID: z.string().min(1),
+});
+
+export const HandshakeAuthSchema = z.object({
+	sessionID: z.string().min(1).optional(),
+	username: z.string().trim().min(1).max(50).optional(),
+});
+
+export type PlayedWordData = z.infer<typeof PlayedWordDataSchema>;
+export type GameStartData = z.infer<typeof GameStartDataSchema>;
+export type GameState = z.infer<typeof GameStateSchema>;
+export type GameMove = z.infer<typeof GameMoveSchema>;
+export type ClientGameMove = z.infer<typeof ClientGameMoveSchema>;
+export type GameEndData = z.infer<typeof GameEndDataSchema>;
+export type Challenge = z.infer<typeof ChallengeSchema>;
+export type ChallengeNewArgs = z.infer<typeof ChallengeNewArgsSchema>;
+export type ChallengeAcceptArgs = z.infer<typeof ChallengeAcceptArgsSchema>;
+export type User = z.infer<typeof UserSchema>;
+export type Session = z.infer<typeof SessionSchema>;
+export type HandshakeAuth = z.infer<typeof HandshakeAuthSchema>;

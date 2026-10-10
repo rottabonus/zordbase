@@ -1,18 +1,32 @@
+import { generateMovements } from "../../../shared/boardLogic.ts";
+
 addEventListener("message", (event) => {
 	//console.log('postmessage event')
 	const wholeBoard = calculateValues(
 		event.data.board,
-		event.data.playerName,
+		event.data.player1Id,
+		event.data.player2Id,
+		event.data.isMultiplayer,
 		event.data.words,
 	);
 	postMessage(wholeBoard);
 });
 
-const calculateValues = (board, playerName, allWords) => {
+const calculateValues = (
+	board,
+	player1Id,
+	player2Id,
+	isMultiplayer,
+	allWords,
+) => {
 	const base = [];
 	for (const [j, boardRow] of board.entries()) {
-		const owner =
-			j === 0 ? playerName : j === board.length - 1 ? "computer" : "none";
+		let owner = "none";
+		if (j === 0) {
+			owner = player1Id; // Player 1 at top (row 0)
+		} else if (j === board.length - 1) {
+			owner = isMultiplayer ? player2Id : "computer"; // Player 2 or computer at bottom (row 11)
+		}
 		const row = boardRow.map((letter, column) => ({
 			letter: letter,
 			row: j,
@@ -39,7 +53,7 @@ const checkAllPossibleWordsAndRoutes = (letter, board, all) => {
 	words.forEach((possibleWord) => {
 		const route = getRouteForWord(possibleWord, movements, letter);
 		if (route.length > 0) {
-			possibilities.push(route.filter((w, i) => i !== 0));
+			possibilities.push(route.filter((_w, i) => i !== 0));
 		}
 	});
 	return possibilities;
@@ -115,46 +129,8 @@ const returnNonPathSearchedNodeIndexes = (
 	return toReturnIndexes;
 };
 
-const generateMovements = (board) => {
-	const moves = {};
-	board.forEach((row, r) => {
-		row.forEach((column, c) => {
-			moves[`${r},${c}`] = getNeighborsData(
-				{ letter: board[r][c], row: r, column: c, owner: "none" },
-				board,
-			);
-		});
-	});
-	return moves;
-};
-
 const getKeyNameObject = (obj) => {
 	return `${obj.row},${obj.column}`;
-};
-
-const getNeighborsData = (node, board) => {
-	const possibleMoves = [];
-	const possibleXpositions = [node.row, node.row + 1, node.row - 1].filter(
-		(x) => x >= 0 && x < board.length,
-	);
-	const possibleYpositions = [
-		node.column,
-		node.column + 1,
-		node.column - 1,
-	].filter((x) => x >= 0 && x < board[0].length);
-	possibleXpositions.forEach((xPos) => {
-		possibleYpositions.forEach((yPos) => {
-			if (!(xPos === node.row && yPos === node.column)) {
-				possibleMoves.push({
-					row: xPos,
-					column: yPos,
-					letter: board[xPos][yPos],
-					owner: "none",
-				});
-			}
-		});
-	});
-	return possibleMoves;
 };
 
 const checkPosition = (r, c, arr) => {

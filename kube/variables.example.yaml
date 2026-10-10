@@ -4,3 +4,10 @@ zordbase_app_image: zordbase-app:latest
 zordbase_app_host: zordbase.yourdomain.com
 zordbase_container_port: 80
 zordbase_service_port: 80
+zordbase_postgres_image: postgres:18-bookworm
+zordbase_postgres_db: zordbase
+zordbase_postgres_user: postgres
+zordbase_postgres_password: secret
+zordbase_postgres_storage_size: 1Gi
+zordbase_postgres_storage_class: standard
+zordbase_postgres_port: 5432

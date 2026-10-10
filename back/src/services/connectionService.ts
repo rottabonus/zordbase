@@ -1,0 +1,97 @@
+import crypto from "node:crypto";
+import type { SocketServer } from "../types.ts";
+import { HandshakeAuthSchema } from "../validation/schemas.ts";
+import { sessionStore } from "./sessionService.ts";
+
+const randomId = () => crypto.randomBytes(8).toString("hex");
+
+const service = (io: SocketServer) => {
+	io.use(async (socket, next) => {
+		const parsedAuth = HandshakeAuthSchema.safeParse(socket.handshake.auth);
+		if (!parsedAuth.success) {
+			return next(new Error("invalid handshake data"));
+		}
+		const { sessionID, username } = parsedAuth.data;
+		if (sessionID) {
+			const session = await sessionStore.findSession(sessionID);
+			if (session) {
+				socket.data.sessionID = sessionID;
+				socket.data.userID = session.userID;
+				socket.data.username = session.username;
+				return next();
+			}
+		}
+
+		if (!username) {
+			return next(new Error("invalid username"));
+		}
+
+		const allSessions = await sessionStore.findAllBut(sessionID ?? "");
+		const isNameExisting = allSessions.some(
+			(session) => session.username === username,
+		);
+		if (isNameExisting) {
+			return next(new Error("name already taken"));
+		}
+
+		socket.data.sessionID = randomId();
+		socket.data.userID = randomId();
+		socket.data.username = username;
+		next();
+	});
+
+	io.on("connection", async (socket) => {
+		// persist session
+		if (socket.data.sessionID) {
+			await sessionStore.saveSession(socket.data.sessionID, {
+				userID: socket.data.userID ?? "",
+				username: socket.data.username ?? "",
+				connected: true,
+			});
+		}
+
+		if (socket.data.userID) {
+			socket.join(socket.data.userID);
+		}
+
+		// emit session details
+		socket.emit("session:set", {
+			sessionID: socket.data.sessionID,
+			userID: socket.data.userID,
+		});
+
+		// fetch existing users
+		const sessions = await sessionStore.findAllSessions();
+		const users = sessions.map((session) => ({
+			userID: session.userID,
+			username: session.username,
+			connected: session.connected,
+		}));
+		socket.emit("users:list", users);
+
+		// notify existing users
+		socket.broadcast.emit("user:connected", {
+			userID: socket.data.userID ?? "",
+			username: socket.data.username ?? "",
+		});
+
+		socket.on("disconnect", async () => {
+			if (socket.data.userID && socket.data.sessionID) {
+				const matchingSockets = await io.in(socket.data.userID).fetchSockets();
+				const isDisconnected = matchingSockets.length === 0;
+				if (isDisconnected) {
+					// notify other users
+					socket.broadcast.emit("user:disconnected", socket.data.userID);
+					// update the connection status of the session
+					await sessionStore.saveSession(socket.data.sessionID, {
+						userID: socket.data.userID,
+						username: socket.data.username ?? "",
+						connected: false,
+					});
+				}
+			}
+		});
+	});
+};
+
+export default { service };

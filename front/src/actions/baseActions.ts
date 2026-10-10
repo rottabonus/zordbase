@@ -9,9 +9,9 @@ const updateBase = (base: letterObject[]) => {
 
 const createBase = (base: letterObject[]) => {
 	const possibleWordsTable: { [key: string]: string[] } = {};
-	for (const [i, letter] of base.entries()) {
+	for (const [_i, letter] of base.entries()) {
 		if (letter.possibleWords) {
-			for (const [j, possibility] of letter.possibleWords.entries()) {
+			for (const [_j, possibility] of letter.possibleWords.entries()) {
 				const word = letter.letter + possibility.map((o) => o.letter).join("");
 				if (!(word in possibleWordsTable)) {
 					possibleWordsTable[word] = [`${letter.row},${letter.column}`];
@@ -93,24 +93,6 @@ const resetBase = (base: letterObject[]) => {
 		type: "RESETGAME",
 		payload: { base, played, selection, history },
 	};
-};
-
-const startingBase = (
-	base: letterObject[],
-	max: number,
-	playerName: string,
-) => {
-	const startingBase = base.map((letter) => {
-		if (letter.row === 0) {
-			letter = { ...letter, owner: playerName };
-		} else if (letter.row === max - 1) {
-			letter = { ...letter, owner: "computer" };
-		} else {
-			letter = { ...letter, owner: "none" };
-		}
-		return letter;
-	});
-	return startingBase;
 };
 
 const createHistory = (

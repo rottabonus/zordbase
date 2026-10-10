@@ -1,3 +1,4 @@
+import { generateMovements } from "../../../shared/boardLogic";
 import type { letterObject } from "../types/types";
 
 const updateOwnersAndRemoveIsolatedNodes = (
@@ -131,7 +132,7 @@ const getBestWord = (base: letterObject[], turn: string, max: number) => {
 	const letterValueArray = [0, 0, 0, 0, 0]; //word length,letters touching opponents base,letters touching own base,letters touching goal 5 higher than starting pos
 	let greatestWordValue = 0;
 	let selection: letterObject[] = [];
-	for (const [i, letter] of computerBase.entries()) {
+	for (const [_i, letter] of computerBase.entries()) {
 		if (letter.possibleWords && letter.possibleWords.length > 0) {
 			for (const [j, possibleWord] of letter.possibleWords.entries()) {
 				letterValueArray[0] = possibleWord.length; //word length
@@ -187,7 +188,7 @@ const checkIfLetterSelectionIsallowed = (
 	turn: string,
 ) => {
 	const selectedAgainIndex = selected.findIndex(
-		(l) => l.row == letter.row && l.column == letter.column,
+		(l) => l.row === letter.row && l.column === letter.column,
 	);
 	if (!selected.length) {
 		return letter.owner === turn
@@ -213,44 +214,6 @@ const checkIfLetterSelectionIsallowed = (
 	return selectedAgainIndex === -1
 		? { possibleSelection: false, selectedBeforeIndex: selectedAgainIndex }
 		: { possibleSelection: true, selectedBeforeIndex: selectedAgainIndex };
-};
-
-const generateMovements = (board: string[][]) => {
-	const moves: Record<string, letterObject[]> = {};
-	board.forEach((row, r) => {
-		row.forEach((_column, c) => {
-			moves[`${r},${c}`] = getNeighborsData(
-				{ letter: board[r][c], row: r, column: c, owner: "none" },
-				board,
-			);
-		});
-	});
-	return moves;
-};
-
-const getNeighborsData = (node: letterObject, board: string[][]) => {
-	const possibleMoves: letterObject[] = [];
-	const possibleXpositions = [node.row, node.row + 1, node.row - 1].filter(
-		(x) => x >= 0 && x < board.length,
-	);
-	const possibleYpositions = [
-		node.column,
-		node.column + 1,
-		node.column - 1,
-	].filter((x) => x >= 0 && x < board[0].length);
-	possibleXpositions.forEach((xPos) => {
-		possibleYpositions.forEach((yPos) => {
-			if (!(xPos === node.row && yPos === node.column)) {
-				possibleMoves.push({
-					row: xPos,
-					column: yPos,
-					letter: board[xPos][yPos],
-					owner: "none",
-				});
-			}
-		});
-	});
-	return possibleMoves;
 };
 
 export default {
