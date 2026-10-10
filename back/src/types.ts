@@ -1,4 +1,16 @@
 import type { Server } from "socket.io";
+import type {
+	Challenge,
+	ClientGameMove,
+	GameEndData,
+	GameMove,
+	GameStartData,
+	GameState,
+	LetterData,
+	PlayedWordData,
+	User,
+} from "./validation/schemas.ts";
+
 export interface Words {
 	words: string[];
 }
@@ -9,9 +21,7 @@ export type SocketServer = Server<
 	InterServerEvents,
 	SocketData
 >;
-export type User = { username: string; userID: string };
 
-type Challenge = { from: string; to: string; fromUsername: string };
 export interface ServerToClientEvents {
 	"users:list": (users: Array<User>) => void;
 	"user:connected": (data: User) => void;
@@ -29,7 +39,6 @@ export interface ServerToClientEvents {
 }
 
 export interface ClientToServerEvents {
-	"username:set": (username: string) => void;
 	"challenge:new": (challenged: string, challengerUsername: string) => void;
 	"challenge:accept": (challenger: string, acceptorUsername: string) => void;
 	"game:move": (move: ClientGameMove) => void;
@@ -47,61 +56,16 @@ export interface SocketData {
 	sessionID: string;
 }
 
-// New types for multiplayer game
-export interface GameStartData {
-	gameId: string;
-	players: [string, string]; // [player1Id, player2Id]
-	player1: string; // userID of player 1 (starts first)
-	player2: string; // userID of player 2
-	board: string[][];
-}
-
-export interface GameState {
-	gameId: string;
-	board: string[][];
-	base: LetterData[];
-	turn: string; // userID of current turn
-	playedWords: PlayedWordData[];
-	players: [string, string];
-	playerNames: Record<string, string>;
-	status: "waiting" | "playing" | "finished";
-	winner?: string;
-	player1Id: string; // userID of player at row 0
-}
-
-export interface LetterData {
-	letter: string;
-	row: number;
-	column: number;
-	owner: string; // userID or "none"
-	possibleWords?: LetterData[][];
-}
-
-export interface PlayedWordData {
-	word: string;
-	owner: string; // userID
-	turn: number;
-}
-
-export interface GameMove {
-	gameId: string;
-	playerId: string;
-	selection: LetterData[];
-	word: string;
-	newBase: LetterData[];
-	playedWords: PlayedWordData[];
-	nextTurn: string; // userID of next player
-	winner?: string;
-}
-
-export interface ClientGameMove {
-	gameId: string;
-	selection: LetterData[];
-	word: string;
-}
-
-export interface GameEndData {
-	gameId: string;
-	winner: string; // userID
-	reason: "win" | "forfeit" | "disconnect";
-}
+// Re-exported so existing imports of these types from "./types.ts"
+// keep working; the shapes themselves are defined once in /shared.
+export type {
+	Challenge,
+	ClientGameMove,
+	GameEndData,
+	GameMove,
+	GameStartData,
+	GameState,
+	LetterData,
+	PlayedWordData,
+	User,
+};

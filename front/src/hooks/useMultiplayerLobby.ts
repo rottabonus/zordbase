@@ -2,6 +2,19 @@ import { useCallback, useEffect, useState } from "react";
 import { useSocket } from "../contexts/SocketContext";
 import { storageService } from "../services/storageService";
 import type { Challenge, GameStartData, Session, User } from "../types/types";
+import {
+	ChallengeAcceptArgsSchema,
+	ChallengeNewArgsSchema,
+} from "../validation/schemas";
+import {
+	emitValidated,
+	parseChallenge,
+	parseGameStart,
+	parseSession,
+	parseUser,
+	parseUserId,
+	parseUsersList,
+} from "../validation/socketValidators";
 
 interface UseMultiplayerLobbyOptions {
 	onSessionRestore?: (session: Session) => void;
@@ -58,9 +71,16 @@ export const useMultiplayerLobby = ({
 		[connect],
 	);
 
-	// Event handlers defined with useCallback to avoid stale closures
+	// Event handlers defined with useCallback to avoid stale closures.
+	// Each one validates its payload first, before touching any state.
 	const handleSessionSet = useCallback(
-		(newSession: Session) => {
+		(data: unknown) => {
+			const parsed = parseSession(data);
+			if (!parsed.success || !parsed.data) {
+				console.error(parsed.error);
+				return;
+			}
+			const newSession: Session = parsed.data;
 			setSession(newSession);
 			storageService.setItem("session", JSON.stringify(newSession));
 			handleSessionRestore(newSession);
@@ -68,32 +88,58 @@ export const useMultiplayerLobby = ({
 		[handleSessionRestore],
 	);
 
-	const handleUsersList = useCallback((usersList: User[]) => {
-		console.log("initial users", usersList);
-		setUsers(usersList.filter((user) => user.connected));
+	const handleUsersList = useCallback((data: unknown) => {
+		const parsed = parseUsersList(data);
+		if (!parsed.success || !parsed.data) {
+			console.error(parsed.error);
+			return;
+		}
+		console.log("initial users", parsed.data);
+		setUsers((parsed.data as User[]).filter((user) => user.connected));
 	}, []);
 
-	const handleUserConnected = useCallback((user: User) => {
-		console.log("userconnected", user);
-		setUsers((prevUsers) => [...prevUsers, user]);
+	const handleUserConnected = useCallback((data: unknown) => {
+		const parsed = parseUser(data);
+		if (!parsed.success || !parsed.data) {
+			console.error(parsed.error);
+			return;
+		}
+		console.log("userconnected", parsed.data);
+		setUsers((prevUsers) => [...prevUsers, parsed.data as User]);
 	}, []);
 
-	const handleUserDisconnected = useCallback((id: string) => {
+	const handleUserDisconnected = useCallback((data: unknown) => {
+		const parsed = parseUserId(data);
+		if (!parsed.success || !parsed.data) {
+			console.error(parsed.error);
+			return;
+		}
+		const id = parsed.data;
 		console.log("disconnected", id);
 		setUsers((prevUsers) =>
 			prevUsers.filter((user) => user.userID !== id && user.connected),
 		);
 	}, []);
 
-	const handleChallengeGot = useCallback((challenge: Challenge) => {
-		console.log("you got challenged", challenge);
-		setIncomingChallenge(challenge);
+	const handleChallengeGot = useCallback((data: unknown) => {
+		const parsed = parseChallenge(data);
+		if (!parsed.success || !parsed.data) {
+			console.error(parsed.error);
+			return;
+		}
+		console.log("you got challenged", parsed.data);
+		setIncomingChallenge(parsed.data as Challenge);
 	}, []);
 
 	const handleGameStart = useCallback(
-		(data: GameStartData) => {
-			console.log("game starting", data);
-			onGameStart?.(data);
+		(data: unknown) => {
+			const parsed = parseGameStart(data);
+			if (!parsed.success || !parsed.data) {
+				console.error(parsed.error);
+				return;
+			}
+			console.log("game starting", parsed.data);
+			onGameStart?.(parsed.data as GameStartData);
 		},
 		[onGameStart],
 	);
@@ -131,14 +177,20 @@ export const useMultiplayerLobby = ({
 	const challenge = useCallback(
 		(userId: string) => {
 			console.log("challenge sent to ", userId);
-			socket?.emit("challenge:new", userId, name);
+			emitValidated(socket, "challenge:new", ChallengeNewArgsSchema, [
+				userId,
+				name,
+			]);
 		},
 		[socket, name],
 	);
 
 	const acceptChallenge = useCallback(
 		(challengerId: string) => {
-			socket?.emit("challenge:accept", challengerId, name);
+			emitValidated(socket, "challenge:accept", ChallengeAcceptArgsSchema, [
+				challengerId,
+				name,
+			]);
 			setIncomingChallenge(null);
 		},
 		[socket, name],

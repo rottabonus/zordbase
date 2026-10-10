@@ -45,6 +45,7 @@ services:
     volumes:
       - ./back/src:/app/src
       - ./words:/words
+      - ./shared:/shared
     ports:
       - 3000:3000
 
@@ -59,6 +60,7 @@ services:
       - DEV_API=http://backend:3000
     volumes:
       - ./front/src:/app/src
+      - ./shared:/shared
     ports:
       - 6540:6540
 

@@ -1,3 +1,4 @@
+import path from "node:path";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
@@ -10,6 +11,10 @@ export default defineConfig({
 				target: process.env.DEV_API || "http://localhost:3000",
 				changeOrigin: true,
 			},
+		},
+		fs: {
+			// Allow serving ../shared (schemas shared with back/) from the dev server.
+			allow: [path.resolve(import.meta.dirname, "..")],
 		},
 	},
 	build: {

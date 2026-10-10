@@ -1,21 +1,13 @@
-import type { z } from "zod";
+import { z } from "zod";
 import {
-	type Challenge,
 	ChallengeSchema,
-	ClientGameMoveSchema,
-	type GameEndData,
 	GameEndDataSchema,
-	type GameMove,
 	GameMoveSchema,
-	type GameStartData,
 	GameStartDataSchema,
-	type GameState,
 	GameStateSchema,
-	type Session,
 	SessionSchema,
-	type User,
 	UserSchema,
-} from "../validation/schemas";
+} from "./schemas";
 
 export interface ParseResult<T> {
 	success: boolean;
@@ -23,112 +15,73 @@ export interface ParseResult<T> {
 	error?: string;
 }
 
-const formatZodError = (error: z.ZodError): string => {
-	return error.issues
-		.map((e) => `${e.path.join(".")}: ${e.message}`)
-		.join(", ");
-};
+const formatZodError = (error: z.ZodError): string =>
+	error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ");
 
-export const parseGameState = (data: unknown): ParseResult<GameState> => {
-	const result = GameStateSchema.safeParse(data);
+const parse = <S extends z.ZodTypeAny>(
+	schema: S,
+	data: unknown,
+	label: string,
+): ParseResult<z.infer<S>> => {
+	const result = schema.safeParse(data);
 	if (!result.success) {
 		return {
 			success: false,
-			error: `Invalid game state: ${formatZodError(result.error)}`,
+			error: `Invalid ${label}: ${formatZodError(result.error)}`,
 		};
 	}
 	return { success: true, data: result.data };
 };
 
-export const parseGameMove = (data: unknown): ParseResult<GameMove> => {
-	const result = GameMoveSchema.safeParse(data);
-	if (!result.success) {
-		return {
-			success: false,
-			error: `Invalid game move: ${formatZodError(result.error)}`,
-		};
+// Incoming (socket.on) payloads - validated as soon as they arrive, before
+// any handler touches them.
+export const parseGameState = (data: unknown) =>
+	parse(GameStateSchema, data, "game state");
+export const parseGameMove = (data: unknown) =>
+	parse(GameMoveSchema, data, "game move");
+export const parseGameEnd = (data: unknown) =>
+	parse(GameEndDataSchema, data, "game end data");
+export const parseGameStart = (data: unknown) =>
+	parse(GameStartDataSchema, data, "game start data");
+export const parseChallenge = (data: unknown) =>
+	parse(ChallengeSchema, data, "challenge data");
+export const parseUser = (data: unknown) =>
+	parse(UserSchema, data, "user data");
+export const parseUsersList = (data: unknown) =>
+	parse(UserSchema.array(), data, "users list");
+export const parseUserId = (data: unknown) =>
+	parse(z.string().min(1), data, "user id");
+export const parseSession = (data: unknown) =>
+	parse(SessionSchema, data, "session data");
+export const parseGameErrorMessage = (data: unknown) =>
+	parse(z.string(), data, "game error message");
+
+// Method-shorthand syntax so this stays assignable from a strictly-typed
+// socket.io-client `Socket<...>` (whose `emit` only accepts its own literal
+// union of event names) - TS checks method parameters bivariantly.
+type Emitter = { emit(event: string, ...args: unknown[]): unknown };
+
+/**
+ * Validates a payload against `schema` and, if valid, emits it on `socket`.
+ * This covers outgoing (socket.emit) payloads - validated right before they
+ * leave the client, so a client-side bug surfaces immediately instead of
+ * round-tripping to the server and back as a "game:error". Tuple-schema
+ * results are spread as positional args (matching events like
+ * `challenge:new` that take multiple arguments); everything else is sent as
+ * a single argument. Returns false (and logs) without emitting on failure.
+ */
+export const emitValidated = <S extends z.ZodTypeAny>(
+	socket: Emitter | null | undefined,
+	event: string,
+	schema: S,
+	payload: unknown,
+): boolean => {
+	const result = parse(schema, payload, `outgoing "${event}"`);
+	if (!result.success || result.data === undefined) {
+		console.error(result.error);
+		return false;
 	}
-	return { success: true, data: result.data };
-};
-
-export const parseGameEnd = (data: unknown): ParseResult<GameEndData> => {
-	const result = GameEndDataSchema.safeParse(data);
-	if (!result.success) {
-		return {
-			success: false,
-			error: `Invalid game end data: ${formatZodError(result.error)}`,
-		};
-	}
-	return { success: true, data: result.data };
-};
-
-export const parseGameStart = (data: unknown): ParseResult<GameStartData> => {
-	const result = GameStartDataSchema.safeParse(data);
-	if (!result.success) {
-		return {
-			success: false,
-			error: `Invalid game start data: ${formatZodError(result.error)}`,
-		};
-	}
-	return { success: true, data: result.data };
-};
-
-export const parseChallenge = (data: unknown): ParseResult<Challenge> => {
-	const result = ChallengeSchema.safeParse(data);
-	if (!result.success) {
-		return {
-			success: false,
-			error: `Invalid challenge data: ${formatZodError(result.error)}`,
-		};
-	}
-	return { success: true, data: result.data };
-};
-
-export const parseUser = (data: unknown): ParseResult<User> => {
-	const result = UserSchema.safeParse(data);
-	if (!result.success) {
-		return {
-			success: false,
-			error: `Invalid user data: ${formatZodError(result.error)}`,
-		};
-	}
-	return { success: true, data: result.data };
-};
-
-export const parseSession = (data: unknown): ParseResult<Session> => {
-	const result = SessionSchema.safeParse(data);
-	if (!result.success) {
-		return {
-			success: false,
-			error: `Invalid session data: ${formatZodError(result.error)}`,
-		};
-	}
-	return { success: true, data: result.data };
-};
-
-export const parseClientGameMove = (data: unknown) => {
-	const result = ClientGameMoveSchema.safeParse(data);
-	if (!result.success) {
-		return {
-			success: false,
-			error: `Invalid move data: ${formatZodError(result.error)}`,
-		};
-	}
-	return { success: true, data: result.data };
-};
-
-export const createSocketParsers = () => ({
-	"game:state": parseGameState,
-	"game:move": parseGameMove,
-	"game:end": parseGameEnd,
-	"game:start": parseGameStart,
-	"challenge:got": parseChallenge,
-	"user:connected": parseUser,
-	"session:set": parseSession,
-});
-
-export type SocketEventParser = {
-	[K in keyof typeof createSocketParsers extends infer T ? T : never]: (
-		data: unknown,
-	) => ParseResult<unknown>;
+	const args = Array.isArray(result.data) ? result.data : [result.data];
+	socket?.emit(event, ...args);
+	return true;
 };

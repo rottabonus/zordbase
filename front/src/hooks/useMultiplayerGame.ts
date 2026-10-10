@@ -11,6 +11,14 @@ import type {
 	GameState,
 	letterObject,
 } from "../types/types";
+import { ClientGameMoveSchema, GameIdSchema } from "../validation/schemas";
+import {
+	emitValidated,
+	parseGameEnd,
+	parseGameErrorMessage,
+	parseGameMove,
+	parseGameState,
+} from "../validation/socketValidators";
 
 interface UseMultiplayerGameOptions {
 	gameId: string | undefined;
@@ -111,7 +119,13 @@ export const useMultiplayerGame = ({
 	useEffect(() => {
 		if (!socket || !gameIdRef.current) return;
 
-		const handleGameState = (state: GameState) => {
+		const handleGameState = (data: unknown) => {
+			const parsed = parseGameState(data);
+			if (!parsed.success || !parsed.data) {
+				console.error(parsed.error);
+				return;
+			}
+			const state = parsed.data as GameState;
 			console.log("Received game state", {
 				state,
 				myUserId: myUserIdRef.current,
@@ -172,7 +186,13 @@ export const useMultiplayerGame = ({
 			initializeBaseFromServer(state.base);
 		};
 
-		const handleGameMove = (move: GameMove) => {
+		const handleGameMove = (data: unknown) => {
+			const parsed = parseGameMove(data);
+			if (!parsed.success || !parsed.data) {
+				console.error(parsed.error);
+				return;
+			}
+			const move = parsed.data as GameMove;
 			console.log("Received game move", move);
 
 			const myUserId = myUserIdRef.current;
@@ -257,7 +277,13 @@ export const useMultiplayerGame = ({
 			}, animationDuration);
 		};
 
-		const handleGameEnd = (data: GameEndData) => {
+		const handleGameEnd = (raw: unknown) => {
+			const parsed = parseGameEnd(raw);
+			if (!parsed.success || !parsed.data) {
+				console.error(parsed.error);
+				return;
+			}
+			const data = parsed.data as GameEndData;
 			console.log("Game ended", data);
 			setGameStatus("finished");
 
@@ -284,7 +310,13 @@ export const useMultiplayerGame = ({
 			dispatch(allActions.messageActions.setMessage(message, "message"));
 		};
 
-		const handleGameError = (err: string) => {
+		const handleGameError = (data: unknown) => {
+			const parsed = parseGameErrorMessage(data);
+			if (!parsed.success || parsed.data === undefined) {
+				console.error(parsed.error);
+				return;
+			}
+			const err = parsed.data;
 			console.error("Game error", err);
 			setError(err);
 			dispatch(allActions.multiplayerActions.setError(err));
@@ -303,7 +335,7 @@ export const useMultiplayerGame = ({
 					gameId: gameIdRef.current,
 					myUserId: myUserIdRef.current,
 				});
-				socket.emit("game:join", gameIdRef.current);
+				emitValidated(socket, "game:join", GameIdSchema, gameIdRef.current);
 			}
 		};
 
@@ -354,7 +386,7 @@ export const useMultiplayerGame = ({
 	useEffect(() => {
 		if (myUserId && isConnected && socket && gameId) {
 			console.log("Re-joining game with myUserId:", myUserId);
-			socket.emit("game:join", gameId);
+			emitValidated(socket, "game:join", GameIdSchema, gameId);
 		}
 	}, [myUserId, isConnected, socket, gameId]);
 
@@ -364,7 +396,7 @@ export const useMultiplayerGame = ({
 				gameId,
 				myUserId: myUserIdRef.current,
 			});
-			socket.emit("game:join", gameId);
+			emitValidated(socket, "game:join", GameIdSchema, gameId);
 		}
 	}, [gameId, isConnected, socket]);
 
@@ -385,7 +417,7 @@ export const useMultiplayerGame = ({
 				if (preMoveBase) {
 					ourMovePreBaseRef.current = preMoveBase;
 				}
-				socket.emit("game:move", {
+				emitValidated(socket, "game:move", ClientGameMoveSchema, {
 					gameId: moveGameId,
 					selection,
 					word,

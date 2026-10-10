@@ -1,12 +1,17 @@
 import crypto from "node:crypto";
 import type { SocketServer } from "../types.ts";
+import { HandshakeAuthSchema } from "../validation/schemas.ts";
 import { sessionStore } from "./sessionService.ts";
 
 const randomId = () => crypto.randomBytes(8).toString("hex");
 
 const service = (io: SocketServer) => {
 	io.use(async (socket, next) => {
-		const { sessionID, username } = socket.handshake.auth;
+		const parsedAuth = HandshakeAuthSchema.safeParse(socket.handshake.auth);
+		if (!parsedAuth.success) {
+			return next(new Error("invalid handshake data"));
+		}
+		const { sessionID, username } = parsedAuth.data;
 		if (sessionID) {
 			const session = await sessionStore.findSession(sessionID);
 			if (session) {
@@ -21,7 +26,7 @@ const service = (io: SocketServer) => {
 			return next(new Error("invalid username"));
 		}
 
-		const allSessions = await sessionStore.findAllBut(sessionID);
+		const allSessions = await sessionStore.findAllBut(sessionID ?? "");
 		const isNameExisting = allSessions.some(
 			(session) => session.username === username,
 		);
