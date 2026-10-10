@@ -1,5 +1,6 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
+import { logger } from "../logger.ts";
 import * as schema from "./schema.ts";
 
 const pool = new Pool({
@@ -17,13 +18,13 @@ export const closePool = () => pool.end();
 
 // For graceful shutdown
 process.on("SIGINT", async () => {
-	console.log("Closing database pool...");
+	logger.info("Closing database pool...");
 	await closePool();
 	process.exit(0);
 });
 
 process.on("SIGTERM", async () => {
-	console.log("Closing database pool...");
+	logger.info("Closing database pool...");
 	await closePool();
 	process.exit(0);
 });

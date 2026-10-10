@@ -1,5 +1,6 @@
 import type { Socket } from "socket.io";
 import type { z } from "zod";
+import { logger } from "../logger.ts";
 
 const formatZodError = (error: z.ZodError): string =>
 	error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ");
@@ -31,7 +32,7 @@ export const validateEvent = <S extends z.ZodTypeAny>(
 		try {
 			await handler(result.data);
 		} catch (error) {
-			console.error("Unhandled error in socket handler:", error);
+			logger.error({ err: error }, "Unhandled error in socket handler");
 			socket.emit("game:error", "Internal server error");
 		}
 	};

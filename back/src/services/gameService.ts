@@ -1,6 +1,7 @@
 import { gameMoveRepository } from "../db/gameMoveRepository.ts";
 import { gameRoomRepository } from "../db/gameRoomRepository.ts";
 import type { GameRoom as DbGameRoom } from "../db/schema.ts";
+import { logger } from "../logger.ts";
 import type {
 	GameMove,
 	GameStartData,
@@ -77,7 +78,7 @@ const service = (io: SocketServer) => {
 						to: challengedID,
 						fromUsername: challengerUsername,
 					};
-					console.log("new challenge", challenge);
+					logger.info({ challenge }, "new challenge");
 					socket.to(challenge.to).emit("challenge:got", challenge);
 				},
 			),
@@ -93,7 +94,7 @@ const service = (io: SocketServer) => {
 					const acceptorUsername = socket.data.username ?? "";
 					if (!userId) return;
 					const challenge = { from: userId, to: challengerID };
-					console.log("game was accepted, now start with", challenge);
+					logger.info({ challenge }, "game was accepted, now start with");
 
 					const gameId = generateGameId();
 					const board = createGameBoard(12, 10);
@@ -332,7 +333,7 @@ const service = (io: SocketServer) => {
 					});
 				}
 			} catch (error) {
-				console.error("Unhandled error in disconnect handler:", error);
+				logger.error({ err: error }, "Unhandled error in disconnect handler");
 			}
 		});
 	});

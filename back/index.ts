@@ -3,6 +3,7 @@ import cors from "cors";
 import express from "express";
 import { Server } from "socket.io";
 import { closePool, db } from "./src/db/client.ts";
+import { logger } from "./src/logger.ts";
 import wordRouter from "./src/routes/words.ts";
 import connection from "./src/services/connectionService.ts";
 import game from "./src/services/gameService.ts";
@@ -34,19 +35,19 @@ game.service(io);
 
 const PORT = process.env.PORT ? process.env.PORT : 3000;
 server.listen(PORT, () => {
-	console.log(`Server running on port ${PORT}`);
+	logger.info({ port: PORT }, "Server running");
 });
 
 const shutdown = async () => {
-	console.log("Shutting down...");
+	logger.info("Shutting down...");
 	await closePool();
 	server.close(() => {
-		console.log("HTTP server closed");
+		logger.info("HTTP server closed");
 		process.exit(0);
 	});
 	// Force close after 10 seconds
 	setTimeout(() => {
-		console.error("Force shutdown");
+		logger.error("Force shutdown");
 		process.exit(1);
 	}, 10000);
 };
