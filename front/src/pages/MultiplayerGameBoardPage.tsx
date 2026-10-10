@@ -12,6 +12,7 @@ import { Message } from "../components/Message";
 import { PlayedWordList } from "../components/PlayedWordList";
 import { useGameModals } from "../hooks/useGameModals";
 import { useMultiplayerGame } from "../hooks/useMultiplayerGame";
+import { useTimeTravel } from "../hooks/useTimeTravel";
 import { selectBase } from "../reducers/baseReducer";
 import { selectBoard } from "../reducers/boardReducer";
 import { selectMultiplayer } from "../reducers/multiplayerReducer";
@@ -53,13 +54,13 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 		isMyTurn,
 		error,
 		myUserId,
-		computerSelect,
 		joinGame,
 		makeMove,
 	} = useMultiplayerGame({
 		gameId,
 		initializeBaseFromServer,
 	});
+	const { timeTravel, isTimeTraveling } = useTimeTravel(base, stateHistory);
 
 	// Join game when connected and we have user ID
 	useEffect(() => {
@@ -144,7 +145,7 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 		column: number,
 		_owner: string,
 	) => {
-		if (!isMyTurn || gameStatus !== "playing") return;
+		if (!isMyTurn || gameStatus !== "playing" || isTimeTraveling) return;
 
 		const baseCell = base.find((b) => b.row === row && b.column === column);
 		const actualOwner = baseCell?.owner || "none";
@@ -188,25 +189,6 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 		}
 	};
 
-	const timeTravel = (turn: number) => {
-		const currentBase = [...base];
-		const timeOutCounter = stateHistory[turn].selection.length;
-		dispatch(allActions.baseActions.updateBase(stateHistory[turn].base));
-		// Visual replay
-		computerSelect(stateHistory[turn].selection);
-		setTimeout(
-			() => {
-				backToPresent(currentBase);
-				removeSelection();
-			},
-			timeOutCounter * 500 + 700,
-		);
-	};
-
-	const backToPresent = (base: letterObject[]) => {
-		dispatch(allActions.baseActions.updateBase(base));
-	};
-
 	useEffect(() => {
 		if (newGame && gameState) {
 			initializeBaseFromServer(gameState.base);
@@ -237,7 +219,7 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 						resetGame={showResetModal}
 						confirmSelection={confirmSelection}
 						removeSelection={removeSelection}
-						disabled={!isMyTurn || gameStatus !== "playing"}
+						disabled={!isMyTurn || gameStatus !== "playing" || isTimeTraveling}
 					/>
 					{(error || multiplayerError) && (
 						<div className="error-message">{error || multiplayerError}</div>
@@ -250,6 +232,7 @@ export const MultiplayerGameBoardPage: React.FC = () => {
 						isMultiplayer={true}
 						myUserId={myUserId}
 						opponentId={opponentId}
+						disabled={isTimeTraveling}
 					/>
 					<LogoContainer />
 				</div>

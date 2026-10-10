@@ -11,12 +11,12 @@ import { Message } from "../components/Message";
 import { PlayedWordList } from "../components/PlayedWordList";
 import { useAnimatedMove } from "../hooks/useAnimatedMove";
 import { useGameModals } from "../hooks/useGameModals";
-import { useSelectionAnimator } from "../hooks/useSelectionAnimator";
+import { useTimeTravel } from "../hooks/useTimeTravel";
 import { selectBase } from "../reducers/baseReducer";
 import { selectBoard } from "../reducers/boardReducer";
 import gameService from "../services/game";
 import wordService from "../services/words";
-import type { letterObject, selectionObject } from "../types/types";
+import type { selectionObject } from "../types/types";
 
 export const GameBoardPage: React.FC = () => {
 	const { board, turn, newGame, isLoading } = useSelector(selectBoard);
@@ -88,15 +88,8 @@ export const GameBoardPage: React.FC = () => {
 		}
 	}, [base, dispatch, initializeBase]);
 
-	const computerSelect = useSelectionAnimator();
 	const applyMove = useAnimatedMove();
-
-	const backToPresent = useCallback(
-		(base: letterObject[]) => {
-			dispatch(allActions.baseActions.updateBase(base));
-		},
-		[dispatch],
-	);
+	const { timeTravel, isTimeTraveling } = useTimeTravel(base, stateHistory);
 
 	const resetGame = () => {
 		dispatch(allActions.baseActions.resetBase(stateHistory[1].base));
@@ -189,9 +182,13 @@ export const GameBoardPage: React.FC = () => {
 				},
 			],
 			onComplete: () => {
-				checkGame
-					? gameChange()
-					: dispatch(allActions.boardActions.changeTurn(playerName));
+				// Always hand the turn back to the player, even on a win - otherwise
+				// `turn` stays "computer" and the effect below keeps re-triggering
+				// computer moves after the game is already over.
+				dispatch(allActions.boardActions.changeTurn(playerName));
+				if (checkGame) {
+					gameChange();
+				}
 			},
 		});
 	}, [
@@ -215,6 +212,7 @@ export const GameBoardPage: React.FC = () => {
 		column: number,
 		_owner: string,
 	) => {
+		if (isTimeTraveling) return;
 		const baseCell = base.find((b) => b.row === row && b.column === column);
 		const actualOwner = baseCell?.owner || "none";
 
@@ -258,20 +256,6 @@ export const GameBoardPage: React.FC = () => {
 		}
 	};
 
-	const timeTravel = (turn: number) => {
-		const currentBase = [...base];
-		const timeOutCounter = stateHistory[turn].selection.length;
-		dispatch(allActions.baseActions.updateBase(stateHistory[turn].base));
-		computerSelect(stateHistory[turn].selection);
-		setTimeout(
-			() => {
-				backToPresent(currentBase);
-				removeSelection();
-			},
-			timeOutCounter * 500 + 700,
-		);
-	};
-
 	useEffect(() => {
 		if (newGame) {
 			dispatch(allActions.boardActions.gameStart());
@@ -302,6 +286,7 @@ export const GameBoardPage: React.FC = () => {
 						resetGame={showResetModal}
 						confirmSelection={confirmSelection}
 						removeSelection={removeSelection}
+						disabled={isTimeTraveling}
 					/>
 				</div>
 				<div className="wordlist-and-info-container">
@@ -311,6 +296,7 @@ export const GameBoardPage: React.FC = () => {
 						isMultiplayer={false}
 						myUserId={playerName}
 						opponentId="computer"
+						disabled={isTimeTraveling}
 					/>
 					<LogoContainer />
 				</div>

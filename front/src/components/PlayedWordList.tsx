@@ -13,6 +13,7 @@ interface PlayedWordProps {
 	isMultiplayer?: boolean;
 	myUserId?: string;
 	opponentId?: string;
+	disabled?: boolean;
 }
 
 export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
@@ -23,7 +24,7 @@ export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
 		stateHistory,
 	} = useSelector(selectBase);
 	const { isLoading } = useSelector(selectBoard);
-	const { opponentName, isMultiplayer, myUserId, opponentId } = props;
+	const { opponentName, isMultiplayer, myUserId, opponentId, disabled } = props;
 
 	// Calculate offset between stateHistory and playedWords
 	// stateHistory includes initial entries (empty + server initial in multiplayer)
@@ -84,13 +85,15 @@ export const PlayedWordList: React.FC<PlayedWordProps> = (props) => {
 							type="button"
 							onClick={handleClick}
 							onKeyDown={handleKeyDown}
+							disabled={disabled}
 							style={{
 								color: styleValues.color,
 								textAlign: styleValues.textAlign,
 								padding: "4px",
 								background: "transparent",
 								border: "none",
-								cursor: "pointer",
+								cursor: disabled ? "default" : "pointer",
+								opacity: disabled ? 0.5 : 1,
 							}}
 						>
 							{w.word}
